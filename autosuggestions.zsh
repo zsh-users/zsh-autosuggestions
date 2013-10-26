@@ -1,24 +1,28 @@
 # Fish-like autosuggestions for zsh. This is implemented on top of zsh's
-# builtin prediction feature by considering whatever is after the cursor
-# to be 'unmaterialized'. The unmaterialized part is highlighted and ignored
+# builtin prediction feature by treating whatever is after the cursor
+# as 'unmaterialized'. The unmaterialized part is highlighted and ignored
 # when the user accepts the line. To materialize autosuggestions 'TAB' must
 # be pressed.
 #
 # Since predict-on doesn't work well on the middle of the line, many actions
-# that move the cursor to the left will disable autosuggestions, so it should
-# be less obtrusive than using predict-on directly
+# that move the cursor to the left will pause autosuggestions, so it should
+# be safe enough to leave autosuggest enabled by default with
+# zle-line-init() {
+#		enable-autosuggestions
+# }
+# zle -N zle-line-init
 zstyle ':predict' verbose no
-zstyle ':completion:incremental:*' completer _complete
 zstyle ':completion:predict:*' completer _complete
 
 autoload predict-on
 
-disable-autosuggestions() {
+pause-autosuggestions() {
 	# When autosuggestions are disabled, kill the unmaterialized part
 	RBUFFER=''
 	unset ZLE_AUTOSUGGESTING
+	ZLE_AUTOSUGGESTING_PAUSED=1
 	predict-off
-	# Restore default widgets
+	zle -N self-insert paused-autosuggest-self-insert
 	zle -A .accept-line accept-line
 	zle -A .vi-cmd-mode vi-cmd-mode
 	zle -A .vi-backward-char vi-backward-char
@@ -33,6 +37,7 @@ disable-autosuggestions() {
 }
 
 enable-autosuggestions() {
+	unset ZLE_AUTOSUGGESTING_PAUSED
 	ZLE_AUTOSUGGESTING=1
 	predict-on
 	# Save the prediction widgets
@@ -64,9 +69,17 @@ enable-autosuggestions() {
 	highlight-suggested-text
 }
 
+disable-autosuggestions() {
+	if [[ -z $ZLE_AUTOSUGGESTING_PAUSED ]]; then
+		pause-autosuggestions
+	fi
+	unset ZLE_AUTOSUGGESTING_PAUSED
+	zle -A .self-insert self-insert
+}
+
 # Toggles autosuggestions on/off
 toggle-autosuggestions() {
-	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
+	if [[ -n $ZLE_AUTOSUGGESTING || -n $ZLE_AUTOSUGGESTING_PAUSED ]]; then
 		disable-autosuggestions
 	else
 		enable-autosuggestions
@@ -86,50 +99,60 @@ autosuggest-accept-line() {
 # When entering vi command mode, disable autosuggestions as its possible the
 # user is going to edit the middle of the line
 autosuggest-vi-cmd-mode() {
-	disable-autosuggestions
+	pause-autosuggestions
 	zle .vi-cmd-mode
 }
 
 # Disable autosuggestions when doing anything that moves the cursor to the left
 autosuggest-vi-backward-char() {
-	disable-autosuggestions
+	pause-autosuggestions
 	zle .vi-backward-char
 }
 
 autosuggest-backward-char() {
-	disable-autosuggestions
+	pause-autosuggestions
 	zle .backward-char
 }
 
 autosuggest-backward-word() {
-	disable-autosuggestions
+	pause-autosuggestions
 	zle .backward-word
 }
 
 autosuggest-beginning-of-line() {
-	disable-autosuggestions
+	pause-autosuggestions
 	zle .beginning-of-line
 }
 
 # Searching history or moving arrows up/down also disables autosuggestion
 autosuggest-history-search-forward() {
-	disable-autosuggestions
+	pause-autosuggestions
 	zle .history-search-forward
 }
 
 autosuggest-history-search-backward() {
-	disable-autosuggestions
+	pause-autosuggestions
 	zle .history-search-backward
 }
 
 autosuggest-up-line-or-history() {
-	disable-autosuggestions
+	pause-autosuggestions
 	zle .up-line-or-history
 }
 
 autosuggest-down-line-or-history() {
-	disable-autosuggestions
+	pause-autosuggestions
 	zle .down-line-or-history
+}
+
+paused-autosuggest-self-insert() {
+	if [[ $RBUFFER == '' ]]; then
+		# Resume autosuggestions when inserting at the end of the line
+		enable-autosuggestions
+		zle insert-and-autosuggest
+	else
+		zle .self-insert
+	fi
 }
 
 highlight-suggested-text() {

@@ -4,7 +4,7 @@
 
 ## Installation
 
-```sh
+```zsh
 git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-autosuggestions
 cat >> ~/.zshrc << "EOF"
 source ~/.zsh-autosuggestions/autosuggestions.zsh
