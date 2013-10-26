@@ -1,0 +1,19 @@
+# zsh-autosuggestions
+
+> [Fish](http://fishshell.com/)-like autosuggestions on top of zsh 'predict-on' widget.
+
+## Installation
+
+```sh
+git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-autosuggestions
+cat >> ~/.zshrc << "EOF"
+source ~/.zsh-autosuggestions/autosuggestions.zsh
+# Enable autosuggestions automatically
+zle-line-init() {
+  enable-autosuggestions
+}
+zle -N zle-line-init
+# use ctrl+t to toggle autosuggestions
+bindkey '^T' toggle-autosuggestions
+EOF
+```
