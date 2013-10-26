@@ -16,8 +16,8 @@
 # zle -N zle-line-init
 # ```
 #
-zstyle ':predict' verbose no
-zstyle ':completion:predict:*' completer _complete
+zstyle -t ':predict' verbose || zstyle ':predict' verbose no
+zstyle -t ':completion:predict:*' completer || zstyle ':completion:predict:*' completer _expand _complete
 
 autoload predict-on
 
@@ -38,7 +38,6 @@ pause-autosuggestions() {
 	zle -A .history-search-backward history-search-backward
 	zle -A .up-line-or-history up-line-or-history
 	zle -A .down-line-or-history down-line-or-history
-	zle -A .expand-or-complete expand-or-complete
 	highlight-suggested-text
 }
 
@@ -67,10 +66,9 @@ enable-autosuggestions() {
 	zle -N history-search-backward autosuggest-history-search-backward
 	zle -N up-line-or-history autosuggest-up-line-or-history
 	zle -N down-line-or-history autosuggest-down-line-or-history
-	zle -N expand-or-complete autosuggest-expand-or-complete
 	if [[ $BUFFER != '' ]]; then
 		local cursor=$CURSOR
-		zle complete-word
+		zle expand-or-complete
 		CURSOR=$cursor
 	fi
 	highlight-suggested-text
@@ -100,6 +98,7 @@ toggle-autosuggestions() {
 # section when the user accepts the line
 autosuggest-accept-line() {
 	RBUFFER=''
+	region_highlight=()
 	zle .accept-line
 }
 
@@ -178,19 +177,6 @@ insert-and-autosuggest() {
 	highlight-suggested-text
 }
 
-autosuggest-expand-or-complete() {
-	if [[ $RBUFFER == '' ]]; then
-		# If predict-on didnt insert anything, do a normal word
-		# expansion/completion
-		zle expand-or-complete-prefix
-		region_highlight=()
-	else
-		# Else advance the current big word
-		zle .vi-forward-blank-word
-		highlight-suggested-text
-	fi
-}
-
 delete-backward-and-autosuggest() {
 	zle delete-backward-and-predict-orig
 	highlight-suggested-text
@@ -201,16 +187,4 @@ delete-no-autosuggest() {
 	highlight-suggested-text
 }
 
-zle -N enable-autosuggestions
-zle -N disable-autosuggestions
 zle -N toggle-autosuggestions
-zle -N autosuggest-accept-line
-zle -N autosuggest-vi-cmd-mode
-zle -N autosuggest-history-search-forward
-zle -N autosuggest-history-search-backward
-zle -N autosuggest-up-line-or-history
-zle -N autosuggest-down-line-or-history
-zle -N autosuggest-expand-or-complete
-zle -N insert-and-autosuggest
-zle -N delete-backward-and-autosuggest
-zle -N delete-no-autosuggest
