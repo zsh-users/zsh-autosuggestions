@@ -5,12 +5,17 @@
 # be pressed.
 #
 # Since predict-on doesn't work well on the middle of the line, many actions
-# that move the cursor to the left will pause autosuggestions, so it should
-# be safe enough to leave autosuggest enabled by default with
+# that move the cursor to the left will pause autosuggestions, so it should be
+# safe enough to leave autosuggest enabled by default by adding the followingto
+# zshrc:
+#
+# ```zsh
 # zle-line-init() {
 #		enable-autosuggestions
 # }
 # zle -N zle-line-init
+# ```
+#
 zstyle ':predict' verbose no
 zstyle ':completion:predict:*' completer _complete
 
@@ -33,6 +38,7 @@ pause-autosuggestions() {
 	zle -A .history-search-backward history-search-backward
 	zle -A .up-line-or-history up-line-or-history
 	zle -A .down-line-or-history down-line-or-history
+	zle -A .expand-or-complete expand-or-complete
 	highlight-suggested-text
 }
 
@@ -61,6 +67,7 @@ enable-autosuggestions() {
 	zle -N history-search-backward autosuggest-history-search-backward
 	zle -N up-line-or-history autosuggest-up-line-or-history
 	zle -N down-line-or-history autosuggest-down-line-or-history
+	zle -N expand-or-complete autosuggest-expand-or-complete
 	if [[ $BUFFER != '' ]]; then
 		local cursor=$CURSOR
 		zle complete-word
@@ -157,7 +164,10 @@ paused-autosuggest-self-insert() {
 
 highlight-suggested-text() {
 	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
-		region_highlight=("$(( $CURSOR + 1 )) $(( $CURSOR + $#RBUFFER )) fg=8")
+		local color='fg=8'
+		[[ -n $AUTOSUGGESTION_HIGHLIGHT_COLOR ]] &&\
+		 	color=$AUTOSUGGESTION_HIGHLIGHT_COLOR
+		region_highlight=("$(( $CURSOR + 1 )) $(( $CURSOR + $#RBUFFER )) $color")
 	else
 		region_highlight=()
 	fi
@@ -166,6 +176,19 @@ highlight-suggested-text() {
 insert-and-autosuggest() {
 	zle insert-and-predict-orig
 	highlight-suggested-text
+}
+
+autosuggest-expand-or-complete() {
+	if [[ $RBUFFER == '' ]]; then
+		# If predict-on didnt insert anything, do a normal word
+		# expansion/completion
+		zle expand-or-complete-prefix
+		region_highlight=()
+	else
+		# Else advance the current big word
+		zle .vi-forward-blank-word
+		highlight-suggested-text
+	fi
 }
 
 delete-backward-and-autosuggest() {
@@ -187,6 +210,7 @@ zle -N autosuggest-history-search-forward
 zle -N autosuggest-history-search-backward
 zle -N autosuggest-up-line-or-history
 zle -N autosuggest-down-line-or-history
+zle -N autosuggest-expand-or-complete
 zle -N insert-and-autosuggest
 zle -N delete-backward-and-autosuggest
 zle -N delete-no-autosuggest
