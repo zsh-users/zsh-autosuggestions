@@ -15,19 +15,17 @@
 # }
 # zle -N zle-line-init
 # ```
-#
-zstyle -t ':predict' verbose || zstyle ':predict' verbose no
-zstyle -t ':completion:predict:*' completer || zstyle ':completion:predict:*' completer _expand _complete
 
-autoload predict-on
 
 pause-autosuggestions() {
 	# When autosuggestions are disabled, kill the unmaterialized part
 	RBUFFER=''
 	unset ZLE_AUTOSUGGESTING
 	ZLE_AUTOSUGGESTING_PAUSED=1
-	predict-off
 	zle -A self-insert paused-autosuggest-self-insert
+	zle -A .magic-space magic-space
+	zle -A .backward-delete-char backward-delete-char
+	zle -A .delete-char-or-list delete-char-or-list
 	zle -A .accept-line accept-line
 	zle -A .vi-cmd-mode vi-cmd-mode
 	zle -A .vi-backward-char vi-backward-char
@@ -38,34 +36,33 @@ pause-autosuggestions() {
 	zle -A .history-search-backward history-search-backward
 	zle -A .up-line-or-history up-line-or-history
 	zle -A .down-line-or-history down-line-or-history
+	zle -A .complete-word complete-word
+	zle -A .expand-or-complete expand-or-complete
 	highlight-suggested-text
 }
 
 enable-autosuggestions() {
 	unset ZLE_AUTOSUGGESTING_PAUSED
 	ZLE_AUTOSUGGESTING=1
-	predict-on
-	# Save the prediction widgets
-	zle -A self-insert insert-and-predict-orig
-	zle -A backward-delete-char delete-backward-and-predict-orig
-	zle -A delete-char-or-list delete-no-predict-orig
 	# Replace prediction widgets by versions that will also highlight RBUFFER
-	zle -A autosuggest-self-insert self-insert
-	zle -A autosuggest-self-insert magic-space
-	zle -A autosuggest-backward-delete-char backward-delete-char
-	zle -A autosuggest-delete-char-or-list delete-char-or-list 
+	zle -N self-insert autosuggest-self-insert
+	zle -N self-insert autosuggest-self-insert
+	zle -N backward-delete-char autosuggest-delete
+	zle -N delete-char-or-list autosuggest-delete
 	# Replace some default widgets that should disable autosuggestion
 	# automatically 
-	zle -A autosuggest-accept-line accept-line
-	zle -A autosuggest-vi-cmd-mode vi-cmd-mode
-	zle -A autosuggest-vi-backward-char vi-backward-char
-	zle -A autosuggest-backward-char backward-char
-	zle -A autosuggest-backward-word backward-word
-	zle -A autosuggest-beginning-of-line beginning-of-line
-	zle -A autosuggest-history-search-forward history-search-forward
-	zle -A autosuggest-history-search-backward history-search-backward
-	zle -A autosuggest-up-line-or-history up-line-or-history
-	zle -A autosuggest-down-line-or-history down-line-or-history
+	zle -N accept-line execute-widget-and-pause
+	zle -N vi-cmd-mode execute-widget-and-pause
+	zle -N vi-backward-char execute-widget-and-pause
+	zle -N backward-char execute-widget-and-pause
+	zle -N backward-word execute-widget-and-pause
+	zle -N beginning-of-line execute-widget-and-pause
+	zle -N history-search-forward execute-widget-and-pause
+	zle -N history-search-backward execute-widget-and-pause
+	zle -N up-line-or-history execute-widget-and-pause
+	zle -N down-line-or-history execute-widget-and-pause
+	zle -N complete-word autosuggest-expand-or-complete
+	zle -N expand-or-complete autosuggest-expand-or-complete
 	if [[ $BUFFER != '' ]]; then
 		local cursor=$CURSOR
 		zle .expand-or-complete
@@ -102,53 +99,9 @@ autosuggest-accept-line() {
 	zle .accept-line
 }
 
-# When entering vi command mode, disable autosuggestions as its possible the
-# user is going to edit the middle of the line
-autosuggest-vi-cmd-mode() {
+execute-widget-and-pause() {
 	pause-autosuggestions
-	zle .vi-cmd-mode
-}
-
-# Disable autosuggestions when doing anything that moves the cursor to the left
-autosuggest-vi-backward-char() {
-	pause-autosuggestions
-	zle .vi-backward-char
-}
-
-autosuggest-backward-char() {
-	pause-autosuggestions
-	zle .backward-char
-}
-
-autosuggest-backward-word() {
-	pause-autosuggestions
-	zle .backward-word
-}
-
-autosuggest-beginning-of-line() {
-	pause-autosuggestions
-	zle .beginning-of-line
-}
-
-# Searching history or moving arrows up/down also disables autosuggestion
-autosuggest-history-search-forward() {
-	pause-autosuggestions
-	zle .history-search-forward
-}
-
-autosuggest-history-search-backward() {
-	pause-autosuggestions
-	zle .history-search-backward
-}
-
-autosuggest-up-line-or-history() {
-	pause-autosuggestions
-	zle .up-line-or-history
-}
-
-autosuggest-down-line-or-history() {
-	pause-autosuggestions
-	zle .down-line-or-history
+	zle .$WIDGET "$@"
 }
 
 highlight-suggested-text() {
@@ -166,41 +119,61 @@ paused-autosuggest-self-insert() {
 	if [[ $RBUFFER == '' ]]; then
 		# Resume autosuggestions when inserting at the end of the line
 		enable-autosuggestions
-		insert-and-autosuggest
+		autosuggest-self-insert
 	else
 		zle .self-insert
 	fi
 }
 
+show-suggestion() {
+	local complete_word=$1
+	if ! zle .history-beginning-search-backward; then
+		RBUFFER=''
+		if [[ $LBUFFER[-1] != ' ' ]]; then
+			integer curs=$CURSOR
+			unsetopt automenu recexact
+			zle complete-word-orig
+			CURSOR=$curs
+		fi
+	fi
+	highlight-suggested-text
+}
+
 autosuggest-self-insert() {
-	zle insert-and-predict-orig
+	setopt localoptions noshwordsplit noksharrays
+	if [[ ${RBUFFER[1]} == ${KEYS[-1]} ]]; then
+		# Same as what's typed, just move on
+		((++CURSOR))
+		highlight-suggested-text
+	else
+		LBUFFER="$LBUFFER$KEYS"
+		show-suggestion
+	fi
+}
+
+autosuggest-delete() {
+	zle .$WIDGET
+	show-suggestion
+}
+
+autosuggest-expand-or-complete() {
+	RBUFFER=''
+	zle .$WIDGET "$@"
+	show-suggestion
+}
+
+accept-suggested-small-word() {
+	zle .vi-forward-word
 	highlight-suggested-text
 }
 
-autosuggest-backward-delete-char() {
-	zle delete-backward-and-predict-orig
-	highlight-suggested-text
-}
-
-autosuggest-delete-char-or-list() {
-	zle delete-no-predict-orig
+accept-suggested-word() {
+	zle .forward-word
 	highlight-suggested-text
 }
 
 zle -N toggle-autosuggestions
 zle -N enable-autosuggestions
 zle -N disable-autosuggestions
-zle -N paused-autosuggest-self-insert
-zle -N autosuggest-self-insert
-zle -N autosuggest-backward-delete-char
-zle -N autosuggest-delete-char-or-list
-zle -N autosuggest-accept-line
-zle -N autosuggest-vi-cmd-mode
-zle -N autosuggest-vi-backward-char
-zle -N autosuggest-backward-char
-zle -N autosuggest-backward-word
-zle -N autosuggest-beginning-of-line
-zle -N autosuggest-history-search-forward
-zle -N autosuggest-history-search-backward
-zle -N autosuggest-up-line-or-history
-zle -N autosuggest-down-line-or-history
+zle -N accept-suggested-small-word
+zle -N accept-suggested-word
