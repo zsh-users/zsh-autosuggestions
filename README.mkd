@@ -15,5 +15,7 @@ zle-line-init() {
 zle -N zle-line-init
 # use ctrl+t to toggle autosuggestions
 bindkey '^T' toggle-autosuggestions
+# use ctrl+f to accept a suggested word
+bindkey '^F' accept-suggested-word
 EOF
 ```
