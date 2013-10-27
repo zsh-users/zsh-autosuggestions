@@ -27,7 +27,7 @@ pause-autosuggestions() {
 	unset ZLE_AUTOSUGGESTING
 	ZLE_AUTOSUGGESTING_PAUSED=1
 	predict-off
-	zle -N self-insert paused-autosuggest-self-insert
+	zle -A self-insert paused-autosuggest-self-insert
 	zle -A .accept-line accept-line
 	zle -A .vi-cmd-mode vi-cmd-mode
 	zle -A .vi-backward-char vi-backward-char
@@ -50,25 +50,25 @@ enable-autosuggestions() {
 	zle -A backward-delete-char delete-backward-and-predict-orig
 	zle -A delete-char-or-list delete-no-predict-orig
 	# Replace prediction widgets by versions that will also highlight RBUFFER
-	zle -N self-insert insert-and-autosuggest
-	zle -N magic-space insert-and-autosuggest
-	zle -N backward-delete-char delete-backward-and-autosuggest
-	zle -N delete-char-or-list delete-no-autosuggest
+	zle -A autosuggest-self-insert self-insert
+	zle -A autosuggest-self-insert magic-space
+	zle -A autosuggest-backward-delete-char backward-delete-char
+	zle -A autosuggest-delete-char-or-list delete-char-or-list 
 	# Replace some default widgets that should disable autosuggestion
 	# automatically 
-	zle -N accept-line autosuggest-accept-line
-	zle -N vi-cmd-mode autosuggest-vi-cmd-mode
-	zle -N vi-backward-char autosuggest-vi-backward-char
-	zle -N backward-char autosuggest-backward-char
-	zle -N backward-word autosuggest-backward-word
-	zle -N beginning-of-line autosuggest-beginning-of-line
-	zle -N history-search-forward autosuggest-history-search-forward
-	zle -N history-search-backward autosuggest-history-search-backward
-	zle -N up-line-or-history autosuggest-up-line-or-history
-	zle -N down-line-or-history autosuggest-down-line-or-history
+	zle -A autosuggest-accept-line accept-line
+	zle -A autosuggest-vi-cmd-mode vi-cmd-mode
+	zle -A autosuggest-vi-backward-char vi-backward-char
+	zle -A autosuggest-backward-char backward-char
+	zle -A autosuggest-backward-word backward-word
+	zle -A autosuggest-beginning-of-line beginning-of-line
+	zle -A autosuggest-history-search-forward history-search-forward
+	zle -A autosuggest-history-search-backward history-search-backward
+	zle -A autosuggest-up-line-or-history up-line-or-history
+	zle -A autosuggest-down-line-or-history down-line-or-history
 	if [[ $BUFFER != '' ]]; then
 		local cursor=$CURSOR
-		zle expand-or-complete
+		zle .expand-or-complete
 		CURSOR=$cursor
 	fi
 	highlight-suggested-text
@@ -151,16 +151,6 @@ autosuggest-down-line-or-history() {
 	zle .down-line-or-history
 }
 
-paused-autosuggest-self-insert() {
-	if [[ $RBUFFER == '' ]]; then
-		# Resume autosuggestions when inserting at the end of the line
-		enable-autosuggestions
-		zle insert-and-autosuggest
-	else
-		zle .self-insert
-	fi
-}
-
 highlight-suggested-text() {
 	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
 		local color='fg=8'
@@ -172,19 +162,45 @@ highlight-suggested-text() {
 	fi
 }
 
-insert-and-autosuggest() {
+paused-autosuggest-self-insert() {
+	if [[ $RBUFFER == '' ]]; then
+		# Resume autosuggestions when inserting at the end of the line
+		enable-autosuggestions
+		insert-and-autosuggest
+	else
+		zle .self-insert
+	fi
+}
+
+autosuggest-self-insert() {
 	zle insert-and-predict-orig
 	highlight-suggested-text
 }
 
-delete-backward-and-autosuggest() {
+autosuggest-backward-delete-char() {
 	zle delete-backward-and-predict-orig
 	highlight-suggested-text
 }
 
-delete-no-autosuggest() {
+autosuggest-delete-char-or-list() {
 	zle delete-no-predict-orig
 	highlight-suggested-text
 }
 
 zle -N toggle-autosuggestions
+zle -N enable-autosuggestions
+zle -N disable-autosuggestions
+zle -N paused-autosuggest-self-insert
+zle -N autosuggest-self-insert
+zle -N autosuggest-backward-delete-char
+zle -N autosuggest-delete-char-or-list
+zle -N autosuggest-accept-line
+zle -N autosuggest-vi-cmd-mode
+zle -N autosuggest-vi-backward-char
+zle -N autosuggest-backward-char
+zle -N autosuggest-backward-word
+zle -N autosuggest-beginning-of-line
+zle -N autosuggest-history-search-forward
+zle -N autosuggest-history-search-backward
+zle -N autosuggest-up-line-or-history
+zle -N autosuggest-down-line-or-history
