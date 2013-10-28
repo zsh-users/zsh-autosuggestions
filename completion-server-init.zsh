@@ -96,6 +96,7 @@ compadd () {
 	# this is the point where we have all matches in $__hits and all
 	# descriptions in $__dscr!
 
+	__hits=(${(O)__hits})
 	# display all matches
 	local dsuf dscr
 	for i in {1..$#__hits}; do
