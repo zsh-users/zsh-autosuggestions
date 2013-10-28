@@ -146,11 +146,13 @@ paused-autosuggest-self-insert() {
 }
 
 autosuggest-first-completion() {
+	local cursor=$CURSOR
 	zle .complete-word || return 1
+	CURSOR=$cursor
 }
 
 show-suggestion() {
-	[[ $LBUFFER == '' ]] && return
+	[[ -n $ZLE_DISABLE_AUTOSUGGEST || $LBUFFER == '' ]] && return
 	# TODO need a way to reset HISTNO so .history-beginning-search-backward
 	# will always retrieve the last matching history entry
 	# unset HISTNO
