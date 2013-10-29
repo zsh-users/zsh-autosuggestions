@@ -19,7 +19,8 @@ zpty -w z "source '${0:a:h}/completion-server-init.zsh'"
 read-to-null() {
 	while zpty -r z chunk; do
 		[[ $chunk == *$'\0'* ]] && break
-		print -n - $chunk
+		[[ $chunk != $'\1'* ]] && continue # ignore what doesnt start with '1'
+		print -n - ${chunk:1}
 	done
 }
 

@@ -110,7 +110,7 @@ compadd () {
 		# description to be displayed afterwards
 		# (( $#__dscr >= $i )) && dscr=" -- ${${__dscr[$i]}##$__hits[$i] #}" || dscr=
 
-		print - $IPREFIX$apre$hpre$__hits[$i]$dsuf$hsuf$asuf$dscr
+		print - $'\1'$IPREFIX$apre$hpre$__hits[$i]$dsuf$hsuf$asuf$dscr
 
 	done
 
