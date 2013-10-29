@@ -35,10 +35,10 @@ handle-request() {
 		# send the longest completion back to the client, strip the last
 		# non-printable character
 		if (( $#current )); then
-			print -u $connection - ${current:0:-1}
+			print -u $connection - $prefix$'\2'${current:0:-1}
+		else
+			print -u $connection ''
 		fi
-		# signal that we're done
-		print -u $connection ''
 		# clear input buffer
 		zpty -w z $'\n'
 		break # handle more requests/return to zselect

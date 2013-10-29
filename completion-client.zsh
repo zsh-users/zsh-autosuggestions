@@ -33,13 +33,9 @@ autosuggest-server-connect() {
 	ZLE_AUTOSUGGEST_CONNECTION=$REPLY
 }
 
-
 autosuggest-first-completion() {
+	[[ -z $ZLE_AUTOSUGGEST_CONNECTION ]] && return 1
 	setopt local_options noglob
 	local response
 	print -u $ZLE_AUTOSUGGEST_CONNECTION - $1 &> /dev/null || return 1
-	while IFS= read -r -u $ZLE_AUTOSUGGEST_CONNECTION response; do
-		[[ $response == '' ]] && break 
-		print - ${response}
-	done
 }
