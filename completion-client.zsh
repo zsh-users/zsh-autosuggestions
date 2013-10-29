@@ -9,9 +9,13 @@ autosuggest-ensure-server() {
 	local pid_file="$server_dir/pid"
 	local socket_path="$server_dir/socket"
 
-	[[ -S $socket_path && -r $pid_file ]] && \
-	 	kill -0 $(<$pid_file) &> /dev/null || \
-	 	zsh $AUTOSUGGEST_SERVER_SCRIPT $server_dir $pid_file $socket_path &!
+	if [[ ! -S $socket_path || ! -r $pid_file ]] || ! kill -0 $(<$pid_file) &> /dev/null; then
+		if which setsid &> /dev/null; then
+			setsid zsh $AUTOSUGGEST_SERVER_SCRIPT $server_dir $pid_file $socket_path &!
+		else
+			zsh $AUTOSUGGEST_SERVER_SCRIPT $server_dir $pid_file $socket_path &!
+		fi
+	fi
 
 	integer remaining_tries=10
 	# wait until the process is listening
@@ -28,7 +32,7 @@ autosuggest-first-completion() {
 	local connection=$REPLY
 	local completion
 	print -u $connection - $1
-	while read -u $connection completion; do
+	while IFS= read -r -u $connection completion; do
 		print - ${completion}
 	done
 	# close fd

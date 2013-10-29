@@ -27,14 +27,14 @@ menu-complete reverse-menu-complete menu-expand-or-complete menu-select
 accept-and-menu-complete
 )
 
-pause-autosuggestions() {
+autosuggest-pause-autosuggestions() {
 	[[ -n $ZLE_AUTOSUGGESTING_PAUSED ]] && return
 	local widget
 	# When autosuggestions are disabled, kill the unmaterialized part
 	RBUFFER=''
 	unset ZLE_AUTOSUGGESTING
 	ZLE_AUTOSUGGESTING_PAUSED=1
-	zle -A self-insert paused-autosuggest-self-insert
+	zle -A self-insert autosuggest-paused-self-insert
 	zle -A .magic-space magic-space
 	zle -A .backward-delete-char backward-delete-char
 	zle -A .accept-line accept-line
@@ -44,7 +44,7 @@ pause-autosuggestions() {
 	for widget in $ZLE_AUTOSUGGEST_COMPLETION_WIDGETS; do
 		eval "zle -A autosuggest-${widget}-orig $widget"
 	done
-	highlight-suggested-text
+	autosuggest-highlight-suggested-text
 }
 
 enable-autosuggestions() {
@@ -53,9 +53,9 @@ enable-autosuggestions() {
 	unset ZLE_AUTOSUGGESTING_PAUSED
 	ZLE_AUTOSUGGESTING=1
 	# Replace prediction widgets by versions that will also highlight RBUFFER
-	zle -N self-insert autosuggest-self-insert
-	zle -N magic-space autosuggest-self-insert
-	zle -N backward-delete-char autosuggest-delete
+	zle -N self-insert autosuggest-insert-or-space
+	zle -N magic-space autosuggest-insert-or-space
+	zle -N backward-delete-char autosuggest-backward-delete-char
 	zle -N accept-line autosuggest-accept-line
 	# Hook into some default widgets that should pause autosuggestion
 	# automatically 
@@ -69,13 +69,13 @@ enable-autosuggestions() {
 			zle -A autosuggest-tab $widget"
 	done
 	if [[ $BUFFER != '' ]]; then
-		show-suggestion
+		autosuggest-pop-suggestion
 	fi
 }
 
 disable-autosuggestions() {
 	if [[ -z $ZLE_AUTOSUGGESTING_PAUSED ]]; then
-		pause-autosuggestions
+		autosuggest-pause-autosuggestions
 	fi
 	unset ZLE_AUTOSUGGESTING_PAUSED
 	zle -A .self-insert self-insert
@@ -90,7 +90,7 @@ toggle-autosuggestions() {
 	fi
 }
 
-highlight-suggested-text() {
+autosuggest-highlight-suggested-text() {
 	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
 		local color='fg=8'
 		[[ -n $AUTOSUGGESTION_HIGHLIGHT_COLOR ]] &&\
@@ -101,36 +101,36 @@ highlight-suggested-text() {
 	fi
 }
 
-autosuggest-self-insert() {
-	setopt localoptions noshwordsplit noksharrays
-	if [[ ${RBUFFER[1]} == ${KEYS[-1]} ]]; then
-		# Same as what's typed, just move on
+autosuggest-insert-or-space() {
+	if [[ $LBUFFER == *$'\012'* ]] || (( PENDING )); then
+		# Editing a multiline buffer or pasting in a chunk of text, dont
+		# autosuggest
+		zle .$WIDGET "$@"
+	elif [[ ${RBUFFER[1]} == ${KEYS[-1]} ]]; then
+    # Same as what's typed, just move on
 		((++CURSOR))
-		highlight-suggested-text
+		autosuggest-highlight-suggested-text
 	else
-		LBUFFER="$LBUFFER$KEYS"
-		show-suggestion
+    LBUFFER="$LBUFFER$KEYS"
+		autosuggest-pop-suggestion
 	fi
 }
 
-# Taken from predict-on
-autosuggest-delete() {
-	if (( $#LBUFFER > 1 )); then
-		setopt localoptions noshwordsplit noksharrays
-		# When editing a multiline buffer, it's unlikely prediction is wanted;
-		# or if the last widget was e.g. a motion, then probably the intent is
-		# to actually edit the line, not change the search prefix.
-		if [[ $LASTWIDGET != (self-insert|magic-space|backward-delete-char) ]]; then
-			LBUFFER="$LBUFFER[1,-2]"
-		else
-			((--CURSOR))
-			zle .history-beginning-search-forward || RBUFFER=""
-			return 0
-		fi
-	else
-		zle .kill-whole-line
+autosuggest-backward-delete-char() {
+	if ! (( $CURSOR )); then
+	 	zle .kill-whole-line
+		return
 	fi
-	highlight-suggested-text
+
+	if [[ $LBUFFER == *$'\012'* || $LASTWIDGET != (self-insert|magic-space|backward-delete-char) ]]; then
+		# When editing a multiline buffer or if the last widget was e.g. a motion,
+		# then probably the intent is to actually edit the line, not change the
+		# search prefix.
+		LBUFFER="$LBUFFER[1,-2]"
+	else
+		((--CURSOR))
+		zle .history-beginning-search-forward || RBUFFER=''
+	fi
 }
 
 # When autosuggesting, ignore RBUFFER which corresponds to the 'unmaterialized'
@@ -141,50 +141,56 @@ autosuggest-accept-line() {
 	zle .accept-line
 }
 
-paused-autosuggest-self-insert() {
+autosuggest-paused-self-insert() {
 	if [[ $RBUFFER == '' ]]; then
 		# Resume autosuggestions when inserting at the end of the line
 		enable-autosuggestions
-		autosuggest-self-insert
+		zle autosuggest-modify
 	else
 		zle .self-insert
 	fi
 }
 
 autosuggest-get-suggested-completion() {
+	if (( $CURSOR == 0 )) || [[ ${LBUFFER[-1]} == ' ' ]]; then
+	 	RBUFFER=''
+		return
+	fi
+
 	local words last_word
-	local suggestion=$(autosuggest-first-completion $LBUFFER)
+	local suggestion="$(autosuggest-first-completion ${LBUFFER})"
 	words=(${(z)LBUFFER})
 	last_word=${words[-1]}
 	suggestion=${suggestion:$#last_word}
 	RBUFFER="$suggestion"
 }
 
-show-suggestion() {
+autosuggest-pop-suggestion() {
 	[[ -n $ZLE_DISABLE_AUTOSUGGEST || $LBUFFER == '' ]] && return
 	zle .history-beginning-search-backward ||\
 	 	autosuggest-get-suggested-completion
-	highlight-suggested-text
+	autosuggest-highlight-suggested-text
 }
 
 autosuggest-pause() {
-	pause-autosuggestions
+	autosuggest-pause-autosuggestions
 	zle autosuggest-${WIDGET}-orig "$@"
 }
 
 autosuggest-tab() {
 	RBUFFER=''
 	zle autosuggest-${WIDGET}-orig "$@"
+	autosuggest-highlight-suggested-text
 }
 
 accept-suggested-small-word() {
 	zle .vi-forward-word
-	highlight-suggested-text
+	autosuggest-highlight-suggested-text
 }
 
 accept-suggested-word() {
 	zle .forward-word
-	highlight-suggested-text
+	autosuggest-highlight-suggested-text
 }
 
 zle -N toggle-autosuggestions
