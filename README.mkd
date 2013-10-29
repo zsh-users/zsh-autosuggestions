@@ -1,6 +1,6 @@
 # zsh-autosuggestions
 
-> [Fish](http://fishshell.com/)-like autosuggestions on top of zsh 'predict-on' widget.
+> [Fish](http://fishshell.com/)-like fast/unobtrusive autosuggestions for zsh
 
 ## Installation
 
@@ -10,12 +10,12 @@ cat >> ~/.zshrc << "EOF"
 source ~/.zsh-autosuggestions/autosuggestions.zsh
 # Enable autosuggestions automatically
 zle-line-init() {
-  enable-autosuggestions
+	zle autosuggest-start
 }
 zle -N zle-line-init
-# use ctrl+t to toggle autosuggestions
-bindkey '^T' toggle-autosuggestions
+# use ctrl+t to toggle autosuggestions(hopefully this wont be needed)
+bindkey '^T' autosuggest-toggle
 # use ctrl+f to accept a suggested word
-bindkey '^F' accept-suggested-word
+bindkey '^F' autosuggest-accept-suggested-word
 EOF
 ```
