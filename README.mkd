@@ -1,6 +1,7 @@
 # zsh-autosuggestions
 
-> [Fish](http://fishshell.com/)-like fast/unobtrusive autosuggestions for zsh
+> [Fish](http://fishshell.com/)-like fast/unobtrusive autosuggestions for zsh.
+> [Shelr demo](http://shelr.tv/records/527007a99660803c5d000048).
 
 ## Installation
 
