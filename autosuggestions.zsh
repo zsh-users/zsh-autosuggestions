@@ -8,30 +8,12 @@
 # ```
 zmodload zsh/net/socket
 
-AUTOSUGGEST_SERVER_SCRIPT="${0:a:h}/completion-server.zsh"
+source "${0:a:h}/completion-client.zsh"
 
-# function {
-# 	[[ -n $ZLE_DISABLE_AUTOSUGGEST ]] && return
-# 	setopt local_options no_hup
-
-# 	local server_dir="/tmp/zsh-autosuggest-$USER"
-# 	local pid_file="$server_dir/pid"
-# 	local socket_path="$server_dir/socket"
-
-# 	if ! [[ -S $socket_path && -r $pid_file ]] || ! kill -0 $(<$pid_file) &>/dev/null; then
-# 		# start server
-# 		zsh $AUTOSUGGEST_SERVER_SCRIPT $server_dir $pid_file $socket_path &!
-# 	fi
-
-# 	integer remaining_tries=10
-# 	# wait until the process is listening
-# 	while ! [[ -d $server_dir && -r $pid_file ]] || ! kill -0 $(<$pid_file) &> /dev/null; do
-# 		(( --remaining_tries )) || break
-# 		sleep 0.3
-# 	done
-
-# 	ZLE_AUTOSUGGEST_SOCKET=$socket_path
-# }
+function {
+	[[ -n $ZLE_DISABLE_AUTOSUGGEST ]] && return
+	autosuggest-ensure-server
+}
 
 ZLE_AUTOSUGGEST_PAUSE_WIDGETS=(
 vi-cmd-mode vi-backward-char backward-char backward-word beginning-of-line
@@ -169,25 +151,14 @@ paused-autosuggest-self-insert() {
 	fi
 }
 
-autosuggest-first-completion() {
-	zsocket $ZLE_AUTOSUGGEST_SOCKET &>/dev/null || return 1
-	local connection=$REPLY
-	local completion
-	print -u $connection $LBUFFER
-	while read -u $connection completion; do
-		RBUFFER=" $completion"
-		break
-	done
-	exec {connection}>&-
+autosuggest-get-completion() {
+	local suggestion=$(autosuggest-first-completion $LBUFFER)
+	RBUFFER="$suggestion"
 }
 
 show-suggestion() {
 	[[ -n $ZLE_DISABLE_AUTOSUGGEST || $LBUFFER == '' ]] && return
-	# TODO need a way to reset HISTNO so .history-beginning-search-backward
-	# will always retrieve the last matching history entry
-	# unset HISTNO
-	zle .history-beginning-search-backward || autosuggest-first-completion\
-		|| RBUFFER=''
+	zle .history-beginning-search-backward || autosuggest-get-completion
 	highlight-suggested-text
 }
 

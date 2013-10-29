@@ -1,6 +1,7 @@
 # Based on:
 # https://github.com/Valodim/zsh-capture-completion/blob/master/.zshrc
 
+ZLE_DISABLE_AUTOSUGGEST=1
 # no prompt!
 PROMPT=
 
@@ -38,6 +39,10 @@ zstyle ':completion:*' insert-tab false
 zstyle ':completion:*' list-separator ''
 # dont use matchers
 zstyle -d ':completion:*' matcher-list
+# dont format
+zstyle -d ':completion:*' format
+# no color formatting
+zstyle -d ':completion:*' list-colors
 
 # we use zparseopts
 zmodload zsh/zutil
@@ -96,7 +101,6 @@ compadd () {
 	# this is the point where we have all matches in $__hits and all
 	# descriptions in $__dscr!
 
-	__hits=(${(O)__hits})
 	# display all matches
 	local dsuf dscr
 	for i in {1..$#__hits}; do

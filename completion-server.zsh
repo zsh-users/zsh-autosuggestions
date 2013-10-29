@@ -2,7 +2,9 @@
 # Based on:
 # https://github.com/Valodim/zsh-capture-completion/blob/master/capture.zsh
 
+# close stdio
 exec &> /dev/null
+exec < /dev/null
 
 zmodload zsh/zpty
 zmodload zsh/net/socket
@@ -13,37 +15,30 @@ zpty z ZLE_DISABLE_AUTOSUGGEST=1 zsh -i
 # Source the init script
 zpty -w z "source '${0:a:h}/completion-server-init.zsh'"
 
+# read all completions and return the longest match
 read-to-null() {
-	connection=$1
-	integer consumed=0
 	while zpty -r z chunk; do
 		[[ $chunk == *$'\0'* ]] && break
-		(( consumed++ )) && continue
-		if [[ -n $connection ]]; then
-			print -n -u $connection $chunk
-		else
-			print -n $chunk &> /dev/null
-		fi
+		print -n $chunk
 	done
 }
 
 # wait for ok from shell
-read-to-null
+read-to-null &> /dev/null
 
-# listen on an unix domain socket
+# listen on a socket for completion requests
 server_dir=$1
 pid_file=$2
 socket_path=$3
 
 
 cleanup() {
-	rm -f $socket_path
-	rm -f $pid_file
+	rm -f $socket_path $pid_file
 }
 
 trap cleanup TERM INT HUP EXIT
 
-mkdir $server_dir &> /dev/null
+mkdir -m 700 $server_dir &> /dev/null
 
 while ! zsocket -l $socket_path; do
 	if [[ ! -r $pid_file ]] || ! kill -0 $(<$pid_file) &> /dev/null; then
@@ -61,10 +56,26 @@ while zsocket -a $server &> /dev/null; do
 	connection=$REPLY
 	# connection accepted, read the request and send response
 	while read -u $connection prefix &> /dev/null; do
+		# send the prefix to be completed followed by a TAB to force
+		# completion
 		zpty -w -n z $prefix$'\t'
 		zpty -r z chunk &> /dev/null # read empty line before completions
-		read-to-null $connection
+		local current=''
+		# read completions one by one, storing the longest match
+		read-to-null | while read line; do
+			(( $#line > $#current )) && current=$line
+		done
+		# send the longest completion back to the client, strip the last
+		# non-printable character
+		if (( $#current )); then
+			local last_word=${${(z)prefix}[-1]}
+			print -u $connection ${current:$#last_word:-1}
+		else
+			print -u $connection ''
+		fi
+		# close fd
 		exec {connection}>&-
+		# clear input buffer
 		zpty -w z $'\n'
 	done
 done
