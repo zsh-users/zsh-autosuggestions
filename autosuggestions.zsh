@@ -3,18 +3,10 @@
 #
 # ```zsh
 # zle-line-init() {
-#		autosuggest-enable
+#		autosuggest-start
 # }
 # zle -N zle-line-init
 # ```
-zmodload zsh/net/socket
-
-source "${0:a:h}/completion-client.zsh"
-
-function {
-	[[ -n $ZLE_DISABLE_AUTOSUGGEST ]] && return
-	autosuggest-ensure-server
-}
 
 ZLE_AUTOSUGGEST_PAUSE_WIDGETS=(
 vi-cmd-mode vi-backward-char backward-char backward-word beginning-of-line
@@ -45,8 +37,6 @@ autosuggest-pause() {
 		eval "zle -A autosuggest-${widget}-orig $widget"
 	done
 	autosuggest-highlight-suggested-text
-
-	zle -F $ZLE_AUTOSUGGEST_CONNECTION
 }
 
 autosuggest-resume() {
@@ -72,30 +62,10 @@ autosuggest-resume() {
 	if [[ $BUFFER != '' ]]; then
 		autosuggest-request-suggestion
 	fi
-
-	if [[ -n $ZLE_AUTOSUGGEST_CONNECTION ]]; then
-		# install listen for suggestions asynchronously
-		zle -F $ZLE_AUTOSUGGEST_CONNECTION autosuggest-pop-suggestion
-	fi
 }
 
 autosuggest-start() {
 	autosuggest-resume
-	zle recursive-edit
-	integer rv=$?
-	autosuggest-pause
-	zle -A .self-insert self-insert
-	(( rv )) || zle accept-line
-	return rv
-}
-
-# Toggles autosuggestions on/off
-autosuggest-toggle() {
-	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
-		autosuggest-pause
-	else
-		autosuggest-resume
-	fi
 }
 
 autosuggest-highlight-suggested-text() {
@@ -125,7 +95,7 @@ autosuggest-insert-or-space() {
 }
 
 autosuggest-backward-delete-char() {
-	if ! (( $CURSOR )); then
+	if ! (( CURSOR )); then
 	 	zle .kill-whole-line
 		return
 	fi
@@ -152,39 +122,11 @@ autosuggest-accept-line() {
 autosuggest-paused-self-insert() {
 	if [[ $RBUFFER == '' ]]; then
 		# Resume autosuggestions when inserting at the end of the line
-		autosuggest-enable
+		autosuggest-resume
 		zle autosuggest-modify
 	else
 		zle .self-insert
 	fi
-}
-
-autosuggest-pop-suggestion() {
-	local words last_word suggestion
-	if ! IFS= read -r -u $ZLE_AUTOSUGGEST_CONNECTION suggestion; then
-		# server closed the connection, stop listenting
-		zle -F $ZLE_AUTOSUGGEST_CONNECTION
-		unset ZLE_AUTOSUGGEST_CONNECTION
-		return
-	fi
-	if [[ -n $suggestion ]]; then
-		local prefix=${suggestion%$'\2'*}
-		suggestion=${suggestion#*$'\2'}
-		# only use the suggestion if the prefix is still compatible with
-		# the suggestion(prefix should be contained in LBUFFER)
-		if [[ ${LBUFFER#$prefix*} != ${LBUFFER} ]]; then
-			words=(${(z)LBUFFER})
-			last_word=${words[-1]}
-			suggestion=${suggestion:$#last_word}
-			RBUFFER="$suggestion"
-			autosuggest-highlight-suggested-text
-		else
-			RBUFFER=''
-		fi
-	else
-		RBUFFER=''
-	fi
-	zle -Rc
 }
 
 autosuggest-request-suggestion() {
@@ -194,8 +136,7 @@ autosuggest-request-suggestion() {
 	fi
 
 	[[ -n $ZLE_DISABLE_AUTOSUGGEST || $LBUFFER == '' ]] && return
-	zle .history-beginning-search-backward ||\
-		autosuggest-first-completion ${LBUFFER}
+	zle .history-beginning-search-backward || RBUFFER=''
 	autosuggest-highlight-suggested-text
 }
 
@@ -220,7 +161,6 @@ autosuggest-accept-suggested-word() {
 	autosuggest-highlight-suggested-text
 }
 
-zle -N autosuggest-toggle
 zle -N autosuggest-start
 zle -N autosuggest-accept-suggested-small-word
 zle -N autosuggest-accept-suggested-word
