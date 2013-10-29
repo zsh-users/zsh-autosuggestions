@@ -14,13 +14,13 @@ read-to-null() {
 accept-connection() {
 	zsocket -a $server
 	fds[$REPLY]=1
-	print "connection accepted, fd: $REPLY" >&2
+	print "connection accepted, fd: $REPLY"
 }
 
 handle-request() {
 	local connection=$1 current line
 	integer read_something=0
-	print "request received from fd $connection" >&2
+	print "request received from fd $connection"
 	while read -u $connection prefix &> /dev/null; do
 		read_something=1
 		# send the prefix to be completed followed by a TAB to force
@@ -44,7 +44,7 @@ handle-request() {
 		break # handle more requests/return to zselect
 	done
 	if ! (( read_something )); then
-		print "connection with fd $connection closed" >&2
+		print "connection with fd $connection closed"
 	  unset fds[$connection]
 		exec {connection}>&- # free the file descriptor
 	fi
@@ -67,7 +67,6 @@ exec < /dev/null
 
 zmodload zsh/zpty
 zmodload zsh/zselect
-zmodload zsh/net/socket
 zmodload zsh/net/socket
 setopt noglob
 print "autosuggestion server started, pid: $$"
