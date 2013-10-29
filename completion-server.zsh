@@ -19,7 +19,7 @@ zpty -w z "source '${0:a:h}/completion-server-init.zsh'"
 read-to-null() {
 	while zpty -r z chunk; do
 		[[ $chunk == *$'\0'* ]] && break
-		print -n $chunk
+		print -n - $chunk
 	done
 }
 
@@ -68,8 +68,7 @@ while zsocket -a $server &> /dev/null; do
 		# send the longest completion back to the client, strip the last
 		# non-printable character
 		if (( $#current )); then
-			local last_word=${${(z)prefix}[-1]}
-			print -u $connection ${current:$#last_word:-1}
+			print -u $connection - ${current:0:-1}
 		else
 			print -u $connection ''
 		fi

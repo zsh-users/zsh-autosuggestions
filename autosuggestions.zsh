@@ -151,14 +151,19 @@ paused-autosuggest-self-insert() {
 	fi
 }
 
-autosuggest-get-completion() {
+autosuggest-get-suggested-completion() {
+	local words last_word
 	local suggestion=$(autosuggest-first-completion $LBUFFER)
+	words=(${(z)LBUFFER})
+	last_word=${words[-1]}
+	suggestion=${suggestion:$#last_word}
 	RBUFFER="$suggestion"
 }
 
 show-suggestion() {
 	[[ -n $ZLE_DISABLE_AUTOSUGGEST || $LBUFFER == '' ]] && return
-	zle .history-beginning-search-backward || autosuggest-get-completion
+	zle .history-beginning-search-backward ||\
+	 	autosuggest-get-suggested-completion
 	highlight-suggested-text
 }
 

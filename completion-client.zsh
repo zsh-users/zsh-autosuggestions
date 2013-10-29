@@ -27,9 +27,9 @@ autosuggest-first-completion() {
 	zsocket $ZLE_AUTOSUGGEST_SOCKET &>/dev/null || return 1
 	local connection=$REPLY
 	local completion
-	print -u $connection $1
+	print -u $connection - $1
 	while read -u $connection completion; do
-		print ${completion}
+		print - ${completion}
 	done
 	# close fd
 	exec {connection}>&-
