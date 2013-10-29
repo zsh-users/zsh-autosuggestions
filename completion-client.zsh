@@ -17,24 +17,29 @@ autosuggest-ensure-server() {
 		fi
 	fi
 
+	autosuggest-server-connect
+}
+
+autosuggest-server-connect() {
+	unset ZLE_AUTOSUGGEST_CONNECTION
+
 	integer remaining_tries=10
-	# wait until the process is listening
-	while ! [[ -d $server_dir && -r $pid_file ]] ||\
-	 	! kill -0 $(<$pid_file) &> /dev/null && (( --remaining_tries )); do
+	while (( --remaining_tries )) && ! zsocket $socket_path &>/dev/null; do
 		sleep 0.3
 	done
-	ZLE_AUTOSUGGEST_SOCKET=$socket_path
+
+	[[ -z $REPLY ]] && return 1
+
+	ZLE_AUTOSUGGEST_CONNECTION=$REPLY
 }
 
 
 autosuggest-first-completion() {
-	zsocket $ZLE_AUTOSUGGEST_SOCKET &>/dev/null || return 1
-	local connection=$REPLY
-	local completion
-	print -u $connection - $1
-	while IFS= read -r -u $connection completion; do
-		print - ${completion}
+	setopt local_options noglob
+	local response
+	print -u $ZLE_AUTOSUGGEST_CONNECTION - $1 &> /dev/null || return 1
+	while IFS= read -r -u $ZLE_AUTOSUGGEST_CONNECTION response; do
+		[[ $response == '' ]] && break 
+		print - ${response}
 	done
-	# close fd
-	exec {connection}>&-
 }
