@@ -14,7 +14,7 @@ read-to-null() {
 accept-connection() {
 	zsocket -a $server
 	fds[$REPLY]=1
-	print "connection accepted, fd: $REPLY"
+	print "connection accepted, fd: $REPLY" >&2
 }
 
 handle-request() {
@@ -44,7 +44,7 @@ handle-request() {
 		break # handle more requests/return to zselect
 	done
 	if ! (( read_something )); then
-		print "connection with fd $connection closed"
+		print "connection with fd $connection closed" >&2
 	  unset fds[$connection]
 		exec {connection}>&- # free the file descriptor
 	fi
@@ -69,7 +69,7 @@ zmodload zsh/zpty
 zmodload zsh/zselect
 zmodload zsh/net/socket
 setopt noglob
-print "autosuggestion server started, pid: $$"
+print "autosuggestion server started, pid: $$" >&2
 
 # Start an interactive zsh connected to a zpty
 zpty z ZLE_DISABLE_AUTOSUGGEST=1 zsh -i
@@ -96,10 +96,10 @@ cleanup() {
 
 trap cleanup TERM INT HUP EXIT
 
-mkdir -m 700 $server_dir &> /dev/null
+mkdir -m 700 $server_dir
 
 while ! zsocket -l $socket_path; do
-	if [[ ! -r $pid_file ]] || ! kill -0 $(<$pid_file) &> /dev/null; then
+	if [[ ! -r $pid_file ]] || ! kill -0 $(<$pid_file); then
 		rm -f $socket_path
 	else
 		exit 1
