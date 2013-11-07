@@ -9,7 +9,7 @@ autosuggest-ensure-server() {
 	local pid_file="$server_dir/pid"
 	local socket_path="$server_dir/socket"
 
-	if [[ ! -S $socket_path || ! -r $pid_file ]] || ! kill -0 $(<$pid_file) &> /dev/null; then
+	if [[ ! -d $server_dir || ! -r $pid_file ]] || ! kill -0 $(<$pid_file) &> /dev/null; then
 		if which setsid &> /dev/null; then
 			setsid zsh $AUTOSUGGEST_SERVER_SCRIPT $server_dir $pid_file $socket_path &!
 		else
@@ -33,9 +33,8 @@ autosuggest-server-connect() {
 	ZLE_AUTOSUGGEST_CONNECTION=$REPLY
 }
 
-autosuggest-first-completion() {
+autosuggest-send-request() {
 	[[ -z $ZLE_AUTOSUGGEST_CONNECTION ]] && return 1
 	setopt local_options noglob
-	local response
 	print -u $ZLE_AUTOSUGGEST_CONNECTION - $1 &> /dev/null || return 1
 }
