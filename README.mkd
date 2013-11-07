@@ -5,18 +5,27 @@
 
 ## Installation
 
-```zsh
+```sh
 git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-autosuggestions
+
 cat >> ~/.zshrc << "EOF"
 source ~/.zsh-autosuggestions/autosuggestions.zsh
+
 # Enable autosuggestions automatically
 zle-line-init() {
 	zle autosuggest-start
 }
 zle -N zle-line-init
+
 # use ctrl+t to toggle autosuggestions(hopefully this wont be needed)
 bindkey '^T' autosuggest-toggle
-# use ctrl+f to accept a suggested word
+
+# use ctrl+f to accept suggestions
+bindkey '^F' autosuggest-accept-suggested-small-word
+# or
 bindkey '^F' autosuggest-accept-suggested-word
 EOF
 ```
+I recommend binding ctrl+f to autosuggest-accept-suggested-small-word, as the
+[zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
+plugin will already provide a key to accept the entire suggestion
