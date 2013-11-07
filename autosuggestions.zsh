@@ -12,7 +12,10 @@ zmodload zsh/net/socket
 source "${0:a:h}/completion-client.zsh"
 
 function {
-	[[ -n $ZLE_DISABLE_AUTOSUGGEST ]] && return
+	if [[ -n $ZLE_DISABLE_AUTOSUGGEST ]]; then
+		ZSH_HIGHLIGHT_HIGHLIGHTERS=()
+		return
+	fi
 	autoload -U is-at-least
 
 	if is-at-least 5.0.3; then
@@ -84,6 +87,9 @@ autosuggest-resume() {
 }
 
 autosuggest-start() {
+	if [[ -z $ZLE_DISABLE_AUTOSUGGEST && -n $functions[_zsh_highlight] ]]; then
+		ZSH_HIGHLIGHT_HIGHLIGHTERS+=(autosuggest)
+	fi
 	autosuggest-resume
 }
 
@@ -98,14 +104,23 @@ autosuggest-toggle() {
 }
 
 autosuggest-highlight-suggested-text() {
-	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
-		local color='fg=8'
-		[[ -n $AUTOSUGGESTION_HIGHLIGHT_COLOR ]] &&\
-			color=$AUTOSUGGESTION_HIGHLIGHT_COLOR
-		region_highlight=("$(( $CURSOR + 1 )) $(( $CURSOR + $#RBUFFER )) $color")
+	if (( $+functions[_zsh_highlight_buffer_modified] > 0 )); then
+		_zsh_highlight
 	else
 		region_highlight=()
+		_zsh_highlight_autosuggest_highlighter
 	fi
+}
+
+_zsh_highlight_autosuggest_highlighter_predicate() {
+	[[ -n $ZLE_AUTOSUGGESTING ]] && (( $#RBUFFER > 0 ))
+}
+
+_zsh_highlight_autosuggest_highlighter() {
+	local color='fg=8'
+	[[ -n $AUTOSUGGESTION_HIGHLIGHT_COLOR ]] &&\
+		color=$AUTOSUGGESTION_HIGHLIGHT_COLOR
+	region_highlight+=("$(( $CURSOR + 1 )) $(( $CURSOR + $#RBUFFER )) $color")
 }
 
 autosuggest-insert-or-space() {
@@ -119,6 +134,7 @@ autosuggest-insert-or-space() {
 	if [[ ${RBUFFER[1]} == ${KEYS[-1]} ]]; then
 		# Same as what's typed, just move on
 		((++CURSOR))
+		autosuggest-invalidate-highlight-cache
 	else
 		LBUFFER="$LBUFFER$KEYS"
 		if [[ $LASTWIDGET == (self-insert|magic-space|backward-delete-char) || $LASTWIDGET == (complete-word|accept-*|zle-line-init) ]]; then
@@ -140,6 +156,7 @@ autosuggest-backward-delete-char() {
       LBUFFER="$LBUFFER[1,-2]"
     else
       ((--CURSOR))
+			autosuggest-invalidate-highlight-cache
       zle .history-beginning-search-forward || RBUFFER=''
     fi
 		autosuggest-highlight-suggested-text
@@ -152,7 +169,10 @@ autosuggest-backward-delete-char() {
 # section when the user accepts the line
 autosuggest-accept-line() {
 	RBUFFER=''
-	region_highlight=()
+	if (( $+functions[_zsh_highlight_buffer_modified] > 0 )); then
+		# Only clear the colors if the user doesn't have zsh-highlight installed
+		region_highlight=()
+	fi
 	zle .accept-line
 }
 
@@ -206,13 +226,24 @@ autosuggest-tab() {
 }
 
 autosuggest-accept-suggested-small-word() {
-	zle .vi-forward-word
-	autosuggest-highlight-suggested-text
+	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
+		zle .vi-forward-word
+		autosuggest-invalidate-highlight-cache
+		autosuggest-highlight-suggested-text
+	fi
 }
 
 autosuggest-accept-suggested-word() {
-	zle .forward-word
-	autosuggest-highlight-suggested-text
+	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
+		zle .forward-word
+		autosuggest-invalidate-highlight-cache
+		autosuggest-highlight-suggested-text
+	fi
+}
+
+autosuggest-invalidate-highlight-cache() {
+	# invalidate the buffer for zsh-syntax-highlighting
+	_ZSH_HIGHLIGHT_PRIOR_BUFFER=''
 }
 
 zle -N autosuggest-toggle
