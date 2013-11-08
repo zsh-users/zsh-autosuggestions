@@ -35,6 +35,11 @@ menu-complete reverse-menu-complete menu-expand-or-complete menu-select
 accept-and-menu-complete
 )
 
+ZLE_AUTOSUGGEST_ACCEPT_WIDGETS=(
+vi-forward-char forward-char vi-forward-word forward-word vi-add-eol
+vi-add-next vi-forward-blank-word
+)
+
 autosuggest-pause() {
 	[[ -z $ZLE_AUTOSUGGESTING ]] && return
 	unset ZLE_AUTOSUGGESTING
@@ -45,11 +50,7 @@ autosuggest-pause() {
 	zle -A autosuggest-magic-space-orig magic-space
 	zle -A autosuggest-backward-delete-char-orig backward-delete-char
 	zle -A autosuggest-accept-line-orig accept-line
-	for widget in $ZLE_AUTOSUGGEST_SUSPEND_WIDGETS; do
-		[[ -z $widgets[$widget] ]] && continue
-		eval "zle -A autosuggest-${widget}-orig ${widget}"
-	done
-	for widget in $ZLE_AUTOSUGGEST_COMPLETION_WIDGETS; do
+	for widget in $ZLE_AUTOSUGGEST_ACCEPT_WIDGETS $ZLE_AUTOSUGGEST_SUSPEND_WIDGETS $ZLE_AUTOSUGGEST_COMPLETION_WIDGETS; do
 		[[ -z $widgets[$widget] ]] && continue
 		eval "zle -A autosuggest-${widget}-orig ${widget}"
 	done
@@ -71,6 +72,10 @@ autosuggest-resume() {
 	zle -A autosuggest-accept-line accept-line 
 	# Hook into some default widgets that should suspend autosuggestion
 	# automatically 
+	for widget in $ZLE_AUTOSUGGEST_ACCEPT_WIDGETS; do
+		[[ -z $widgets[$widget] ]] && continue
+		eval "zle -A autosuggest-accept-suggestion $widget"
+	done
 	for widget in $ZLE_AUTOSUGGEST_SUSPEND_WIDGETS; do
 		[[ -z $widgets[$widget] ]] && continue
 		eval "zle -A autosuggest-suspend $widget"
@@ -169,7 +174,7 @@ autosuggest-backward-delete-char() {
 # section when the user accepts the line
 autosuggest-accept-line() {
 	RBUFFER=''
-	if (( $+functions[_zsh_highlight_buffer_modified] > 0 )); then
+	if ! (( $+functions[_zsh_highlight_buffer_modified] )); then
 		# Only clear the colors if the user doesn't have zsh-highlight installed
 		region_highlight=()
 	fi
@@ -225,17 +230,9 @@ autosuggest-tab() {
 	autosuggest-highlight-suggested-text
 }
 
-autosuggest-accept-suggested-small-word() {
+autosuggest-accept-suggestion() {
+	zle autosuggest-${WIDGET}-orig "$@"
 	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
-		zle .vi-forward-word
-		autosuggest-invalidate-highlight-cache
-		autosuggest-highlight-suggested-text
-	fi
-}
-
-autosuggest-accept-suggested-word() {
-	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
-		zle .forward-word
 		autosuggest-invalidate-highlight-cache
 		autosuggest-highlight-suggested-text
 	fi
@@ -258,17 +255,15 @@ zle -N autosuggest-accept-line
 
 zle -N autosuggest-tab
 zle -N autosuggest-suspend
+zle -N autosuggest-accept-suggestion
 
 # Save all widgets
 zle -A self-insert autosuggest-self-insert-orig
 zle -A magic-space autosuggest-magic-space-orig
 zle -A backward-delete-char autosuggest-backward-delete-char-orig
 zle -A accept-line autosuggest-accept-line-orig
-for widget in $ZLE_AUTOSUGGEST_SUSPEND_WIDGETS; do
-	[[ -z $widgets[$widget] ]] && continue
-	eval "zle -A $widget autosuggest-${widget}-orig"
-done
-for widget in $ZLE_AUTOSUGGEST_COMPLETION_WIDGETS; do
+
+for widget in ${ZLE_AUTOSUGGEST_ACCEPT_WIDGETS} ${ZLE_AUTOSUGGEST_SUSPEND_WIDGETS} ${ZLE_AUTOSUGGEST_COMPLETION_WIDGETS}; do
 	[[ -z $widgets[$widget] ]] && continue
 	eval "zle -A $widget autosuggest-${widget}-orig"
 done
