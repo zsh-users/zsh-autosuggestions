@@ -51,7 +51,8 @@ autosuggest-pause() {
 	zle -A autosuggest-backward-delete-char-orig backward-delete-char
 	zle -A autosuggest-accept-line-orig accept-line
 	for widget in $ZLE_AUTOSUGGEST_ACCEPT_WIDGETS $ZLE_AUTOSUGGEST_SUSPEND_WIDGETS $ZLE_AUTOSUGGEST_COMPLETION_WIDGETS; do
-		[[ -z $widgets[$widget] ]] && continue
+		[[ -z $widgets[$widget] || -z $widgets[autosuggest-${widget}-orig] ]] &&\
+		 	continue
 		eval "zle -A autosuggest-${widget}-orig ${widget}"
 	done
 	autosuggest-highlight-suggested-text
