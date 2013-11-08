@@ -18,7 +18,7 @@ zle-line-init() {
 zle -N zle-line-init
 
 # use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
-autosuggestions is designed to be unobtrusive)
+# zsh-autosuggestions is designed to be unobtrusive)
 bindkey '^T' autosuggest-toggle
 ```
 
