@@ -11,6 +11,10 @@ zmodload zsh/net/socket
 
 source "${0:a:h}/completion-client.zsh"
 
+# configuration variables
+AUTOSUGGESTION_HIGHLIGHT_COLOR='fg=8'
+AUTOSUGGESTION_HIGHLIGHT_CURSOR=1
+
 function {
 	if [[ -n $ZLE_DISABLE_AUTOSUGGEST ]]; then
 		ZSH_HIGHLIGHT_HIGHLIGHTERS=()
@@ -123,10 +127,7 @@ _zsh_highlight_autosuggest_highlighter_predicate() {
 }
 
 _zsh_highlight_autosuggest_highlighter() {
-	local color='fg=8'
-	[[ -n $AUTOSUGGESTION_HIGHLIGHT_COLOR ]] &&\
-		color=$AUTOSUGGESTION_HIGHLIGHT_COLOR
-	region_highlight+=("$(( $CURSOR + 1 )) $(( $CURSOR + $#RBUFFER )) $color")
+	region_highlight+=("$(( $CURSOR + $AUTOSUGGESTION_HIGHLIGHT_CURSOR )) $(( $CURSOR + $#RBUFFER )) $AUTOSUGGESTION_HIGHLIGHT_COLOR")
 }
 
 autosuggest-insert-or-space() {

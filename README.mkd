@@ -37,3 +37,10 @@ Emacs-mode users can simply use alt+f which is bound to forward-word
 
 The [zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
 plugin is also recommended.
+
+## Configuration
+
+You may override default global config variables after plugin load.
+
+- `AUTOSUGGESTION_HIGHLIGHT_COLOR`: suggestion highlight color, default is `'fg=8'`.
+- `AUTOSUGGESTION_HIGHLIGHT_CURSOR`: highlight word after cursor or not. Must be integer value `1` or `0`, default is `1`.
