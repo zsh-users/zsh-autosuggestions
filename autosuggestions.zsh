@@ -1,5 +1,5 @@
 # Fish-like autosuggestions for zsh. Some of the code was based on the code
-# for 'predict-on' 
+# for 'predict-on'
 #
 # ```zsh
 # zle-line-init() {
@@ -68,11 +68,11 @@ autosuggest-resume() {
 	local widget
 	# Replace prediction widgets by versions that will also highlight RBUFFER
 	zle -A autosuggest-insert-or-space self-insert
-	zle -A autosuggest-insert-or-space magic-space 
-	zle -A autosuggest-backward-delete-char backward-delete-char 
-	zle -A autosuggest-accept-line accept-line 
+	zle -A autosuggest-insert-or-space magic-space
+	zle -A autosuggest-backward-delete-char backward-delete-char
+	zle -A autosuggest-accept-line accept-line
 	# Hook into some default widgets that should suspend autosuggestion
-	# automatically 
+	# automatically
 	for widget in $ZLE_AUTOSUGGEST_ACCEPT_WIDGETS; do
 		[[ -z $widgets[$widget] ]] && continue
 		eval "zle -A autosuggest-accept-suggestion $widget"

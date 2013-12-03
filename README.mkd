@@ -29,7 +29,7 @@ this:
 ```sh
 # Accept suggestions without leaving insert mode
 bindkey '^f' vi-forward-word
-# or 
+# or
 bindkey '^f' vi-forward-blank-word
 ```
 
