@@ -1,5 +1,5 @@
 # Fish-like autosuggestions for zsh. Some of the code was based on the code
-# for 'predict-on' 
+# for 'predict-on'
 #
 # ```zsh
 # zle-line-init() {
@@ -10,6 +10,10 @@
 zmodload zsh/net/socket
 
 source "${0:a:h}/completion-client.zsh"
+
+# configuration variables
+AUTOSUGGESTION_HIGHLIGHT_COLOR='fg=8'
+AUTOSUGGESTION_HIGHLIGHT_CURSOR=1
 
 function {
 	if [[ -n $ZLE_DISABLE_AUTOSUGGEST ]]; then
@@ -26,6 +30,7 @@ function {
 ZLE_AUTOSUGGEST_SUSPEND_WIDGETS=(
 vi-cmd-mode vi-backward-char backward-char backward-word beginning-of-line
 history-search-forward history-search-backward up-line-or-history
+history-beginning-search-forward history-beginning-search-backward
 down-line-or-history
 )
 
@@ -68,11 +73,11 @@ autosuggest-resume() {
 	local widget
 	# Replace prediction widgets by versions that will also highlight RBUFFER
 	zle -A autosuggest-insert-or-space self-insert
-	zle -A autosuggest-insert-or-space magic-space 
-	zle -A autosuggest-backward-delete-char backward-delete-char 
-	zle -A autosuggest-accept-line accept-line 
+	zle -A autosuggest-insert-or-space magic-space
+	zle -A autosuggest-backward-delete-char backward-delete-char
+	zle -A autosuggest-accept-line accept-line
 	# Hook into some default widgets that should suspend autosuggestion
-	# automatically 
+	# automatically
 	for widget in $ZLE_AUTOSUGGEST_ACCEPT_WIDGETS; do
 		[[ -z $widgets[$widget] ]] && continue
 		eval "zle -A autosuggest-accept-suggestion $widget"
@@ -123,10 +128,7 @@ _zsh_highlight_autosuggest_highlighter_predicate() {
 }
 
 _zsh_highlight_autosuggest_highlighter() {
-	local color='fg=8'
-	[[ -n $AUTOSUGGESTION_HIGHLIGHT_COLOR ]] &&\
-		color=$AUTOSUGGESTION_HIGHLIGHT_COLOR
-	region_highlight+=("$(( $CURSOR + 1 )) $(( $CURSOR + $#RBUFFER )) $color")
+	region_highlight+=("$(( $CURSOR + $AUTOSUGGESTION_HIGHLIGHT_CURSOR )) $(( $CURSOR + $#RBUFFER )) $AUTOSUGGESTION_HIGHLIGHT_COLOR")
 }
 
 autosuggest-insert-or-space() {
