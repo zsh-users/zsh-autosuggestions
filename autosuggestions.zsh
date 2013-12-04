@@ -30,6 +30,7 @@ function {
 ZLE_AUTOSUGGEST_SUSPEND_WIDGETS=(
 vi-cmd-mode vi-backward-char backward-char backward-word beginning-of-line
 history-search-forward history-search-backward up-line-or-history
+history-beginning-search-forward history-beginning-search-backward
 down-line-or-history
 )
 
