@@ -6,9 +6,11 @@
 ## Installation
 
 ```sh
-git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-autosuggestions
+$ git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-autosuggestions
 
-cat >> ~/.zshrc << "EOF"
+$ cat >> ~/.zshrc << "EOF"
+
+# setup zsh-autosuggestions
 source ~/.zsh-autosuggestions/autosuggestions.zsh
 
 # Enable autosuggestions automatically
@@ -21,6 +23,7 @@ zle -N zle-line-init
 # zsh-autosuggestions is designed to be unobtrusive)
 bindkey '^T' autosuggest-toggle
 EOF
+
 ```
 
 Any widget that moves the cursor to the right(forward-word, forward-char...)
