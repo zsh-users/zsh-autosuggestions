@@ -31,7 +31,7 @@ ZLE_AUTOSUGGEST_SUSPEND_WIDGETS=(
 vi-cmd-mode vi-backward-char backward-char backward-word beginning-of-line
 history-search-forward history-search-backward up-line-or-history
 history-beginning-search-forward history-beginning-search-backward
-down-line-or-history
+down-line-or-history history-substring-search-up history-substring-search-down
 )
 
 ZLE_AUTOSUGGEST_COMPLETION_WIDGETS=(
@@ -42,7 +42,7 @@ accept-and-menu-complete
 
 ZLE_AUTOSUGGEST_ACCEPT_WIDGETS=(
 vi-forward-char forward-char vi-forward-word forward-word vi-add-eol
-vi-add-next vi-forward-blank-word
+vi-add-next vi-forward-blank-word end-of-line
 )
 
 autosuggest-pause() {
