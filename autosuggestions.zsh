@@ -32,6 +32,7 @@ vi-cmd-mode vi-backward-char backward-char backward-word beginning-of-line
 history-search-forward history-search-backward up-line-or-history
 history-beginning-search-forward history-beginning-search-backward
 down-line-or-history history-substring-search-up history-substring-search-down
+backward-kill-word
 )
 
 ZLE_AUTOSUGGEST_COMPLETION_WIDGETS=(
@@ -234,7 +235,11 @@ autosuggest-tab() {
 }
 
 autosuggest-accept-suggestion() {
-	zle autosuggest-${WIDGET}-orig "$@"
+        if [[ AUTOSUGGESTION_ACCEPT_RIGHT_ARROW -eq 1 && "$WIDGET" == 'forward-char' ]]; then
+	  zle autosuggest-end-of-line-orig "$@"
+        else
+	  zle autosuggest-${WIDGET}-orig "$@"
+        fi
 	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
 		autosuggest-invalidate-highlight-cache
 		autosuggest-highlight-suggested-text
