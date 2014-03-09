@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 zmodload zsh/net/socket
 
-AUTOSUGGEST_SERVER_SCRIPT="${0:a:h}/lib/completion-server.zsh"
+AUTOSUGGEST_SERVER_SCRIPT="${0:a:h}/completion-server.zsh"
 
 autosuggest-ensure-server() {
 	setopt local_options no_hup
