@@ -1,1 +1,1 @@
-autosuggestions.zsh
+source ${0%/*}/autosuggestions.zsh
