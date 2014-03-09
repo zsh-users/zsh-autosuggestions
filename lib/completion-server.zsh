@@ -75,7 +75,7 @@ print "autosuggestion server started, pid: $$" >&2
 zpty z ZLE_DISABLE_AUTOSUGGEST=1 zsh -i
 print 'interactive shell started'
 # Source the init script
-zpty -w z "source '${0:a:h}/completion-server-init.zsh'"
+zpty -w z "source '${0:a:h}/lib/completion-server-init.zsh'"
 
 # wait for ok from shell
 read-to-null &> /dev/null
