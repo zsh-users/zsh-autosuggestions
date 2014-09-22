@@ -22,9 +22,9 @@ function {
 	fi
 	autoload -U is-at-least
 
-	if is-at-least 5.0.3; then
-		autosuggest-ensure-server
-	fi
+	# if is-at-least 5.0.3; then
+	# 	autosuggest-ensure-server
+	# fi
 }
 
 ZLE_AUTOSUGGEST_SUSPEND_WIDGETS=(
