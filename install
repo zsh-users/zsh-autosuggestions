@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Install script for zsh-autocomplete
+
+#first checks if ~/.zshrc file exists and is readable
+if [ ! -r ~/.zshrc ]; then
+    echo "\nError: ~/.zshrc file does not exist or is not readable!\n"
+    exit 1
+fi
+
+DIR=$(dirname $(readlink -e $0)) ;
+
+# appends the string to ~/.zshrc file
+cat >> ~/.zshrc << EOF
+
+# Setup zsh-autosuggestions
+source $DIR/autosuggestions.zsh
+
+# Enable autosuggestions automatically
+zle-line-init() {
+    zle autosuggest-start
+}
+
+zle -N zle-line-init
+
+# use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
+# zsh-autosuggestions is designed to be unobtrusive)
+bindkey '^T' autosuggest-toggle
+EOF
+
+echo "\nSetup completed successfully!\n"
+exit 0
