@@ -4,7 +4,7 @@
 
 ## Installation
 ```
-    $ git clone git://github.com/wgallios/zsh-autosuggestions ~/.zsh-autosuggestions
+    $ git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-autosuggestions
     sh .zsh-autosuggestions/install
 ```
 
