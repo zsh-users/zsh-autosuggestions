@@ -100,7 +100,9 @@ autosuggest-resume() {
 
 autosuggest-start() {
 	if [[ -z $ZLE_DISABLE_AUTOSUGGEST && -n $functions[_zsh_highlight] ]]; then
-		ZSH_HIGHLIGHT_HIGHLIGHTERS+=(autosuggest)
+            if [[ ${ZSH_HIGHLIGHT_HIGHLIGHTERS[(i)autosuggest]} -gt ${#ZSH_HIGHLIGHT_HIGHLIGHTERS}  ]];then
+                ZSH_HIGHLIGHT_HIGHLIGHTERS+=(autosuggest)
+            fi
 	fi
 	autosuggest-resume
 }
