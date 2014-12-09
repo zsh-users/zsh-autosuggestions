@@ -1,7 +1,5 @@
 # zsh-autosuggestions
 
-(Due to lack of time, I'm currently unable to maintain this project. I has a lot of bugs, so use at your own risk!)
-
 > [Fish](http://fishshell.com/)-like fast/unobtrusive autosuggestions for zsh.
 
 ## Installation
