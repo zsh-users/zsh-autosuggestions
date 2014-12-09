@@ -30,3 +30,7 @@ You may override default global config variables after plugin load.
 
 - `AUTOSUGGESTION_HIGHLIGHT_COLOR`: suggestion highlight color, default is `'fg=8'`.
 - `AUTOSUGGESTION_HIGHLIGHT_CURSOR`: highlight word after cursor or not. Must be integer value `1` or `0`, default is `1`.
+
+## Known Issues
+
+ - `COMPLETION_WAITING_DOTS`: setting this to `true` is known to cause problems when attempting to autocomplete with <kbd>TAB</kbd> 
