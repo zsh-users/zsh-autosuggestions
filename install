@@ -8,7 +8,7 @@ if [ ! -r ~/.zshrc ]; then
     exit 1
 fi
 
-DIR=$(dirname $(readlink -e $0)) ;
+DIR=$(dirname $(readlink -f $0)) ;
 
 # appends the string to ~/.zshrc file
 cat >> ~/.zshrc << EOF
