@@ -5,7 +5,7 @@
 ## Installation
 ```
     $ git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-autosuggestions
-    sh .zsh-autosuggestions/install
+    $ sh ~/.zsh-autosuggestions/install
 ```
 
 Any widget that moves the cursor to the right(forward-word, forward-char...)
