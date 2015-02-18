@@ -8,6 +8,12 @@
     $ sh ~/.zsh-autosuggestions/install
 ```
 
+On some linux distributions like ubuntu and debian sh is symlinked to /bin/dash and causes an installation error since the installation script needs some bash features. If sh is symlinked to dash, please run it with the bash :
+
+`
+bash ~/.zsh-autosuggestions/install
+`
+
 Any widget that moves the cursor to the right(forward-word, forward-char...)
 will accept parts of the suggested text. For example, vi-mode users can do
 this:
