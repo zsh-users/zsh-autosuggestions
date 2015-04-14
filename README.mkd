@@ -5,13 +5,13 @@
 ## Installation
 ```
     $ git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-autosuggestions
-    $ sh ~/.zsh-autosuggestions/install
+    $ bash ~/.zsh-autosuggestions/install
 ```
 
-On some linux distributions like ubuntu and debian sh is symlinked to /bin/dash and causes an installation error since the installation script needs some bash features. If sh is symlinked to dash, please run it with the bash :
+If you do not have bash, please run it with sh :
 
 `
-bash ~/.zsh-autosuggestions/install
+sh ~/.zsh-autosuggestions/install
 `
 
 Any widget that moves the cursor to the right(forward-word, forward-char...)
