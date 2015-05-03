@@ -2,11 +2,18 @@
 
 # Install script for zsh-autocomplete
 
-#first checks if ~/.zshrc file exists and is readable
-if [ ! -r ~/.zshrc ]; then
-    echo "\nError: ~/.zshrc file does not exist or is not readable!\n"
-    exit 1
-fi
+config="$HOME/.zshrc"
+for config in "$HOME/.zshrc" "$ZDOTDIR/.zshrc" "$1" 
+do
+	echo $config
+	#first checks if ~/.zshrc file exists and is readable
+	if [ -r "$config" ]; then
+		break
+	elif [ "$config" = "$1" ]; then
+		echo "\nError: Please specify as first argument the file in which to load zsh-autosuggestions (usually ~/.zshrc)!\n"
+		exit 1
+	fi
+done
 
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
@@ -16,8 +23,8 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-# appends the string to ~/.zshrc file
-cat >> ~/.zshrc << EOF
+# appends the string to $config (usually ~/.zshrc) file
+cat >> "$config" << EOF
 
 # Setup zsh-autosuggestions
 source $DIR/autosuggestions.zsh
