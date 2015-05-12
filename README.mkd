@@ -36,7 +36,7 @@ You may override default global config variables after plugin load.
 
 - `AUTOSUGGESTION_HIGHLIGHT_COLOR`: suggestion highlight color, default is `'fg=8'`.
 - `AUTOSUGGESTION_HIGHLIGHT_CURSOR`: highlight word after cursor or not. Must be integer value `1` or `0`, default is `1`.
-- `AUTOSUGGESTION_ACCEPT_RIGHT_ARROW`: complete entire suggestion with right arrow. Must be integer value `1` or `0`, default is 0 (right arrow completes one letter at a time).
+- `AUTOSUGGESTION_ACCEPT_RIGHT_ARROW`: complete entire suggestion with right arrow. Must be integer value `1` or `0`, default is `0` (right arrow completes one letter at a time).
 
 ## Known Issues
 
