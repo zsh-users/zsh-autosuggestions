@@ -250,7 +250,7 @@ autosuggest-accept-suggestion() {
 
 autosuggest-invalidate-highlight-cache() {
 	# invalidate the buffer for zsh-syntax-highlighting
-	_ZSH_HIGHLIGHT_PRIOR_BUFFER=''
+	_zsh_highlight_autosuggest_highlighter_cache=()
 }
 
 zle -N autosuggest-toggle
