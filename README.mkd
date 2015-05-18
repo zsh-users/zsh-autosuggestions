@@ -40,4 +40,4 @@ You may override default global config variables after plugin load.
 
 ## Known Issues
 
- - `COMPLETION_WAITING_DOTS`: setting this to `true` is known to cause problems when attempting to autocomplete with <kbd>TAB</kbd> 
+ - `COMPLETION_WAITING_DOTS`: setting this to `true` is known to cause problems when attempting to autocomplete with <kbd>TAB</kbd>
