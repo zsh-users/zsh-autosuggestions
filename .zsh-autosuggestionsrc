@@ -1,5 +1,5 @@
 # Setup zsh-autosuggestions
-source $DIR/autosuggestions.zsh
+source $HOME/.zsh-autosuggestions/autosuggestions.zsh
 
 # Enable autosuggestions automatically
 zle-line-init() {
