@@ -48,7 +48,7 @@ zstyle -d ':completion:*' list-colors
 zmodload zsh/zutil
 
 # override compadd (this our hook)
-compadd () {
+compadd() {
 
 	# check if any of -O, -A or -D are given
 	if [[ ${@[1,(i)(-|--)]} == *-(O|A|D)\ * ]]; then

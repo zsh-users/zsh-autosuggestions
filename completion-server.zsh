@@ -45,7 +45,7 @@ handle-request() {
 	done
 	if ! (( read_something )); then
 		print "connection with fd $connection closed" >&2
-	  unset fds[$connection]
+		unset fds[$connection]
 		exec {connection}>&- # free the file descriptor
 	fi
 }

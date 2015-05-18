@@ -28,22 +28,22 @@ function {
 }
 
 ZLE_AUTOSUGGEST_SUSPEND_WIDGETS=(
-vi-cmd-mode vi-backward-char backward-char backward-word beginning-of-line
-history-search-forward history-search-backward up-line-or-history
-history-beginning-search-forward history-beginning-search-backward
-down-line-or-history history-substring-search-up history-substring-search-down
-backward-kill-word
+	vi-cmd-mode vi-backward-char backward-char backward-word beginning-of-line
+	history-search-forward history-search-backward up-line-or-history
+	history-beginning-search-forward history-beginning-search-backward
+	down-line-or-history history-substring-search-up history-substring-search-down
+	backward-kill-word
 )
 
 ZLE_AUTOSUGGEST_COMPLETION_WIDGETS=(
-complete-word expand-or-complete expand-or-complete-prefix list-choices
-menu-complete reverse-menu-complete menu-expand-or-complete menu-select
-accept-and-menu-complete
+	complete-word expand-or-complete expand-or-complete-prefix list-choices
+	menu-complete reverse-menu-complete menu-expand-or-complete menu-select
+	accept-and-menu-complete
 )
 
 ZLE_AUTOSUGGEST_ACCEPT_WIDGETS=(
-vi-forward-char forward-char vi-forward-word forward-word vi-add-eol
-vi-add-next vi-forward-blank-word end-of-line
+	vi-forward-char forward-char vi-forward-word forward-word vi-add-eol
+	vi-add-next vi-forward-blank-word end-of-line
 )
 
 autosuggest-pause() {
@@ -100,9 +100,9 @@ autosuggest-resume() {
 
 autosuggest-start() {
 	if [[ -z $ZLE_DISABLE_AUTOSUGGEST && -n $functions[_zsh_highlight] ]]; then
-            if [[ ${ZSH_HIGHLIGHT_HIGHLIGHTERS[(i)autosuggest]} -gt ${#ZSH_HIGHLIGHT_HIGHLIGHTERS}  ]];then
-                ZSH_HIGHLIGHT_HIGHLIGHTERS+=(autosuggest)
-            fi
+		if [[ ${ZSH_HIGHLIGHT_HIGHLIGHTERS[(i)autosuggest]} -gt ${#ZSH_HIGHLIGHT_HIGHLIGHTERS} ]]; then
+			ZSH_HIGHLIGHT_HIGHLIGHTERS+=(autosuggest)
+		fi
 	fi
 	autosuggest-resume
 }
@@ -135,7 +135,7 @@ _zsh_highlight_autosuggest_highlighter() {
 }
 
 autosuggest-insert-or-space() {
-  setopt localoptions noshwordsplit noksharrays
+	setopt localoptions noshwordsplit noksharrays
 	if [[ $LBUFFER == *$'\012'* ]] || (( PENDING )); then
 		# Editing multiline buffer or pasting a chunk of text, pause
 		autosuggest-suspend
@@ -163,13 +163,13 @@ autosuggest-insert-or-space() {
 autosuggest-backward-delete-char() {
 	if (( $#LBUFFER > 1 )); then
 		setopt localoptions noshwordsplit noksharrays
-    if [[ $LBUFFER = *$'\012'* || $LASTWIDGET != (self-insert|magic-space|backward-delete-char) ]]; then
-      LBUFFER="$LBUFFER[1,-2]"
-    else
-      ((--CURSOR))
-			autosuggest-invalidate-highlight-cache
-      zle .history-beginning-search-forward || RBUFFER=''
-    fi
+	if [[ $LBUFFER = *$'\012'* || $LASTWIDGET != (self-insert|magic-space|backward-delete-char) ]]; then
+		LBUFFER="$LBUFFER[1,-2]"
+	else
+		((--CURSOR))
+		autosuggest-invalidate-highlight-cache
+		zle .history-beginning-search-forward || RBUFFER=''
+	fi
 		autosuggest-highlight-suggested-text
 	else
 		zle .kill-whole-line
@@ -237,11 +237,11 @@ autosuggest-tab() {
 }
 
 autosuggest-accept-suggestion() {
-        if [[ AUTOSUGGESTION_ACCEPT_RIGHT_ARROW -eq 1 && "$WIDGET" == 'forward-char' ]]; then
-	  zle autosuggest-end-of-line-orig "$@"
-        else
-	  zle autosuggest-${WIDGET}-orig "$@"
-        fi
+	if [[ AUTOSUGGESTION_ACCEPT_RIGHT_ARROW -eq 1 && "$WIDGET" == 'forward-char' ]]; then
+		zle autosuggest-end-of-line-orig "$@"
+	else
+		zle autosuggest-${WIDGET}-orig "$@"
+	fi
 	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
 		autosuggest-invalidate-highlight-cache
 		autosuggest-highlight-suggested-text
