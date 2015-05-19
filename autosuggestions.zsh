@@ -233,6 +233,7 @@ autosuggest-suspend() {
 autosuggest-tab() {
 	RBUFFER=''
 	zle autosuggest-${WIDGET}-orig "$@"
+	autosuggest-invalidate-highlight-cache
 	autosuggest-highlight-suggested-text
 }
 
