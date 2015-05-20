@@ -163,13 +163,14 @@ autosuggest-insert-or-space() {
 autosuggest-backward-delete-char() {
 	if (( $#LBUFFER > 1 )); then
 		setopt localoptions noshwordsplit noksharrays
-	if [[ $LBUFFER = *$'\012'* || $LASTWIDGET != (self-insert|magic-space|backward-delete-char) ]]; then
-		LBUFFER="$LBUFFER[1,-2]"
-	else
-		((--CURSOR))
-		autosuggest-invalidate-highlight-cache
-		zle .history-beginning-search-forward || RBUFFER=''
-	fi
+
+		if [[ $LBUFFER = *$'\012'* || $LASTWIDGET != (self-insert|magic-space|backward-delete-char) ]]; then
+			LBUFFER="$LBUFFER[1,-2]"
+		else
+			((--CURSOR))
+			autosuggest-invalidate-highlight-cache
+			zle .history-beginning-search-forward || RBUFFER=''
+		fi
 		autosuggest-highlight-suggested-text
 	else
 		zle .kill-whole-line
