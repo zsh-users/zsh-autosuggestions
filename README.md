@@ -114,6 +114,7 @@ bindkey '^T' autosuggest-toggle
 List of widgets:
 
  - `autosuggest-toggle` – disable/enable autosuggestions.
+ - `autosuggest-execute-suggestion` – accept the suggestion and execute it.
 
 
 ## Configuration

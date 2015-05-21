@@ -250,6 +250,15 @@ autosuggest-accept-suggestion() {
 	fi
 }
 
+autosuggest-execute-suggestion() {
+	if [[ -n $ZLE_AUTOSUGGESTING ]]; then
+		zle autosuggest-end-of-line-orig
+		autosuggest-invalidate-highlight-cache
+		autosuggest-highlight-suggested-text
+	fi
+	zle .accept-line
+}
+
 autosuggest-invalidate-highlight-cache() {
 	# invalidate the buffer for zsh-syntax-highlighting
 	_zsh_highlight_autosuggest_highlighter_cache=()
@@ -259,6 +268,7 @@ zle -N autosuggest-toggle
 zle -N autosuggest-start
 zle -N autosuggest-accept-suggested-small-word
 zle -N autosuggest-accept-suggested-word
+zle -N autosuggest-execute-suggestion
 
 zle -N autosuggest-paused-self-insert
 zle -N autosuggest-insert-or-space
