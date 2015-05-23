@@ -128,7 +128,15 @@ You may override default global config variables after plugin load, i.e. put it 
 
 ## Known Issues
 
- - `COMPLETION_WAITING_DOTS`: setting this to `true` is known to cause problems when attempting to autocomplete with <kbd>TAB</kbd>.
+> When I hit <kbd>Tab</kbd> and autosuggestions is enabled, it deletes the previous line, and scrolls up the terminal.
+
+This usually happens when autosuggestions is used along with something like [“completion waiting dots.”](http://michael.thegrebs.com/2012/09/04/zsh-completion-waiting-dots/)
+Check which widget is bind to the Tab key; run `bindkey "^I"`.
+If it prints something other than `"^I" expand-or-complete`, then this may be the problem.
+
+If you use [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh), then make sure that the variable `COMPLETION_WAITING_DOTS` is not set (it enables [this](https://github.com/robbyrussell/oh-my-zsh/blob/e55c715508a2f652fed741f2047c66dda2c6e5b0/lib/completion.zsh#L56-L64) problematic code).
+
+If you use module [editor](https://github.com/sorin-ionescu/prezto/tree/master/modules/editor) from [Prezto](https://github.com/sorin-ionescu/prezto), then you must comment out [these lines](https://github.com/sorin-ionescu/prezto/blob/a84ac5b0023d71c98bb28a68c550dc13f6c51945/modules/editor/init.zsh#L303-L304).
 
 
 ## License
