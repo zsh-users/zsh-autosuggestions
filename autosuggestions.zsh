@@ -29,10 +29,13 @@ function {
 
 ZLE_AUTOSUGGEST_SUSPEND_WIDGETS=(
 	vi-cmd-mode vi-backward-char backward-char backward-word beginning-of-line
-	history-search-forward history-search-backward up-line-or-history
-	history-beginning-search-forward history-beginning-search-backward
-	down-line-or-history history-substring-search-up history-substring-search-down
-	backward-kill-word
+	history-search-forward history-search-backward history-beginning-search-forward
+	history-beginning-search-backward history-substring-search-up
+	history-substring-search-down backward-kill-word
+)
+
+ZLE_AUTOSUGGEST_MOVE_IN_HISTORY_WIDGETS=(
+	up-line-or-history down-line-or-history
 )
 
 ZLE_AUTOSUGGEST_COMPLETION_WIDGETS=(
@@ -56,7 +59,7 @@ autosuggest-pause() {
 	zle -A autosuggest-magic-space-orig magic-space
 	zle -A autosuggest-backward-delete-char-orig backward-delete-char
 	zle -A autosuggest-accept-line-orig accept-line
-	for widget in $ZLE_AUTOSUGGEST_ACCEPT_WIDGETS $ZLE_AUTOSUGGEST_SUSPEND_WIDGETS $ZLE_AUTOSUGGEST_COMPLETION_WIDGETS; do
+	for widget in $ZLE_AUTOSUGGEST_ACCEPT_WIDGETS $ZLE_AUTOSUGGEST_SUSPEND_WIDGETS $ZLE_AUTOSUGGEST_COMPLETION_WIDGETS $ZLE_AUTOSUGGEST_MOVE_IN_HISTORY_WIDGETS; do
 		[[ -z $widgets[$widget] || -z $widgets[autosuggest-${widget}-orig] ]] &&\
 		 	continue
 		eval "zle -A autosuggest-${widget}-orig ${widget}"
@@ -82,6 +85,10 @@ autosuggest-resume() {
 	for widget in $ZLE_AUTOSUGGEST_ACCEPT_WIDGETS; do
 		[[ -z $widgets[$widget] ]] && continue
 		eval "zle -A autosuggest-accept-suggestion $widget"
+	done
+	for widget in $ZLE_AUTOSUGGEST_MOVE_IN_HISTORY_WIDGETS; do
+		[[ -z $widgets[$widget] ]] && continue
+		eval "zle -A autosuggest-move-in-history $widget"
 	done
 	for widget in $ZLE_AUTOSUGGEST_SUSPEND_WIDGETS; do
 		[[ -z $widgets[$widget] ]] && continue
@@ -237,7 +244,17 @@ autosuggest-tab() {
 	autosuggest-invalidate-highlight-cache
 	autosuggest-highlight-suggested-text
 }
-
+autosuggest-move-in-history() {
+	if [[ -n $RBUFFER ]]; then
+		if [[ "$WIDGET" == 'up-line-or-history' ]]; then
+			zle autosuggest-history-beginning-search-backward-orig
+		else
+			zle autosuggest-history-beginning-search-forward-orig
+		fi
+	else
+		zle autosuggest-${WIDGET}-orig
+	fi
+}
 autosuggest-accept-suggestion() {
 	if [[ AUTOSUGGESTION_ACCEPT_RIGHT_ARROW -eq 1 && "$WIDGET" == 'forward-char' ]]; then
 		zle autosuggest-end-of-line-orig "$@"
@@ -278,6 +295,7 @@ zle -N autosuggest-accept-line
 zle -N autosuggest-tab
 zle -N autosuggest-suspend
 zle -N autosuggest-accept-suggestion
+zle -N autosuggest-move-in-history
 
 # Save all widgets
 zle -A self-insert autosuggest-self-insert-orig
@@ -285,7 +303,7 @@ zle -A magic-space autosuggest-magic-space-orig
 zle -A backward-delete-char autosuggest-backward-delete-char-orig
 zle -A accept-line autosuggest-accept-line-orig
 
-for widget in ${ZLE_AUTOSUGGEST_ACCEPT_WIDGETS} ${ZLE_AUTOSUGGEST_SUSPEND_WIDGETS} ${ZLE_AUTOSUGGEST_COMPLETION_WIDGETS}; do
+for widget in ${ZLE_AUTOSUGGEST_ACCEPT_WIDGETS} ${ZLE_AUTOSUGGEST_SUSPEND_WIDGETS} ${ZLE_AUTOSUGGEST_COMPLETION_WIDGETS} ${ZLE_AUTOSUGGEST_MOVE_IN_HISTORY_WIDGETS}; do
 	[[ -z $widgets[$widget] ]] && continue
 	eval "zle -A $widget autosuggest-${widget}-orig"
 done
