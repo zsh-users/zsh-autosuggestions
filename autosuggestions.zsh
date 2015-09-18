@@ -239,7 +239,7 @@ autosuggest-tab() {
 }
 
 autosuggest-accept-suggestion() {
-	if [[ AUTOSUGGESTION_ACCEPT_RIGHT_ARROW -eq 1 && "$WIDGET" == 'forward-char' ]]; then
+    if [[ AUTOSUGGESTION_ACCEPT_RIGHT_ARROW -eq 1 && ("$WIDGET" == 'forward-char' || "$WIDGET" == 'vi-forward-char') ]]; then
 		zle autosuggest-end-of-line-orig "$@"
 	else
 		zle autosuggest-${WIDGET}-orig "$@"
