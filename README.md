@@ -17,13 +17,13 @@ ZSH assumes this file in your home directory (i.e. `~/.zshrc`), but the location
 [Zgen](https://github.com/tarjoilija/zgen) is a simple and fast plugin manager for ZSH.
 If you don’t use zgen, then use instructions for the manual installation.
 
-1. Load `tarruda/zsh-autosuggestions` and `jimmijj/zsh-syntax-highlighting` using zgen in your .zshrc file, for example:
+1. Load `tarruda/zsh-autosuggestions` and `zsh-users/zsh-syntax-highlighting` using zgen in your .zshrc file, for example:
 
     ```sh
     if ! zgen saved; then
         echo "Creating a zgen save"
 
-        zgen load jimmijj/zsh-syntax-highlighting
+        zgen load zsh-users/zsh-syntax-highlighting
 
         # autosuggestions should be loaded last
         zgen load tarruda/zsh-autosuggestions
@@ -56,7 +56,7 @@ If you don’t use zgen, then use instructions for the manual installation.
 2. Clone zsh-syntax-highlighting repository to `~/.zsh/zsh-syntax-highlighting` (or anywhere else):
 
     ```sh
-    git clone git://github.com/jimmijj/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting
+    git clone git://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting
     ```
 
 3. Load and enable autosuggestions; copy the following snippet and put it to your .zshrc file:
