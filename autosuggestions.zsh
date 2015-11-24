@@ -43,7 +43,7 @@ ZLE_AUTOSUGGEST_COMPLETION_WIDGETS=(
 
 ZLE_AUTOSUGGEST_ACCEPT_WIDGETS=(
 	vi-forward-char forward-char vi-forward-word forward-word vi-add-eol
-	vi-add-next vi-forward-blank-word end-of-line
+	vi-add-next vi-forward-blank-word vi-end-of-line end-of-line
 )
 
 autosuggest-pause() {
