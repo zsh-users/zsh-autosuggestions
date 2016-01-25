@@ -291,4 +291,10 @@ zle -N autosuggest-tab
 zle -N autosuggest-suspend
 zle -N autosuggest-accept-suggestion
 
+# save widgets
+for widget in $ZLE_AUTOSUGGEST_ALL_WIDGETS; do
+	[[ -z $widgets[$widget] || ! -z $widgets[.$widget] ]] && continue
+	eval "zle -A $widget .$widget"
+done
+
 autosuggest-restore-widgets
