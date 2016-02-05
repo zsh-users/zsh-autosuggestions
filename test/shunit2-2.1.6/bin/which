@@ -1,0 +1,36 @@
+#! /bin/sh
+# $Id: which 12 2007-02-18 03:31:14Z sfsetse $
+#
+# This is a simple implementation of the 'which' command for those OSes that
+# don't have one.
+#
+
+true; TRUE=$?
+false; FALSE=$?
+
+showAll=${FALSE}
+
+# process command line flags
+while getopts 'a' opt; do
+  case ${opt} in
+    a) showAll=${TRUE}
+  esac
+done
+shift `expr ${OPTIND} - 1`
+
+# exit if no arguments were given
+[ $# -eq 0 ] && exit 1
+
+command=$1
+
+# search for command
+out=`echo "${PATH}" |sed "s/:/\n/g" |\
+while read path; do
+  fullPath="${path}/${command}"
+  if [ -x "${fullPath}" ]; then
+    echo "${fullPath}"
+    [ ${showAll} -eq ${FALSE} ] && break
+  fi
+done`
+[ -z "${out}" ] && exit 1
+echo "${out}"

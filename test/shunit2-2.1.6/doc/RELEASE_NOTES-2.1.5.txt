@@ -1,0 +1,128 @@
+Release Notes for shUnit2 2.1.5
+===============================
+
+This release contains several bug fixes and changes. Additionally, it includes
+a rewrite of the test output to better match JUnit and PyUnit.
+
+This version also includes a slightly expanded set of coding standards by which
+shUnit2 is coded. It should help anyone reading the code to better understand
+it.
+
+
+
+Please read the Shell Errata section of the documentation for guidance on how
+to meet these requirements.
+
+See the ``CHANGES-2.1.txt`` file for a full list of changes.
+
+
+Tested Platforms
+----------------
+
+Cygwin
+
+- bash 3.2.39(20)
+- ksh (sym-link to pdksh)
+- pdksh 5.2.14
+- zsh 4.3.4
+
+Linux (Ubuntu Dapper 6.06)
+
+- bash 3.1.17(1)
+- ksh M-1993-12-28
+- pdksh 5.2.14-99/07/13.2
+- zsh 4.2.5
+
+Linux (Ubuntu Hardy 8.04)
+
+- bash 3.2.39(1)
+- dash 0.5.4
+- ksh M-1993-12-28
+- pdksh 5.2.14-99/07/13.2
+- zsh 4.3.4
+
+Mac OS X 10.5.4 (Darwin 9.4.0)
+
+- bash 3.2.17(1)
+- ksh M-1993-12-28
+- zsh 4.3.4
+
+Solaris 9 U6 x86
+
+- /bin/sh
+- bash 2.05.0(1)
+- ksh M-11/16/88i
+- zsh 3.0.8
+
+Solaris 11 x86 (Nevada 77)
+
+- /bin/sh
+- bash 3.2.25(1)
+- ksh M-11/16/88i
+- zsh 4.3.4
+
+
+New Features
+------------
+
+Support added for output assert source line number as part of assert messages.
+
+Issue #2: Added assertNotEquals() assert.
+
+Provided a public ``shunit_tmpDir`` variable that can be used by unit test
+scripts that need automated and guaranteed cleanup.
+
+
+Changes and Enhancements
+------------------------
+
+Issue #3: Removed the check for unset variables as shUnit2 should not expect
+scripts being tested to be clean.
+
+Issue #4: Rewrote the test summary. It is now greatly simplified and much more
+script friendly.
+
+Issue #5: Fixed the documentation around the usage of failures.
+
+Issue #9: Added unit tests and improved documentation around the use of macros.
+
+Code updated to meet documented coding standards.
+
+Improved code reuse of ``_shunit_exit()`` and ``_shunit_fatal()`` functions.
+
+All output except shUnit2 error messages now goes to STDOUT.
+
+Converted DocBook documentation to reStructuredText for easier maintenance.
+
+
+Bug Fixes
+---------
+
+Issue #1: Fixed bug in rap code where certain types of exit conditions did not
+generate the ending report.
+
+Issue #7: Fixed duplicated printing of messages passed to asserts.
+
+Fixed bugs in ``shlib_relToAbsPath()`` in ``shlib``.
+
+
+Deprecated Features
+-------------------
+
+None.
+
+
+Known Bugs and Issues
+---------------------
+
+Zsh requires the ``shwordsplit`` option to be set. See the documentation for
+examples of how to do this.
+
+Line numbers in assert messages do not work properly with BASH 2.x.
+
+The Bourne shell of Solaris, BASH 2.x, and Zsh 3.0.x do not properly catch the
+SIGTERM signal. As such, shell interpreter failures due to such things as
+unbound variables cannot be caught. (See ``shunit_test_misc.sh``)
+
+
+.. vim:fileencoding=latin1:ft=rst:spell:tw=80
