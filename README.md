@@ -122,6 +122,22 @@ autosuggest_start
 ```
 
 
+## Troubleshooting
+
+If you have a problem, please search through [the list of issues on GitHub](https://github.com/tarruda/zsh-autosuggestions/issues) to see if someone else has already reported it.
+
+
+### Reporting an Issue
+
+Before reporting an issue, please try temporarily disabling sections of your configuration and other plugins that may be conflicting with this plugin to isolate the problem.
+
+When reporting an issue, please include:
+
+- The smallest, simplest `.zshrc` configuration that will reproduce the problem
+- The version of zsh you're using (`zsh --version`)
+- Which operating system you're running
+
+
 ## Uninstallation
 
 1. Remove the code referencing this plugin from `~/.zshrc`.
