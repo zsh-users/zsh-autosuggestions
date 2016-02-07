@@ -2,9 +2,9 @@
 
 SCRIPT_DIR=$(dirname "$0")
 TEST_DIR=$SCRIPT_DIR/../test
-DIST_DIR=$SCRIPT_DIR/../dist
+DIST_DIR=$SCRIPT_DIR/../
 
-source $DIST_DIR/autosuggestions.zsh
+source $DIST_DIR/zsh-autosuggestions.zsh
 
 testDefaultHighlightStyle() {
 	assertEquals \

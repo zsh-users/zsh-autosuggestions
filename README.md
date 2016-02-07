@@ -7,6 +7,8 @@ It suggests commands as you type, based on command history.
 
 ## Installation
 
+### Manual
+
 1. Clone this repository somewhere on your machine. This guide will assume `~/.zsh/zsh-autosuggestions`.
 
     ```sh
@@ -16,11 +18,10 @@ It suggests commands as you type, based on command history.
 2. Add the following to your `.zshrc`:
 
     ```sh
-    source ~/.zsh/zsh-autosuggestions/dist/autosuggestions.zsh
-    autosuggest_start
+    source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
     ```
 
-    **Note:** If you're using other zle plugins like `zsh-syntax-highlighting` or `zsh-history-substring-search`, check out the [section on compatibility](#compatibility-with-other-zle-plugins) below.
+3. Start a new terminal session.
 
 
 ## Usage
@@ -51,8 +52,6 @@ This plugin works by triggering custom behavior when certain [zle widgets](http:
 - `ZSH_AUTOSUGGEST_ACCEPT_WIDGETS`: Widgets in this array will accept the suggestion when invoked.
 - `ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS`: Widgets in this array will partially accept the suggestion when invoked.
 
-**Note:** These arrays must be set before calling `autosuggest_start`.
-
 **Note:** A widget shouldn't belong to more than one of the above arrays.
 
 
@@ -72,22 +71,6 @@ bindkey '^ ' autosuggest-accept
 
 ## Compatibility With Other ZLE Plugins
 
-### [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting)
-
-Source `zsh-autosuggestions.zsh` *before* `zsh-syntax-highlighting`.
-
-Call `autosuggest_start` *after* sourcing `zsh-syntax-highlighting`.
-
-For example:
-
-```sh
-source ~/.zsh/zsh-autosuggestions/dist/autosuggestions.zsh
-source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-autosuggest_start
-```
-
-
 ### [`zsh-history-substring-search`](https://github.com/zsh-users/zsh-history-substring-search)
 
 When the buffer is empty and one of the `history-substring-search-up/down` widgets is invoked, it will call the `up/down-line-or-history` widget. If the `up/down-line-or-history` widgets are in `ZSH_AUTOSUGGEST_CLEAR_WIDGETS` (the list of widgets that clear the suggestion), this can create an infinite recursion, crashing the shell session.
@@ -106,18 +89,14 @@ Additionally, the `history-substring-search-up` and `history-substring-search-do
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
 ```
 
-Make sure you add/remove these widgets *before* calling `autosuggest_start`.
-
 For example:
 
 ```sh
-source ~/.zsh/zsh-autosuggestions/dist/autosuggestions.zsh
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/Code/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
-
-autosuggest_start
 ```
 
 
@@ -152,7 +131,7 @@ When reporting an issue, please include:
 
 ### Build Process
 
-Edit the source files in `src/`. Run `make` to build `dist/autosuggestions.zsh` from those source files.
+Edit the source files in `src/`. Run `make` to build `zsh-autosuggestions.zsh` from those source files.
 
 
 ### Pull Requests

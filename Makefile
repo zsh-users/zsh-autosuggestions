@@ -1,8 +1,7 @@
-DIST_DIR   := ./dist
 SRC_DIR    := ./src
 SCRIPT_DIR := ./script
 
-SRC_TARGETS := \
+SRC_FILES := \
 	$(SRC_DIR)/config.zsh \
 	$(SRC_DIR)/deprecated.zsh \
 	$(SRC_DIR)/bind.zsh \
@@ -11,17 +10,27 @@ SRC_TARGETS := \
 	$(SRC_DIR)/suggestion.zsh \
 	$(SRC_DIR)/start.zsh
 
-$(DIST_DIR)/autosuggestions.zsh: $(SRC_TARGETS) LICENSE
-	mkdir -p $(DIST_DIR)
-	cat INFO | sed -e 's/^/# /g' > $@
-	echo "#" >> $@
-	cat LICENSE | sed -e 's/^/# /g' >> $@
-	cat >> $@ $(SRC_TARGETS)
+HEADER_FILES := \
+	DESCRIPTION \
+	URL \
+	VERSION \
+	LICENSE
+
+PLUGIN_TARGET := zsh-autosuggestions.zsh
+
+ALL_TARGETS := \
+	$(PLUGIN_TARGET)
+
+all: $(ALL_TARGETS)
+
+$(PLUGIN_TARGET): $(HEADER_FILES) $(SRC_FILES)
+	cat $(HEADER_FILES) | sed -e 's/^/# /g' >> $@
+	cat $(SRC_FILES) >> $@
 
 .PHONY: clean
 clean:
-	rm -rf $(DIST_DIR)
+	rm $(ALL_TARGETS)
 
 .PHONY: test
-test: $(DIST_DIR)/autosuggestions.zsh $(SCRIPT_DIR)/test.sh
-	$(SCRIPT_DIR)/test.sh
+test: all
+	$(SCRIPT_DIR)/test.zsh

@@ -1,7 +1,6 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
 # https://github.com/tarruda/zsh-autosuggestions
-# v0.1.1
-#
+# v0.2.0
 # Copyright (c) 2013 Thiago de Arruda
 # Copyright (c) 2016 Eric Freese
 # 
@@ -339,7 +338,10 @@ _zsh_autosuggest_suggestion() {
 #-------#
 
 # Start the autosuggestion widgets
-autosuggest_start() {
+_zsh_autosuggest_start() {
 	_zsh_autosuggest_check_deprecated_config
 	_zsh_autosuggest_bind_widgets
 }
+
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _zsh_autosuggest_start
