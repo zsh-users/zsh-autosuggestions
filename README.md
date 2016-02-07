@@ -72,7 +72,6 @@ bindkey '^ ' autosuggest-accept
 
 ## Compatibility With Other ZLE Plugins
 
-
 ### [`zsh-syntax-highlighting`](https://github.com/zsh-users/zsh-syntax-highlighting)
 
 Source `zsh-autosuggestions.zsh` *before* `zsh-syntax-highlighting`.
@@ -147,6 +146,29 @@ When reporting an issue, please include:
     ```sh
     rm -rf ~/.zsh/zsh-autosuggestions # Or wherever you installed
     ```
+
+
+## Development
+
+### Build Process
+
+Edit the source files in `src/`. Run `make` to build `dist/autosuggestions.zsh` from those source files.
+
+
+### Pull Requests
+
+Pull requests are welcome! If you send a pull request, please:
+
+- Match the existing coding conventions.
+- Include helpful comments to keep the barrier-to-entry low for people new to the project.
+- Write tests that cover your code as much as possible.
+
+
+### Testing
+
+Testing is performed with [`shunit2`](https://github.com/kward/shunit2) (v2.1.6). Documentation can be found [here](http://shunit2.googlecode.com/svn/trunk/source/2.1/doc/shunit2.html).
+
+The test script lives at `script/test.zsh`. To run the tests, run `make test`.
 
 
 ## License
