@@ -84,4 +84,4 @@ _zsh_autosuggest_widget_clear() {
 }
 
 zle -N autosuggest-accept _zsh_autosuggest_widget_accept
-zle -N autosuggest-clear _zsh_autosuggest_clear
+zle -N autosuggest-clear _zsh_autosuggest_widget_clear

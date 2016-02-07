@@ -1,6 +1,6 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
 # https://github.com/tarruda/zsh-autosuggestions
-# v0.1.0
+# v0.1.1
 #
 # Copyright (c) 2013 Thiago de Arruda
 # Copyright (c) 2016 Eric Freese
@@ -313,7 +313,7 @@ _zsh_autosuggest_widget_clear() {
 }
 
 zle -N autosuggest-accept _zsh_autosuggest_widget_accept
-zle -N autosuggest-clear _zsh_autosuggest_clear
+zle -N autosuggest-clear _zsh_autosuggest_widget_clear
 
 #------------#
 # Suggestion #
