@@ -1,0 +1,177 @@
+# $Id: shunit2_test_helpers 286 2008-11-24 21:42:34Z kate.ward@forestent.com $
+# vim:et:ft=sh:sts=2:sw=2
+#
+# Copyright 2008 Kate Ward. All Rights Reserved.
+# Released under the LGPL (GNU Lesser General Public License)
+#
+# Author: kate.ward@forestent.com (Kate Ward)
+#
+# shUnit2 unit test common functions
+
+# treat unset variables as an error when performing parameter expansion
+set -u
+
+# set shwordsplit for zsh
+[ -n "${ZSH_VERSION:-}" ] && setopt shwordsplit
+
+#
+# constants
+#
+
+# path to shUnit2 library. can be overridden by setting SHUNIT_INC
+TH_SHUNIT=${SHUNIT_INC:-./shunit2}
+
+# configure debugging. set the DEBUG environment variable to any
+# non-empty value to enable debug output, or TRACE to enable trace
+# output.
+TRACE=${TRACE:+'th_trace '}
+[ -n "${TRACE}" ] && DEBUG=1
+[ -z "${TRACE}" ] && TRACE=':'
+
+DEBUG=${DEBUG:+'th_debug '}
+[ -z "${DEBUG}" ] && DEBUG=':'
+
+#
+# variables
+#
+
+th_RANDOM=0
+
+#
+# functions
+#
+
+# message functions
+th_trace() { echo "${MY_NAME}:TRACE $@" >&2; }
+th_debug() { echo "${MY_NAME}:DEBUG $@" >&2; }
+th_info() { echo "${MY_NAME}:INFO $@" >&2; }
+th_warn() { echo "${MY_NAME}:WARN $@" >&2; }
+th_error() { echo "${MY_NAME}:ERROR $@" >&2; }
+th_fatal() { echo "${MY_NAME}:FATAL $@" >&2; }
+
+# output subtest name
+th_subtest() { echo " $@" >&2; }
+
+# generate a random number
+th_generateRandom()
+{
+  tfgr_random=${th_RANDOM}
+
+  while [ "${tfgr_random}" = "${th_RANDOM}" ]; do
+    if [ -n "${RANDOM:-}" ]; then
+      # $RANDOM works
+      tfgr_random=${RANDOM}${RANDOM}${RANDOM}$$
+    elif [ -r '/dev/urandom' ]; then
+      tfgr_random=`od -vAn -N4 -tu4 </dev/urandom |sed 's/^[^0-9]*//'`
+    else
+      tfgr_date=`date '+%H%M%S'`
+      tfgr_random=`expr ${tfgr_date} \* $$`
+      unset tfgr_date
+    fi
+    [ "${tfgr_random}" = "${th_RANDOM}" ] && sleep 1
+  done
+
+  th_RANDOM=${tfgr_random}
+  unset tfgr_random
+}
+
+# this section returns the data section from the specified section of a file. a
+# datasection is defined by a [header], one or more lines of data, and then a
+# blank line.
+th_getDataSect()
+{
+  th_sgrep "\\[$1\\]" "$2" |sed '1d'
+}
+
+# this function greps a section from a file. a section is defined as a group of
+# lines preceeded and followed by blank lines.
+th_sgrep()
+{
+  th_pattern_=$1
+  shift
+
+  sed -e '/./{H;$!d;}' -e "x;/${th_pattern_}/"'!d;' $@ |sed '1d'
+
+  unset th_pattern_
+}
+
+# Custom assert that checks for true return value (0), and no output to STDOUT
+# or STDERR. If a non-zero return value is encountered, the output of STDERR
+# will be output.
+#
+# Args:
+#  th_test_: string: name of the subtest
+#  th_rtrn_: integer: the return value of the subtest performed
+#  th_stdout_: string: filename where stdout was redirected to
+#  th_stderr_: string: filename where stderr was redirected to
+th_assertTrueWithNoOutput()
+{
+  th_test_=$1
+  th_rtrn_=$2
+  th_stdout_=$3
+  th_stderr_=$4
+
+  assertTrue "${th_test_}; expected return value of zero" ${th_rtrn_}
+  [ ${th_rtrn_} -ne ${SHUNIT_TRUE} ] && cat "${th_stderr_}"
+  assertFalse "${th_test_}; expected no output to STDOUT" \
+      "[ -s '${th_stdout_}' ]"
+  assertFalse "${th_test_}; expected no output to STDERR" \
+      "[ -s '${th_stderr_}' ]"
+
+  unset th_test_ th_rtrn_ th_stdout_ th_stderr_
+}
+
+# Custom assert that checks for non-zero return value, output to STDOUT, but no
+# output to STDERR.
+#
+# Args:
+#  th_test_: string: name of the subtest
+#  th_rtrn_: integer: the return value of the subtest performed
+#  th_stdout_: string: filename where stdout was redirected to
+#  th_stderr_: string: filename where stderr was redirected to
+th_assertFalseWithOutput()
+{
+  th_test_=$1
+  th_rtrn_=$2
+  th_stdout_=$3
+  th_stderr_=$4
+
+  assertFalse "${th_test_}; expected non-zero return value" ${th_rtrn_}
+  assertTrue "${th_test_}; expected output to STDOUT" \
+      "[ -s '${th_stdout_}' ]"
+  assertFalse "${th_test_}; expected no output to STDERR" \
+      "[ -s '${th_stderr_}' ]"
+
+  unset th_test_ th_rtrn_ th_stdout_ th_stderr_
+}
+
+# Custom assert that checks for non-zero return value, no output to STDOUT, but
+# output to STDERR.
+#
+# Args:
+#  th_test_: string: name of the subtest
+#  th_rtrn_: integer: the return value of the subtest performed
+#  th_stdout_: string: filename where stdout was redirected to
+#  th_stderr_: string: filename where stderr was redirected to
+th_assertFalseWithError()
+{
+  th_test_=$1
+  th_rtrn_=$2
+  th_stdout_=$3
+  th_stderr_=$4
+
+  assertFalse "${th_test_}; expected non-zero return value" ${th_rtrn_}
+  assertFalse "${th_test_}; expected no output to STDOUT" \
+      "[ -s '${th_stdout_}' ]"
+  assertTrue "${th_test_}; expected output to STDERR" \
+      "[ -s '${th_stderr_}' ]"
+
+  unset th_test_ th_rtrn_ th_stdout_ th_stderr_
+}
+
+#
+# main
+#
+
+${TRACE} 'trace output enabled'
+${DEBUG} 'debug output enabled'

@@ -1,0 +1,34 @@
+Design Doc for shUnit
+
+shUnit is based upon JUnit. The initial ideas for the script came from the book
+"Pragmatic Unit Testing - In Java with JUnit" by Andrew Hunt and David Thomas.
+
+The script was written to perform unit testing for log4sh. log4sh had grown
+enough that it was becoming difficult to easily test and and verify that the
+tests passed for the many different operating systems on which it was being
+used.
+
+The functions in shUnit are meant to match those in JUnit as much as possible
+where shell allows. In the initial version, there will be no concept of
+exceptions (as normal POSIX shell has no concept of them) but attempts to trap
+problems will be done.
+
+Programatic Standards:
+
+* SHUNIT_TRUE - public global constant
+* __SHUNIT_SHELL_FLAGS - private global constant
+* __shunit_oldShellFlags - private global variable
+
+* assertEquals - public unit test function
+* shunit_publicFunc - public shUnit function; can be called from parent unit
+  test script
+* _shunit_privateFunc - private shUnit function; should not be called from
+  parent script. meant for internal use by shUnit
+
+* _su_myVar - variable inside a public function. prefixing with '_su_' to
+  reduce the chances that a variable outside of shUnit will be overridden.
+* _su__myVar - variable inside a private function. prefixing with '_su__' to
+  reduce the chances that a variable in a shUnit public function, or a variable
+  outside of shUnit will be overridden.
+
+$Revision: 4 $

@@ -1,0 +1,13 @@
+Make it possible to execute a single test by passing the name of the test on
+the command line
+
+Add support for '--randomize-order' so that the test order is randomized to
+check for dependencies (which shouldn't be there) between tests.
+
+--debug option to display point in source code (line number and such) where the
+problem showed up.
+
+assertTrue() just gives 'ASSERT:', nothing else :-(. others too?
+upd: assertNull() will give message passed, but nothing else useful :-(
+
+$Revision: 228 $

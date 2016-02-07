@@ -1,0 +1,83 @@
+Release Notes for shUnit2 2.1.2
+===============================
+
+This release adds initial support for the zsh shell. Due to some differences
+with this shell as compared with others, some special checks have been added,
+and there are some extra requirements necessary when this shell is to be used.
+
+To use zsh with shUnit2, the following two requirements must be met:
+* The ``shwordsplit`` option must be set.
+* The ``function_argzero`` option must be unset.
+
+Please read the Shell Errata section of the documentation for guidance on how
+to meet these requirements.
+
+
+See the ``CHANGES-2.1.txt`` file for a full list of changes.
+
+
+Tested Platforms
+----------------
+
+This list of platforms comes from the latest version of log4sh as shUnit2 is
+used in the testing of log4sh on each of these platforms.
+
+Linux
+
+- bash 3.1.17(1), 3.2.25(1)
+- dash 0.5.4
+- ksh 1993-12-28
+- pdksh 5.2.14
+- zsh 4.2.5, 4.3.4
+
+Mac OS X 10.4.11 (Darwin 8.11.1)
+
+- bash 2.05b.0(1)
+- ksh 1993-12-28
+- zsh 4.2.3
+
+Solaris 10 U3 (x86)
+
+- /bin/sh
+- bash 3.00.16(1)
+- ksh M-11/16/88i
+- zsh 4.2.1
+
+
+New Features
+------------
+
+Support for the zsh shell.
+
+
+Changes and Enhancements
+------------------------
+
+Added some argument count checks.
+
+
+Bug Fixes
+---------
+
+None.
+
+
+Deprecated Features
+-------------------
+
+None.
+
+
+Known Bugs and Issues
+---------------------
+
+Functions do not properly test for an invalid number of arguments.
+
+ksh and pdksh do not pass null arguments (i.e. empty strings as '') properly,
+and as such checks do not work properly.
+
+zsh requires the ``shwordsplit`` option to be set, and the ``function_argzero``
+option to be unset for proper operation.
+
+
+.. vim:fileencoding=latin1:ft=rst:spell:textwidth=80
