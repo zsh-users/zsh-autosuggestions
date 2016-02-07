@@ -34,7 +34,7 @@ If you invoke the `forward-word` widget, it will partially accept the suggestion
 
 ## Configuration
 
-You may want to override the default global config variables after sourcing the plugin. Default values of these variables can be found [here](https://github.com/tarruda/zsh-autosuggestions/blob/master/src/config.zsh).
+You may want to override the default global config variables after sourcing the plugin. Default values of these variables can be found [here](src/config.zsh).
 
 
 ### Suggestion Highlight Style
