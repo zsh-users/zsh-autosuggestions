@@ -4,9 +4,16 @@ SCRIPT_DIR=$(dirname "$0")
 TEST_DIR=$SCRIPT_DIR/../test
 DIST_DIR=$SCRIPT_DIR/../
 
+# Use stub.sh for stubbing/mocking
+source $TEST_DIR/stub-1.0.2.sh
+
 source $DIST_DIR/zsh-autosuggestions.zsh
 
-testDefaultHighlightStyle() {
+#--------------------------------------------------------------------#
+# Highlighting                                                       #
+#--------------------------------------------------------------------#
+
+testHighlightDefaultStyle() {
 	assertEquals \
 		"fg=8" \
 		"$ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE"
@@ -23,12 +30,12 @@ testHighlightApplyWithSuggestion() {
 	_zsh_autosuggest_highlight_apply
 
 	assertEquals \
-		"adds to region_highlight with correct style" \
+		"highlight did not use correct style" \
 		"0 2 fg=1 2 10 $ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE" \
 		"$region_highlight"
 
 	assertEquals \
-		"saves the higlight to be removed later" \
+		"higlight was not saved to be removed later" \
 		"2 10 $ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE" \
 		"$_ZSH_AUTOSUGGEST_LAST_HIGHLIGHT"
 
@@ -43,12 +50,12 @@ testHighlightApplyWithoutSuggestion() {
 	_zsh_autosuggest_highlight_apply
 
 	assertEquals \
-		"leaves region_highlight alone" \
+		"region_highlight was modified" \
 		"0 4 fg=1" \
 		"$region_highlight"
 
 	assertNull \
-		"clears the last highlight" \
+		"last highlight region was not cleared" \
 		"$_ZSH_AUTOSUGGEST_LAST_HIGHLIGHT"
 }
 
@@ -61,12 +68,12 @@ testHighlightReset() {
 	_zsh_autosuggest_highlight_reset
 
 	assertEquals \
-		"removes last highlight region" \
+		"last highlight region was not removed" \
 		"0 1 fg=1 1 2 fg=1" \
 		"$region_highlight"
 
 	assertNull \
-		"clears the last highlight" \
+		"last highlight variable was not cleared" \
 		"$_ZSH_AUTOSUGGEST_LAST_HIGHLIGHT"
 }
 
