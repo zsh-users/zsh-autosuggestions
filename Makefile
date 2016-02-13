@@ -26,7 +26,7 @@ ALL_TARGETS := \
 all: $(ALL_TARGETS)
 
 $(PLUGIN_TARGET): $(HEADER_FILES) $(SRC_FILES)
-	cat $(HEADER_FILES) | sed -e 's/^/# /g' >> $@
+	cat $(HEADER_FILES) | sed -e 's/^/# /g' > $@
 	cat $(SRC_FILES) >> $@
 
 $(OH_MY_ZSH_LINK_TARGET): $(PLUGIN_TARGET)
