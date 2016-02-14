@@ -132,7 +132,7 @@ Before reporting an issue, please try temporarily disabling sections of your con
 
 When reporting an issue, please include:
 
-- The smallest, simplest `.zshrc` configuration that will reproduce the problem
+- The smallest, simplest `.zshrc` configuration that will reproduce the problem. See [this comment](https://github.com/tarruda/zsh-autosuggestions/issues/102#issuecomment-180944764) for a good example of what this means.
 - The version of zsh you're using (`zsh --version`)
 - Which operating system you're running
 
