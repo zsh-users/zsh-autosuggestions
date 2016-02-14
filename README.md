@@ -40,7 +40,7 @@ It suggests commands as you type, based on command history.
 
 3. Start a new terminal session.
 
-> **Note:** There is an open issue ([#102](https://github.com/tarruda/zsh-autosuggestions/issues/102)) when using this plugin with `bracketed-paste-magic`, which is enabled by default by Oh My Zsh.
+**Note:** There is an open issue ([#102](https://github.com/tarruda/zsh-autosuggestions/issues/102)) when using this plugin with `bracketed-paste-magic`, which is enabled by default by Oh My Zsh. See the comments in that issue for a workaround.
 
 
 ## Usage
