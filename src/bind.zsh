@@ -55,7 +55,7 @@ _zsh_autosuggest_bind_widgets() {
 	local widget;
 
 	# Find every widget we might want to bind and bind it appropriately
-	for widget in ${${(f)"$(builtin zle -la)"}:#(.*|_*|orig-*|autosuggest-*|$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX*|run-help|which-command|beep|set-local-history|yank)}; do
+	for widget in ${${(f)"$(builtin zle -la)"}:#(.*|_*|orig-*|autosuggest-*|$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX*|zle-line-*|run-help|which-command|beep|set-local-history|yank)}; do
 		if [ ${ZSH_AUTOSUGGEST_MODIFY_WIDGETS[(r)$widget]} ]; then
 			_zsh_autosuggest_bind_widget $widget _zsh_autosuggest_modify
 		elif [ ${ZSH_AUTOSUGGEST_CLEAR_WIDGETS[(r)$widget]} ]; then
