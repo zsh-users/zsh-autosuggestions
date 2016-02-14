@@ -34,9 +34,9 @@ _zsh_autosuggest_bind_widget() {
 	# Set up widget to call $autosuggest_function if it exists
 	# Otherwise just call the original widget
 	if [ -n "$autosuggest_function" ]; then;
-		action=$autosuggest_function;
+		action="$autosuggest_function \$@";
 	else;
-		action="zle $prefix$widget \$@"
+		action="zle $prefix$widget -- \$@"
 	fi
 
 	# Create new function for the widget that highlights and calls the action
@@ -72,9 +72,9 @@ _zsh_autosuggest_bind_widgets() {
 
 # Given the name of a widget, invoke the original we saved, if it exists
 _zsh_autosuggest_invoke_original_widget() {
-	local original_widget_name="$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX$1"
+	local original_widget_name="$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX$WIDGET"
 
 	if [ $widgets[$original_widget_name] ]; then
-		zle $original_widget_name
+		zle $original_widget_name -- $@
 	fi
 }

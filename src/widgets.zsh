@@ -8,13 +8,13 @@ _zsh_autosuggest_clear() {
 	# Remove the suggestion
 	unset POSTDISPLAY
 
-	_zsh_autosuggest_invoke_original_widget $WIDGET
+	_zsh_autosuggest_invoke_original_widget $@
 }
 
 # Modify the buffer and get a new suggestion
 _zsh_autosuggest_modify() {
 	# Original widget modifies the buffer
-	_zsh_autosuggest_invoke_original_widget $WIDGET
+	_zsh_autosuggest_invoke_original_widget $@
 
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion
@@ -44,7 +44,7 @@ _zsh_autosuggest_accept() {
 		CURSOR=${#BUFFER}
 	fi
 
-	_zsh_autosuggest_invoke_original_widget $WIDGET
+	_zsh_autosuggest_invoke_original_widget $@
 }
 
 # Partially accept the suggestion
@@ -56,7 +56,7 @@ _zsh_autosuggest_partial_accept() {
 	BUFFER="$BUFFER$POSTDISPLAY"
 
 	# Original widget moves the cursor
-	_zsh_autosuggest_invoke_original_widget $WIDGET
+	_zsh_autosuggest_invoke_original_widget $@
 
 	# If we've moved past the end of the original buffer
 	if [ $CURSOR -gt $#original_buffer ]; then
@@ -73,13 +73,13 @@ _zsh_autosuggest_partial_accept() {
 
 _zsh_autosuggest_widget_accept() {
 	_zsh_autosuggest_highlight_reset
-	_zsh_autosuggest_accept
+	_zsh_autosuggest_accept $@
 	_zsh_autosuggest_highlight_apply
 }
 
 _zsh_autosuggest_widget_clear() {
 	_zsh_autosuggest_highlight_reset
-	_zsh_autosuggest_clear
+	_zsh_autosuggest_clear $@
 	_zsh_autosuggest_highlight_apply
 }
 

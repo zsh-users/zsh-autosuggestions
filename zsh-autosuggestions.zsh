@@ -160,9 +160,9 @@ _zsh_autosuggest_bind_widget() {
 	# Set up widget to call $autosuggest_function if it exists
 	# Otherwise just call the original widget
 	if [ -n "$autosuggest_function" ]; then;
-		action=$autosuggest_function;
+		action="$autosuggest_function \$@";
 	else;
-		action="zle $prefix$widget \$@"
+		action="zle $prefix$widget -- \$@"
 	fi
 
 	# Create new function for the widget that highlights and calls the action
@@ -198,10 +198,10 @@ _zsh_autosuggest_bind_widgets() {
 
 # Given the name of a widget, invoke the original we saved, if it exists
 _zsh_autosuggest_invoke_original_widget() {
-	local original_widget_name="$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX$1"
+	local original_widget_name="$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX$WIDGET"
 
 	if [ $widgets[$original_widget_name] ]; then
-		zle $original_widget_name
+		zle $original_widget_name -- $@
 	fi
 }
 
@@ -236,13 +236,13 @@ _zsh_autosuggest_clear() {
 	# Remove the suggestion
 	unset POSTDISPLAY
 
-	_zsh_autosuggest_invoke_original_widget $WIDGET
+	_zsh_autosuggest_invoke_original_widget $@
 }
 
 # Modify the buffer and get a new suggestion
 _zsh_autosuggest_modify() {
 	# Original widget modifies the buffer
-	_zsh_autosuggest_invoke_original_widget $WIDGET
+	_zsh_autosuggest_invoke_original_widget $@
 
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion
@@ -272,7 +272,7 @@ _zsh_autosuggest_accept() {
 		CURSOR=${#BUFFER}
 	fi
 
-	_zsh_autosuggest_invoke_original_widget $WIDGET
+	_zsh_autosuggest_invoke_original_widget $@
 }
 
 # Partially accept the suggestion
@@ -284,7 +284,7 @@ _zsh_autosuggest_partial_accept() {
 	BUFFER="$BUFFER$POSTDISPLAY"
 
 	# Original widget moves the cursor
-	_zsh_autosuggest_invoke_original_widget $WIDGET
+	_zsh_autosuggest_invoke_original_widget $@
 
 	# If we've moved past the end of the original buffer
 	if [ $CURSOR -gt $#original_buffer ]; then
@@ -301,13 +301,13 @@ _zsh_autosuggest_partial_accept() {
 
 _zsh_autosuggest_widget_accept() {
 	_zsh_autosuggest_highlight_reset
-	_zsh_autosuggest_accept
+	_zsh_autosuggest_accept $@
 	_zsh_autosuggest_highlight_apply
 }
 
 _zsh_autosuggest_widget_clear() {
 	_zsh_autosuggest_highlight_reset
-	_zsh_autosuggest_clear
+	_zsh_autosuggest_clear $@
 	_zsh_autosuggest_highlight_apply
 }
 
