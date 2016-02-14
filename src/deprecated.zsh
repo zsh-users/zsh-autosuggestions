@@ -1,7 +1,7 @@
 
-#-------------------------------------#
-# Handle Deprecated Variables/Widgets #
-#-------------------------------------#
+#--------------------------------------------------------------------#
+# Handle Deprecated Variables/Widgets                                #
+#--------------------------------------------------------------------#
 
 unset _ZSH_AUTOSUGGEST_DEPRECATED_START_WIDGET_WARNING_SHOWN
 

@@ -1,7 +1,7 @@
 
-#------------#
-# Suggestion #
-#------------#
+#--------------------------------------------------------------------#
+# Suggestion                                                         #
+#--------------------------------------------------------------------#
 
 # Get a suggestion from history that matches a given prefix
 _zsh_autosuggest_suggestion() {

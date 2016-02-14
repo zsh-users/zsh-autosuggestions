@@ -1,7 +1,7 @@
 
-#--------------------------------#
-# Global Configuration Variables #
-#--------------------------------#
+#--------------------------------------------------------------------#
+# Global Configuration Variables                                     #
+#--------------------------------------------------------------------#
 
 # Color to use when highlighting suggestion
 # Uses format of `region_highlight`

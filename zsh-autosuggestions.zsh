@@ -25,9 +25,9 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-#--------------------------------#
-# Global Configuration Variables #
-#--------------------------------#
+#--------------------------------------------------------------------#
+# Global Configuration Variables                                     #
+#--------------------------------------------------------------------#
 
 # Color to use when highlighting suggestion
 # Uses format of `region_highlight`
@@ -86,9 +86,9 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
 	vi-forward-blank-word-end
 )
 
-#-------------------------------------#
-# Handle Deprecated Variables/Widgets #
-#-------------------------------------#
+#--------------------------------------------------------------------#
+# Handle Deprecated Variables/Widgets                                #
+#--------------------------------------------------------------------#
 
 unset _ZSH_AUTOSUGGEST_DEPRECATED_START_WIDGET_WARNING_SHOWN
 
@@ -125,9 +125,9 @@ _zsh_autosuggest_deprecated_start_widget() {
 
 zle -N autosuggest-start _zsh_autosuggest_deprecated_start_widget
 
-#----------------#
-# Widget Helpers #
-#----------------#
+#--------------------------------------------------------------------#
+# Widget Helpers                                                     #
+#--------------------------------------------------------------------#
 
 # Bind a single widget to an autosuggest widget, saving a reference to the original widget
 _zsh_autosuggest_bind_widget() {
@@ -205,9 +205,9 @@ _zsh_autosuggest_invoke_original_widget() {
 	fi
 }
 
-#--------------#
-# Highlighting #
-#--------------#
+#--------------------------------------------------------------------#
+# Highlighting                                                       #
+#--------------------------------------------------------------------#
 
 # If there was a highlight, remove it
 _zsh_autosuggest_highlight_reset() {
@@ -227,9 +227,9 @@ _zsh_autosuggest_highlight_apply() {
 	fi
 }
 
-#------------------------------------#
-# Autosuggest Widget Implementations #
-#------------------------------------#
+#--------------------------------------------------------------------#
+# Autosuggest Widget Implementations                                 #
+#--------------------------------------------------------------------#
 
 # Clear the suggestion
 _zsh_autosuggest_clear() {
@@ -314,9 +314,9 @@ _zsh_autosuggest_widget_clear() {
 zle -N autosuggest-accept _zsh_autosuggest_widget_accept
 zle -N autosuggest-clear _zsh_autosuggest_widget_clear
 
-#------------#
-# Suggestion #
-#------------#
+#--------------------------------------------------------------------#
+# Suggestion                                                         #
+#--------------------------------------------------------------------#
 
 # Get a suggestion from history that matches a given prefix
 _zsh_autosuggest_suggestion() {
@@ -333,9 +333,9 @@ _zsh_autosuggest_suggestion() {
 	echo ${history_matches[1]}
 }
 
-#-------#
-# Start #
-#-------#
+#--------------------------------------------------------------------#
+# Start                                                              #
+#--------------------------------------------------------------------#
 
 # Start the autosuggestion widgets
 _zsh_autosuggest_start() {

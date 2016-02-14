@@ -1,7 +1,7 @@
 
-#----------------#
-# Widget Helpers #
-#----------------#
+#--------------------------------------------------------------------#
+# Widget Helpers                                                     #
+#--------------------------------------------------------------------#
 
 # Bind a single widget to an autosuggest widget, saving a reference to the original widget
 _zsh_autosuggest_bind_widget() {
