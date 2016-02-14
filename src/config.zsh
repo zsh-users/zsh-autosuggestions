@@ -22,27 +22,6 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
 	accept-line
 )
 
-# Widgets that modify the suggestion
-ZSH_AUTOSUGGEST_MODIFY_WIDGETS=(
-	list-choices
-	complete-word
-	menu-complete
-	menu-expand-or-complete
-	reverse-menu-complete
-	expand-or-complete
-	expand-or-complete-prefix
-	self-insert
-	magic-space
-	bracketed-paste
-	expand-cmd-path
-	accept-and-menu-complete
-	backward-delete-char
-	vi-backward-delete-char
-	delete-char
-	vi-delete-char
-	delete-char-or-list
-)
-
 # Widgets that accept the entire suggestion
 ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
 	forward-char

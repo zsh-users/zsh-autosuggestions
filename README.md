@@ -69,9 +69,10 @@ Set `ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE` to configure the style that the suggestion
 This plugin works by triggering custom behavior when certain [zle widgets](http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Zle-Widgets) are invoked. You can add and remove widgets from these arrays to change the behavior of this plugin:
 
 - `ZSH_AUTOSUGGEST_CLEAR_WIDGETS`: Widgets in this array will clear the suggestion when invoked.
-- `ZSH_AUTOSUGGEST_MODIFY_WIDGETS`: Widgets in this array will modify the buffer and fetch a new suggestion when invoked.
 - `ZSH_AUTOSUGGEST_ACCEPT_WIDGETS`: Widgets in this array will accept the suggestion when invoked.
 - `ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS`: Widgets in this array will partially accept the suggestion when invoked.
+
+Widgets not in any of these lists will update the suggestion when invoked.
 
 **Note:** A widget shouldn't belong to more than one of the above arrays.
 

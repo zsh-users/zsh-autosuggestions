@@ -71,17 +71,13 @@ _zsh_autosuggest_partial_accept() {
 	fi
 }
 
-_zsh_autosuggest_widget_accept() {
-	_zsh_autosuggest_highlight_reset
-	_zsh_autosuggest_accept $@
-	_zsh_autosuggest_highlight_apply
-}
-
-_zsh_autosuggest_widget_clear() {
-	_zsh_autosuggest_highlight_reset
-	_zsh_autosuggest_clear $@
-	_zsh_autosuggest_highlight_apply
-}
+for action in clear modify accept partial_accept; do
+	eval "_zsh_autosuggest_widget_$action() {
+		_zsh_autosuggest_highlight_reset
+		_zsh_autosuggest_$action \$@
+		_zsh_autosuggest_highlight_apply
+	}"
+done
 
 zle -N autosuggest-accept _zsh_autosuggest_widget_accept
 zle -N autosuggest-clear _zsh_autosuggest_widget_clear

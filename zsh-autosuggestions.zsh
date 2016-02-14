@@ -48,27 +48,6 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
 	accept-line
 )
 
-# Widgets that modify the suggestion
-ZSH_AUTOSUGGEST_MODIFY_WIDGETS=(
-	list-choices
-	complete-word
-	menu-complete
-	menu-expand-or-complete
-	reverse-menu-complete
-	expand-or-complete
-	expand-or-complete-prefix
-	self-insert
-	magic-space
-	bracketed-paste
-	expand-cmd-path
-	accept-and-menu-complete
-	backward-delete-char
-	vi-backward-delete-char
-	delete-char
-	vi-delete-char
-	delete-char-or-list
-)
-
 # Widgets that accept the entire suggestion
 ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
 	forward-char
@@ -129,13 +108,13 @@ zle -N autosuggest-start _zsh_autosuggest_deprecated_start_widget
 # Bind a single widget to an autosuggest widget, saving a reference to the original widget
 _zsh_autosuggest_bind_widget() {
 	local widget=$1
-	local autosuggest_function=$2
+	local autosuggest_action=$2
 	local prefix=$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX
-	local action
 
+	# Save a reference to the original widget
 	case $widgets[$widget] in
 		# Already bound
-		user:_zsh_autosuggest_(bound|orig)_*);;
+		user:_zsh_autosuggest_(widget|orig)_*);;
 
 		# User-defined widget
 		user:*)
@@ -154,23 +133,8 @@ _zsh_autosuggest_bind_widget() {
 			;;
 	esac
 
-	# Set up widget to call $autosuggest_function if it exists
-	# Otherwise just call the original widget
-	if [ -n "$autosuggest_function" ]; then;
-		action="$autosuggest_function \$@";
-	else;
-		action="zle $prefix$widget -- \$@"
-	fi
-
-	# Create new function for the widget that highlights and calls the action
-	eval "_zsh_autosuggest_bound_$widget() {
-		_zsh_autosuggest_highlight_reset
-		$action
-		_zsh_autosuggest_highlight_apply
-	}"
-
 	# Create the bound widget
-	zle -N $widget _zsh_autosuggest_bound_$widget
+	zle -N $widget _zsh_autosuggest_widget_$autosuggest_action
 }
 
 # Map all configured widgets to the right autosuggest widgets
@@ -179,16 +143,15 @@ _zsh_autosuggest_bind_widgets() {
 
 	# Find every widget we might want to bind and bind it appropriately
 	for widget in ${${(f)"$(builtin zle -la)"}:#(.*|_*|orig-*|autosuggest-*|$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX*|zle-line-*|run-help|which-command|beep|set-local-history|yank)}; do
-		if [ ${ZSH_AUTOSUGGEST_MODIFY_WIDGETS[(r)$widget]} ]; then
-			_zsh_autosuggest_bind_widget $widget _zsh_autosuggest_modify
-		elif [ ${ZSH_AUTOSUGGEST_CLEAR_WIDGETS[(r)$widget]} ]; then
-			_zsh_autosuggest_bind_widget $widget _zsh_autosuggest_clear
+		if [ ${ZSH_AUTOSUGGEST_CLEAR_WIDGETS[(r)$widget]} ]; then
+			_zsh_autosuggest_bind_widget $widget clear
 		elif [ ${ZSH_AUTOSUGGEST_ACCEPT_WIDGETS[(r)$widget]} ]; then
-			_zsh_autosuggest_bind_widget $widget _zsh_autosuggest_accept
+			_zsh_autosuggest_bind_widget $widget accept
 		elif [ ${ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS[(r)$widget]} ]; then
-			_zsh_autosuggest_bind_widget $widget _zsh_autosuggest_partial_accept
+			_zsh_autosuggest_bind_widget $widget partial_accept
 		else
-			_zsh_autosuggest_bind_widget $widget
+			# Assume any unspecified widget might modify the buffer
+			_zsh_autosuggest_bind_widget $widget modify
 		fi
 	done
 }
@@ -296,17 +259,13 @@ _zsh_autosuggest_partial_accept() {
 	fi
 }
 
-_zsh_autosuggest_widget_accept() {
-	_zsh_autosuggest_highlight_reset
-	_zsh_autosuggest_accept $@
-	_zsh_autosuggest_highlight_apply
-}
-
-_zsh_autosuggest_widget_clear() {
-	_zsh_autosuggest_highlight_reset
-	_zsh_autosuggest_clear $@
-	_zsh_autosuggest_highlight_apply
-}
+for action in clear modify accept partial_accept; do
+	eval "_zsh_autosuggest_widget_$action() {
+		_zsh_autosuggest_highlight_reset
+		_zsh_autosuggest_$action \$@
+		_zsh_autosuggest_highlight_apply
+	}"
+done
 
 zle -N autosuggest-accept _zsh_autosuggest_widget_accept
 zle -N autosuggest-clear _zsh_autosuggest_widget_clear
