@@ -38,7 +38,7 @@ _zsh_autosuggest_bind_widget() {
 	# zle without the `-w` flag (e.g. `zle self-insert` instead of
 	# `zle self-insert -w`).
 	eval "_zsh_autosuggest_bound_$widget() {
-		_zsh_autosuggest_widget_$autosuggest_action $prefix$widget $@
+		_zsh_autosuggest_widget_$autosuggest_action $prefix$widget \$@
 	}"
 
 	# Create the bound widget
