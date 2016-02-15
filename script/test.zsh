@@ -85,7 +85,7 @@ testWidgetFunctionClear() {
 	BUFFER="ec"
 	POSTDISPLAY="ho hello"
 
-	_zsh_autosuggest_clear
+	_zsh_autosuggest_clear "original-widget"
 
 	assertEquals \
 		"BUFFER was modified" \
@@ -109,7 +109,7 @@ testWidgetFunctionModify() {
 		_zsh_autosuggest_suggestion \
 		"echo hello"
 
-	_zsh_autosuggest_modify
+	_zsh_autosuggest_modify "original-widget"
 
 	assertTrue \
 		"original widget not invoked" \
@@ -136,7 +136,7 @@ testWidgetFunctionAcceptCursorAtEnd() {
 
 	stub _zsh_autosuggest_invoke_original_widget
 
-	_zsh_autosuggest_accept
+	_zsh_autosuggest_accept "original-widget"
 
 	assertTrue \
 		"original widget not invoked" \
@@ -160,7 +160,7 @@ testWidgetFunctionAcceptCursorNotAtEnd() {
 
 	stub _zsh_autosuggest_invoke_original_widget
 
-	_zsh_autosuggest_accept
+	_zsh_autosuggest_accept "original-widget"
 
 	assertTrue \
 		"original widget not invoked" \
@@ -186,7 +186,7 @@ testWidgetFunctionPartialAcceptCursorMovesOutOfBuffer() {
 		_zsh_autosuggest_invoke_original_widget \
 		'CURSOR=5; LBUFFER="echo "; RBUFFER="hello"'
 
-	_zsh_autosuggest_partial_accept
+	_zsh_autosuggest_partial_accept "original-widget"
 
 	assertTrue \
 		"original widget not invoked" \
@@ -212,7 +212,7 @@ testWidgetFunctionPartialAcceptCursorStaysInBuffer() {
 		_zsh_autosuggest_invoke_original_widget \
 		'CURSOR=5; LBUFFER="echo "; RBUFFER="hello"'
 
-	_zsh_autosuggest_partial_accept
+	_zsh_autosuggest_partial_accept "original-widget"
 
 	assertTrue \
 		"original widget not invoked" \
@@ -236,7 +236,7 @@ testWidgetAccept() {
 
 	# Call the function pointed to by the widget since we can't call
 	# the widget itself when zle is not active
-	${widgets[autosuggest-accept]#*:}
+	${widgets[autosuggest-accept]#*:} "original-widget"
 
 	assertTrue \
 		"autosuggest-accept widget does not exist" \
@@ -262,7 +262,7 @@ testWidgetClear() {
 
 	# Call the function pointed to by the widget since we can't call
 	# the widget itself when zle is not active
-	${widgets[autosuggest-clear]#*:}
+	${widgets[autosuggest-clear]#*:} "original-widget"
 
 	assertTrue \
 		"autosuggest-clear widget does not exist" \

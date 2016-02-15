@@ -114,7 +114,7 @@ _zsh_autosuggest_bind_widget() {
 	# Save a reference to the original widget
 	case $widgets[$widget] in
 		# Already bound
-		user:_zsh_autosuggest_(widget|orig)_*);;
+		user:_zsh_autosuggest_(bound|orig)_*);;
 
 		# User-defined widget
 		user:*)
@@ -133,8 +133,18 @@ _zsh_autosuggest_bind_widget() {
 			;;
 	esac
 
+	# Pass the original widget's name explicitly into the autosuggest
+	# function. Use this passed in widget name to call the original
+	# widget instead of relying on the $WIDGET variable being set
+	# correctly. $WIDGET cannot be trusted because other plugins call
+	# zle without the `-w` flag (e.g. `zle self-insert` instead of
+	# `zle self-insert -w`).
+	eval "_zsh_autosuggest_bound_$widget() {
+		_zsh_autosuggest_widget_$autosuggest_action $prefix$widget $@
+	}"
+
 	# Create the bound widget
-	zle -N $widget _zsh_autosuggest_widget_$autosuggest_action
+	zle -N $widget _zsh_autosuggest_bound_$widget
 }
 
 # Map all configured widgets to the right autosuggest widgets
@@ -156,9 +166,11 @@ _zsh_autosuggest_bind_widgets() {
 	done
 }
 
-# Given the name of a widget, invoke the original we saved, if it exists
+# Given the name of an original widget and args, invoke it, if it exists
 _zsh_autosuggest_invoke_original_widget() {
-	local original_widget_name="$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX$WIDGET"
+	local original_widget_name=$1
+
+	shift
 
 	if [ $widgets[$original_widget_name] ]; then
 		zle $original_widget_name -- $@

@@ -40,8 +40,6 @@ It suggests commands as you type, based on command history.
 
 3. Start a new terminal session.
 
-**Note:** There is an open issue ([#102](https://github.com/tarruda/zsh-autosuggestions/issues/102)) when using this plugin with `bracketed-paste-magic`, which is enabled by default by Oh My Zsh. See the comments in that issue for a workaround.
-
 
 ## Usage
 
@@ -95,29 +93,10 @@ bindkey '^ ' autosuggest-accept
 
 ### [`zsh-history-substring-search`](https://github.com/zsh-users/zsh-history-substring-search)
 
-When the buffer is empty and one of the `history-substring-search-up/down` widgets is invoked, it will call the `up/down-line-or-history` widget. If the `up/down-line-or-history` widgets are in `ZSH_AUTOSUGGEST_CLEAR_WIDGETS` (the list of widgets that clear the suggestion), this can create an infinite recursion, crashing the shell session.
-
-For best results, you'll want to remove `up-line-or-history` and `down-line-or-history` from `ZSH_AUTOSUGGEST_CLEAR_WIDGETS`:
-
-```
-# Remove *-line-or-history widgets from list of widgets that clear the autosuggestion to avoid conflict with history-substring-search-* widgets
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
-```
-
-Additionally, the `history-substring-search-up` and `history-substring-search-down` widgets are not bound by default. You'll probably want to add them to `ZSH_AUTOSUGGEST_CLEAR_WIDGETS` so that the suggestion will be cleared when you start searching through history:
+The `history-substring-search-up` and `history-substring-search-down` widgets are not bound by default. You'll probably want to add them to `ZSH_AUTOSUGGEST_CLEAR_WIDGETS` so that the suggestion will be cleared when you start searching through history:
 
 ```sh
 # Add history-substring-search-* widgets to list of widgets that clear the autosuggestion
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
-```
-
-For example:
-
-```sh
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/Code/zsh-history-substring-search/zsh-history-substring-search.zsh
-
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
 ```
 
