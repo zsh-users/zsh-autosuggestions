@@ -10,5 +10,10 @@ _zsh_autosuggest_suggestion() {
 	# Escape the prefix (requires EXTENDED_GLOB)
 	local prefix="${1//(#m)[\][()|\\*?#<>~^]/\\$MATCH}"
 
-	fc -ln -m "$prefix*" 2>/dev/null | tail -1
+	# Get all history items (reversed) that match pattern $prefix*
+	local history_matches
+	history_matches=(${(j:\0:s:\0:)history[(R)$prefix*]})
+
+	# Echo the first item that matches
+	echo "$history_matches[1]"
 }
