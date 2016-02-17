@@ -4,6 +4,8 @@ _[Fish](http://fishshell.com/)-like fast/unobtrusive autosuggestions for zsh._
 
 It suggests commands as you type, based on command history.
 
+[![asciicast](https://asciinema.org/a/36578.png)](https://asciinema.org/a/36578)
+
 
 ## Installation
 
