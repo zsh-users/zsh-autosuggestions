@@ -66,6 +66,9 @@ _zsh_autosuggest_bind_widgets() {
 
 # Given the name of an original widget and args, invoke it, if it exists
 _zsh_autosuggest_invoke_original_widget() {
+	# Do nothing unless called with at least one arg
+	[ $# -gt 0 ] || return
+
 	local original_widget_name=$1
 
 	shift
