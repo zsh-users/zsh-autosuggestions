@@ -47,6 +47,17 @@ _zsh_autosuggest_accept() {
 	_zsh_autosuggest_invoke_original_widget $@
 }
 
+# Accept the entire suggestion and execute it
+_zsh_autosuggest_execute() {
+	# Add the suggestion to the buffer
+	BUFFER="$BUFFER$POSTDISPLAY"
+
+	# Remove the suggestion
+	unset POSTDISPLAY
+
+	zle .accept-line
+}
+
 # Partially accept the suggestion
 _zsh_autosuggest_partial_accept() {
 	# Save the contents of the buffer so we can restore later if needed
@@ -71,7 +82,7 @@ _zsh_autosuggest_partial_accept() {
 	fi
 }
 
-for action in clear modify accept partial_accept; do
+for action in clear modify accept partial_accept execute; do
 	eval "_zsh_autosuggest_widget_$action() {
 		_zsh_autosuggest_highlight_reset
 		_zsh_autosuggest_$action \$@
@@ -81,3 +92,4 @@ done
 
 zle -N autosuggest-accept _zsh_autosuggest_widget_accept
 zle -N autosuggest-clear _zsh_autosuggest_widget_clear
+zle -N autosuggest-execute _zsh_autosuggest_widget_execute

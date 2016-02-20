@@ -30,6 +30,10 @@ ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
 	vi-end-of-line
 )
 
+# Widgets that accept the entire suggestion and execute it
+ZSH_AUTOSUGGEST_EXECUTE_WIDGETS=(
+)
+
 # Widgets that accept the suggestion as far as the cursor moves
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
 	forward-word
