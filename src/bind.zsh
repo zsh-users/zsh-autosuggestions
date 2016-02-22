@@ -55,6 +55,8 @@ _zsh_autosuggest_bind_widgets() {
 			_zsh_autosuggest_bind_widget $widget clear
 		elif [ ${ZSH_AUTOSUGGEST_ACCEPT_WIDGETS[(r)$widget]} ]; then
 			_zsh_autosuggest_bind_widget $widget accept
+		elif [ ${ZSH_AUTOSUGGEST_EXECUTE_WIDGETS[(r)$widget]} ]; then
+			_zsh_autosuggest_bind_widget $widget execute
 		elif [ ${ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS[(r)$widget]} ]; then
 			_zsh_autosuggest_bind_widget $widget partial_accept
 		else

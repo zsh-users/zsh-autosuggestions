@@ -69,6 +69,7 @@ This plugin works by triggering custom behavior when certain [zle widgets](http:
 
 - `ZSH_AUTOSUGGEST_CLEAR_WIDGETS`: Widgets in this array will clear the suggestion when invoked.
 - `ZSH_AUTOSUGGEST_ACCEPT_WIDGETS`: Widgets in this array will accept the suggestion when invoked.
+- `ZSH_AUTOSUGGEST_EXECUTE_WIDGETS`: Widgets in this array will execute the suggestion when invoked.
 - `ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS`: Widgets in this array will partially accept the suggestion when invoked.
 
 Widgets not in any of these lists will update the suggestion when invoked.
@@ -78,10 +79,11 @@ Widgets not in any of these lists will update the suggestion when invoked.
 
 ### Key Bindings
 
-This plugin provides two widgets that you can use with `bindkey`:
+This plugin provides three widgets that you can use with `bindkey`:
 
 1. `autosuggest-accept`: Accepts the current suggestion.
-2. `autosuggest-clear`: Clears the current suggestion.
+2. `autosuggest-execute`: Accepts and executes the current suggestion.
+3. `autosuggest-clear`: Clears the current suggestion.
 
 For example, this would bind <kbd>ctrl</kbd> + <kbd>space</kbd> to accept the current suggestion.
 
