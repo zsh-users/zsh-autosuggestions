@@ -177,6 +177,29 @@ testWidgetFunctionAcceptCursorNotAtEnd() {
 		"$POSTDISPLAY"
 }
 
+testWidgetFunctionExecute() {
+	BUFFER="ec"
+	POSTDISPLAY="ho hello"
+
+	stub _zsh_autosuggest_invoke_original_widget
+
+	_zsh_autosuggest_execute
+
+	assertTrue \
+		"accept-line not invoked" \
+		"stub_called_with _zsh_autosuggest_invoke_original_widget 'accept-line'"
+
+	assertEquals \
+		"BUFFER was not modified" \
+		"echo hello" \
+		"$BUFFER"
+
+	assertEquals \
+		"POSTDISPLAY was not cleared" \
+		"" \
+		"$POSTDISPLAY"
+}
+
 testWidgetFunctionPartialAcceptCursorMovesOutOfBuffer() {
 	BUFFER="ec"
 	POSTDISPLAY="ho hello"
@@ -275,6 +298,32 @@ testWidgetClear() {
 	assertTrue \
 		"widget function was not called" \
 		"stub_called _zsh_autosuggest_clear"
+
+	assertTrue \
+		"highlight_apply was not called" \
+		"stub_called _zsh_autosuggest_highlight_apply"
+}
+
+testWidgetExecute() {
+	stub _zsh_autosuggest_highlight_reset
+	stub _zsh_autosuggest_execute
+	stub _zsh_autosuggest_highlight_apply
+
+	# Call the function pointed to by the widget since we can't call
+	# the widget itself when zle is not active
+	${widgets[autosuggest-execute]#*:} "original-widget"
+
+	assertTrue \
+		"autosuggest-execute widget does not exist" \
+		"zle -l autosuggest-execute"
+
+	assertTrue \
+		"highlight_reset was not called" \
+		"stub_called _zsh_autosuggest_highlight_reset"
+
+	assertTrue \
+		"widget function was not called" \
+		"stub_called _zsh_autosuggest_execute"
 
 	assertTrue \
 		"highlight_apply was not called" \
