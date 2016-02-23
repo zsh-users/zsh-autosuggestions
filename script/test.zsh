@@ -102,7 +102,7 @@ testWidgetFunctionModify() {
 	POSTDISPLAY=""
 
 	stub_and_eval \
-		 _zsh_autosuggest_invoke_original_widget \
+		_zsh_autosuggest_invoke_original_widget \
 		'BUFFER+="e"'
 
 	stub_and_echo \
