@@ -55,7 +55,9 @@ _zsh_autosuggest_execute() {
 	# Remove the suggestion
 	unset POSTDISPLAY
 
-	zle .accept-line
+	# Call the original `accept-line` to handle syntax highlighting or
+	# other potential custom behavior
+	_zsh_autosuggest_invoke_original_widget "accept-line"
 }
 
 # Partially accept the suggestion
