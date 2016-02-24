@@ -281,6 +281,43 @@ testWidgetClear() {
 		"stub_called _zsh_autosuggest_highlight_apply"
 }
 
+testEscapeCommandPrefix() {
+	assertEquals \
+		"Did not escape single backslash" \
+		"\\\\" \
+		"$(_zsh_autosuggest_escape_command_prefix "\\")"
+
+	assertEquals \
+		"Did not escape two backslashes" \
+		"\\\\\\\\" \
+		"$(_zsh_autosuggest_escape_command_prefix "\\\\")"
+
+	assertEquals \
+		"Did not escape parentheses" \
+		"\\(\\)" \
+		"$(_zsh_autosuggest_escape_command_prefix "()")"
+
+	assertEquals \
+		"Did not escape square brackets" \
+		"\\[\\]" \
+		"$(_zsh_autosuggest_escape_command_prefix "[]")"
+
+	assertEquals \
+		"Did not escape pipe" \
+		"\\|" \
+		"$(_zsh_autosuggest_escape_command_prefix "|")"
+
+	assertEquals \
+		"Did not escape star" \
+		"\\*" \
+		"$(_zsh_autosuggest_escape_command_prefix "*")"
+
+	assertEquals \
+		"Did not escape question mark" \
+		"\\?" \
+		"$(_zsh_autosuggest_escape_command_prefix "?")"
+}
+
 # For zsh compatibility
 setopt shwordsplit
 SHUNIT_PARENT=$0

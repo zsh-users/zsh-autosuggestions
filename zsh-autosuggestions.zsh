@@ -291,17 +291,21 @@ zle -N autosuggest-clear _zsh_autosuggest_widget_clear
 
 # Get a suggestion from history that matches a given prefix
 _zsh_autosuggest_suggestion() {
-	setopt localoptions extendedglob
-
-	# Escape the prefix (requires EXTENDED_GLOB)
-	local prefix="${1//(#m)[\][()|\\*?#<>~^]/\\$MATCH}"
+	local prefix=$(_zsh_autosuggest_escape_command_prefix "$1")
 
 	# Get all history items (reversed) that match pattern $prefix*
 	local history_matches
 	history_matches=(${(j:\0:s:\0:)history[(R)$prefix*]})
 
 	# Echo the first item that matches
-	echo "$history_matches[1]"
+	echo -E "$history_matches[1]"
+}
+
+_zsh_autosuggest_escape_command_prefix() {
+	setopt localoptions EXTENDED_GLOB
+
+	# Escape special chars in the string (requires EXTENDED_GLOB)
+	echo -E "${1//(#m)[\\()\[\]|*?]/\\$MATCH}"
 }
 
 #--------------------------------------------------------------------#
