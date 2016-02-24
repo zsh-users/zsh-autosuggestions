@@ -74,6 +74,6 @@ _zsh_autosuggest_invoke_original_widget() {
 	shift
 
 	if [ $widgets[$original_widget_name] ]; then
-		zle $original_widget_name -w -- $@
+		zle $original_widget_name -- $@
 	fi
 }
