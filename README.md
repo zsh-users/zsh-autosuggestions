@@ -13,7 +13,7 @@ It suggests commands as you type, based on command history.
 1. Clone this repository somewhere on your machine. This guide will assume `~/.zsh/zsh-autosuggestions`.
 
     ```sh
-    git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+    git clone git://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
     ```
 
 2. Add the following to your `.zshrc`:
@@ -30,7 +30,7 @@ It suggests commands as you type, based on command history.
 1. Clone this repository into `$ZSH_CUSTOM/plugins` (by default `~/.oh-my-zsh/custom/plugins`)
 
     ```sh
-    git clone git://github.com/tarruda/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
+    git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
     ```
 
 2. Add the plugin to the list of plugins for Oh My Zsh to load:
@@ -104,7 +104,7 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-se
 
 ## Troubleshooting
 
-If you have a problem, please search through [the list of issues on GitHub](https://github.com/tarruda/zsh-autosuggestions/issues) to see if someone else has already reported it.
+If you have a problem, please search through [the list of issues on GitHub](https://github.com/zsh-users/zsh-autosuggestions/issues) to see if someone else has already reported it.
 
 
 ### Reporting an Issue
@@ -113,7 +113,7 @@ Before reporting an issue, please try temporarily disabling sections of your con
 
 When reporting an issue, please include:
 
-- The smallest, simplest `.zshrc` configuration that will reproduce the problem. See [this comment](https://github.com/tarruda/zsh-autosuggestions/issues/102#issuecomment-180944764) for a good example of what this means.
+- The smallest, simplest `.zshrc` configuration that will reproduce the problem. See [this comment](https://github.com/zsh-users/zsh-autosuggestions/issues/102#issuecomment-180944764) for a good example of what this means.
 - The version of zsh you're using (`zsh --version`)
 - Which operating system you're running
 

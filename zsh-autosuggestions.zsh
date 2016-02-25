@@ -1,5 +1,5 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
-# https://github.com/tarruda/zsh-autosuggestions
+# https://github.com/zsh-users/zsh-autosuggestions
 # v0.2.15
 # Copyright (c) 2013 Thiago de Arruda
 # Copyright (c) 2016 Eric Freese
@@ -92,7 +92,7 @@ _zsh_autosuggest_check_deprecated_config() {
 }
 
 _zsh_autosuggest_deprecated_start_widget() {
-	_zsh_autosuggest_deprecated_warning "The autosuggest-start widget is deprecated. For more info, see the README at https://github.com/tarruda/zsh-autosuggestions."
+	_zsh_autosuggest_deprecated_warning "The autosuggest-start widget is deprecated. For more info, see the README at https://github.com/zsh-users/zsh-autosuggestions."
 	zle -D autosuggest-start
 	eval "zle-line-init() {
 		$(echo $functions[${widgets[zle-line-init]#*:}] | sed -e 's/zle autosuggest-start//g')

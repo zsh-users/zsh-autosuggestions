@@ -26,7 +26,7 @@ _zsh_autosuggest_check_deprecated_config() {
 }
 
 _zsh_autosuggest_deprecated_start_widget() {
-	_zsh_autosuggest_deprecated_warning "The autosuggest-start widget is deprecated. For more info, see the README at https://github.com/tarruda/zsh-autosuggestions."
+	_zsh_autosuggest_deprecated_warning "The autosuggest-start widget is deprecated. For more info, see the README at https://github.com/zsh-users/zsh-autosuggestions."
 	zle -D autosuggest-start
 	eval "zle-line-init() {
 		$(echo $functions[${widgets[zle-line-init]#*:}] | sed -e 's/zle autosuggest-start//g')
