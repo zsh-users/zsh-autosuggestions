@@ -5,7 +5,7 @@
 
 # Get a suggestion from history that matches a given prefix
 _zsh_autosuggest_suggestion() {
-	local prefix=$(_zsh_autosuggest_escape_command_prefix "$1")
+	local prefix="$(_zsh_autosuggest_escape_command_prefix "$1")"
 
 	# Get all history items (reversed) that match pattern $prefix*
 	local history_matches
