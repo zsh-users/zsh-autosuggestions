@@ -3,11 +3,150 @@
 SCRIPT_DIR=$(dirname "$0")
 TEST_DIR=$SCRIPT_DIR/../test
 DIST_DIR=$SCRIPT_DIR/../
+TMPHIST_FILE=/tmp/zsh-autosuggestions-test-tmp-hist
 
 # Use stub.sh for stubbing/mocking
 source $TEST_DIR/stub-1.0.2.sh
 
 source $DIST_DIR/zsh-autosuggestions.zsh
+
+#--------------------------------------------------------------------#
+# Suggestions                                                        #
+#--------------------------------------------------------------------#
+
+testSuggestionSimple() {
+	HISTSIZE=0  # Clear history
+	HISTSIZE=10
+
+	cat > $TMPHIST_FILE <<-EOH
+		one
+		two
+		three
+		four
+		five
+	EOH
+	echo >> $TMPHIST_FILE
+
+	fc -R $TMPHIST_FILE
+
+	rm $TMPHIST_FILE
+
+	unset ZSH_AUTOSUGGEST_MATCH_PREV_CMD
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'garbage'" \
+		"" \
+		"$(_zsh_autosuggest_suggestion garbage)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'o'" \
+		"one" \
+		"$(_zsh_autosuggest_suggestion o)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 't'" \
+		"three" \
+		"$(_zsh_autosuggest_suggestion t)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'tw'" \
+		"two" \
+		"$(_zsh_autosuggest_suggestion tw)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'f'" \
+		"five" \
+		"$(_zsh_autosuggest_suggestion f)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'fo'" \
+		"four" \
+		"$(_zsh_autosuggest_suggestion fo)"
+}
+
+testSuggestionMatchPrevCmd() {
+	HISTSIZE=0  # Clear history
+	HISTSIZE=10
+
+	cat > $TMPHIST_FILE <<-EOH
+		one
+		two
+		three
+		four
+		five
+	EOH
+	echo >> $TMPHIST_FILE
+
+	fc -R $TMPHIST_FILE
+
+	rm $TMPHIST_FILE
+
+	ZSH_AUTOSUGGEST_MATCH_PREV_CMD=1
+
+	stub_and_echo _zsh_autosuggest_prev_cmd "one"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'garbage' after 'one'" \
+		"" \
+		"$(_zsh_autosuggest_suggestion garbage)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'o' after 'one'" \
+		"one" \
+		"$(_zsh_autosuggest_suggestion o)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 't' after 'one'" \
+		"two" \
+		"$(_zsh_autosuggest_suggestion t)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'th' after 'one'" \
+		"three" \
+		"$(_zsh_autosuggest_suggestion th)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'f' after 'one'" \
+		"five" \
+		"$(_zsh_autosuggest_suggestion f)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'fo' after 'one" \
+		"four" \
+		"$(_zsh_autosuggest_suggestion fo)"
+
+	stub_and_echo _zsh_autosuggest_prev_cmd "two"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'garbage' after 'two'" \
+		"" \
+		"$(_zsh_autosuggest_suggestion garbage)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'o' after 'two'" \
+		"one" \
+		"$(_zsh_autosuggest_suggestion o)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 't' after 'two'" \
+		"three" \
+		"$(_zsh_autosuggest_suggestion t)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'tw' after 'two'" \
+		"two" \
+		"$(_zsh_autosuggest_suggestion tw)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'f' after 'two'" \
+		"five" \
+		"$(_zsh_autosuggest_suggestion f)"
+
+	assertEquals \
+		"Did not pick correct suggestion for prefix 'fo' after 'two" \
+		"four" \
+		"$(_zsh_autosuggest_suggestion fo)"
+}
 
 #--------------------------------------------------------------------#
 # Highlighting                                                       #

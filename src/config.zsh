@@ -8,6 +8,18 @@
 # More info: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Zle-Widgets
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 
+# Set this to enable matching the history entry preceding the suggestion
+# against the previously executed command.
+# For example, if your have just executed:
+#   pwd
+#   ls foo
+#   ls bar
+#   pwd
+# And then you start typing 'ls', then the suggestion will be 'ls foo',
+# rather than 'ls bar', as your most recently executed command (pwd)
+# was succeeded by 'ls foo' on it's previous invocation.
+unset ZSH_AUTOSUGGEST_MATCH_PREV_CMD
+
 # Prefix to use when saving original versions of bound widgets
 ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 
