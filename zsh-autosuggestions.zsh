@@ -312,7 +312,8 @@ _zsh_autosuggest_suggestion() {
 
 	# Get all history event numbers (reversed) that correspond to history
 	# entries that match pattern $prefix*
-	local history_match_keys=(${(k)history[(R)$prefix*]})
+	local history_match_keys
+	history_match_keys=(${(k)history[(R)$prefix*]})
 
 	# By default we use the first history number (most recent history entry)
 	local history_key="$history_match_keys[1]"
@@ -320,7 +321,7 @@ _zsh_autosuggest_suggestion() {
 	# If matching on the previous command is enabled ...
 	if (( ${+ZSH_AUTOSUGGEST_MATCH_PREV_CMD} )); then
 		# Get the previously executed command
-		local prev_cmd=$(_zsh_autosuggest_prev_cmd)
+		local prev_cmd="$(_zsh_autosuggest_prev_cmd)"
 		prev_cmd="$(_zsh_autosuggest_escape_command_prefix $prev_cmd)"
 
 		# Iterate up to the first 200 history event numbers that match $prefix
