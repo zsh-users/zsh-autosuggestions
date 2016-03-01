@@ -91,18 +91,6 @@ bindkey '^ ' autosuggest-accept
 ```
 
 
-## Compatibility With Other ZLE Plugins
-
-### [`zsh-history-substring-search`](https://github.com/zsh-users/zsh-history-substring-search)
-
-The `history-substring-search-up` and `history-substring-search-down` widgets are not bound by default. You'll probably want to add them to `ZSH_AUTOSUGGEST_CLEAR_WIDGETS` so that the suggestion will be cleared when you start searching through history:
-
-```sh
-# Add history-substring-search-* widgets to list of widgets that clear the autosuggestion
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
-```
-
-
 ## Troubleshooting
 
 If you have a problem, please search through [the list of issues on GitHub](https://github.com/zsh-users/zsh-autosuggestions/issues) to see if someone else has already reported it.
