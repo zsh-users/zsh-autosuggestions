@@ -24,6 +24,9 @@ ALL_TARGETS := \
 	$(PLUGIN_TARGET) \
 	$(OH_MY_ZSH_LINK_TARGET)
 
+TEST_FILES := \
+	$(SCRIPT_DIR)/test*.zsh
+
 all: $(ALL_TARGETS)
 
 $(PLUGIN_TARGET): $(HEADER_FILES) $(SRC_FILES)
@@ -39,4 +42,7 @@ clean:
 
 .PHONY: test
 test: all
-	$(SCRIPT_DIR)/test.zsh
+	@for test_file in $(TEST_FILES); do \
+		echo "\nRunning $$test_file"; \
+		$$test_file; \
+	done
