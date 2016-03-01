@@ -19,3 +19,8 @@ _zsh_autosuggest_escape_command_prefix() {
 	# Escape special chars in the string (requires EXTENDED_GLOB)
 	echo -E "${1//(#m)[\\()\[\]|*?]/\\$MATCH}"
 }
+
+# Get the previously executed command (hookable for testing)
+_zsh_autosuggest_prev_command() {
+	echo -E "${history[$((HISTCMD-1))]}"
+}
