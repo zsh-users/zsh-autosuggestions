@@ -8,6 +8,7 @@ SRC_FILES := \
 	$(SRC_DIR)/highlight.zsh \
 	$(SRC_DIR)/widgets.zsh \
 	$(SRC_DIR)/suggestion.zsh \
+	$(SRC_DIR)/strategies/*.zsh \
 	$(SRC_DIR)/start.zsh
 
 HEADER_FILES := \

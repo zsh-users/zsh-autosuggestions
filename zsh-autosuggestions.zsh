@@ -37,6 +37,8 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 # Prefix to use when saving original versions of bound widgets
 ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 
+ZSH_AUTOSUGGEST_STRATEGY=default
+
 # Widgets that clear the suggestion
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
 	history-search-forward
@@ -291,16 +293,14 @@ zle -N autosuggest-clear _zsh_autosuggest_widget_clear
 # Suggestion                                                         #
 #--------------------------------------------------------------------#
 
-# Get a suggestion from history that matches a given prefix
+# Delegate to the selected strategy to determine a suggestion
 _zsh_autosuggest_suggestion() {
-	local prefix="$(_zsh_autosuggest_escape_command_prefix "$1")"
+	local prefix="$1"
+	local strategy_function="_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
 
-	# Get all history items (reversed) that match pattern $prefix*
-	local history_matches
-	history_matches=(${(j:\0:s:\0:)history[(R)$prefix*]})
-
-	# Echo the first item that matches
-	echo -E "$history_matches[1]"
+	if [ -n "$functions[$strategy_function]" ]; then
+		echo -E "$($strategy_function "$prefix")"
+	fi
 }
 
 _zsh_autosuggest_escape_command_prefix() {
@@ -308,6 +308,23 @@ _zsh_autosuggest_escape_command_prefix() {
 
 	# Escape special chars in the string (requires EXTENDED_GLOB)
 	echo -E "${1//(#m)[\\()\[\]|*?]/\\$MATCH}"
+}
+
+#--------------------------------------------------------------------#
+# Default Suggestion Strategy                                        #
+#--------------------------------------------------------------------#
+# Suggests the most recent history item that matches the given
+# prefix.
+#
+
+_zsh_autosuggest_strategy_default() {
+	local prefix="$(_zsh_autosuggest_escape_command_prefix "$1")"
+
+	# Get the hist number of the most recent history item that matches
+	local histkey="${${(k)history[(R)$prefix*]}[1]}"
+
+	# Echo the history entry
+	echo -E "${history[$histkey]}"
 }
 
 #--------------------------------------------------------------------#
