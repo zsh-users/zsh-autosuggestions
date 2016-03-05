@@ -1,0 +1,3 @@
+[submodule "vendor/shunit2"]
+	path = vendor/shunit2
+	url = https://github.com/kward/shunit2
