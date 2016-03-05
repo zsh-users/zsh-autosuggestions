@@ -13,7 +13,7 @@ _zsh_autosuggest_suggestion() {
 	fi
 }
 
-_zsh_autosuggest_escape_command_prefix() {
+_zsh_autosuggest_escape_command() {
 	setopt localoptions EXTENDED_GLOB
 
 	# Escape special chars in the string (requires EXTENDED_GLOB)
