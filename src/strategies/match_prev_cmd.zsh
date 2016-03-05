@@ -3,17 +3,18 @@
 # Match Previous Command Suggestion Strategy                         #
 #--------------------------------------------------------------------#
 # Suggests the most recent history item that matches the given
-# prefix, and whose preceding history item also matches the most
+# prefix and whose preceding history item also matches the most
 # recently executed command.
 #
-# For example, if your have just executed:
-#   pwd
-#   ls foo
-#   ls bar
-#   pwd
-# And then you start typing 'ls', then the suggestion will be 'ls foo',
-# rather than 'ls bar', as your most recently executed command (pwd)
-# was followed by 'ls foo' on it's previous invocation.
+# For example, suppose your history has the following entries:
+#   - pwd
+#   - ls foo
+#   - ls bar
+#   - pwd
+#
+# Given the history list above, when you type 'ls', the suggestion
+# will be 'ls foo' rather than 'ls bar' because your most recently
+# executed command (pwd) was previously followed by 'ls foo'.
 #
 
 _zsh_autosuggest_strategy_match_prev_cmd() {
