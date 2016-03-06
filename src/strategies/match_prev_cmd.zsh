@@ -30,7 +30,7 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 
 	# Get the previously executed command
 	local prev_cmd="$(_zsh_autosuggest_prev_command)"
-	prev_cmd="$(_zsh_autosuggest_escape_command $prev_cmd)"
+	prev_cmd="$(_zsh_autosuggest_escape_command "$prev_cmd")"
 
 	# Iterate up to the first 200 history event numbers that match $prefix
 	for key in "${(@)history_match_keys[1,200]}"; do
@@ -39,7 +39,7 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 
 		# See if the history entry preceding the suggestion matches the
 		# previous command, and use it if it does
-		if [[ "${history[$((key - 1))]}" == $prev_cmd ]]; then
+		if [[ "${history[$((key - 1))]}" == "$prev_cmd" ]]; then
 			histkey="$key"
 			break
 		fi

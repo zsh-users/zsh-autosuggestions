@@ -20,7 +20,7 @@ _zsh_autosuggest_escape_command() {
 	echo -E "${1//(#m)[\\()\[\]|*?]/\\$MATCH}"
 }
 
-# Get the previously executed command (hookable for testing)
+# Get the previously executed command
 _zsh_autosuggest_prev_command() {
 	echo -E "${history[$((HISTCMD-1))]}"
 }

@@ -181,7 +181,7 @@ _zsh_autosuggest_invoke_original_widget() {
 	# Do nothing unless called with at least one arg
 	[ $# -gt 0 ] || return
 
-	local original_widget_name=$1
+	local original_widget_name="$1"
 
 	shift
 
@@ -232,12 +232,12 @@ _zsh_autosuggest_modify() {
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion
 	if [ $#BUFFER -gt 0 ]; then
-		suggestion=$(_zsh_autosuggest_suggestion "$BUFFER")
+		suggestion="$(_zsh_autosuggest_suggestion "$BUFFER")"
 	fi
 
 	# Add the suggestion to the POSTDISPLAY
 	if [ -n "$suggestion" ]; then
-		POSTDISPLAY=${suggestion#$BUFFER}
+		POSTDISPLAY="${suggestion#$BUFFER}"
 	else
 		unset POSTDISPLAY
 	fi
@@ -276,7 +276,7 @@ _zsh_autosuggest_execute() {
 # Partially accept the suggestion
 _zsh_autosuggest_partial_accept() {
 	# Save the contents of the buffer so we can restore later if needed
-	local original_buffer=$BUFFER
+	local original_buffer="$BUFFER"
 
 	# Temporarily accept the suggestion.
 	BUFFER="$BUFFER$POSTDISPLAY"
@@ -287,13 +287,13 @@ _zsh_autosuggest_partial_accept() {
 	# If we've moved past the end of the original buffer
 	if [ $CURSOR -gt $#original_buffer ]; then
 		# Set POSTDISPLAY to text right of the cursor
-		POSTDISPLAY=$RBUFFER
+		POSTDISPLAY="$RBUFFER"
 
 		# Clip the buffer at the cursor
-		BUFFER=$LBUFFER
+		BUFFER="$LBUFFER"
 	else
 		# Restore the original buffer
-		BUFFER=$original_buffer
+		BUFFER="$original_buffer"
 	fi
 }
 
@@ -330,7 +330,7 @@ _zsh_autosuggest_escape_command() {
 	echo -E "${1//(#m)[\\()\[\]|*?]/\\$MATCH}"
 }
 
-# Get the previously executed command (hookable for testing)
+# Get the previously executed command
 _zsh_autosuggest_prev_command() {
 	echo -E "${history[$((HISTCMD-1))]}"
 }
@@ -345,11 +345,12 @@ _zsh_autosuggest_prev_command() {
 _zsh_autosuggest_strategy_default() {
 	local prefix="$(_zsh_autosuggest_escape_command "$1")"
 
-	# Get the hist number of the most recent history item that matches
-	local histkey="${${(@k)history[(R)$prefix*]}[1]}"
+	# Get the keys of the history items that match
+	local -a histkeys
+	histkeys=(${(k)history[(r)$prefix*]})
 
-	# Echo the history entry
-	echo -E "${history[$histkey]}"
+	# Echo the value of the first key
+	echo -E "${history[$histkeys[1]]}"
 }
 
 #--------------------------------------------------------------------#
@@ -383,7 +384,7 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 
 	# Get the previously executed command
 	local prev_cmd="$(_zsh_autosuggest_prev_command)"
-	prev_cmd="$(_zsh_autosuggest_escape_command $prev_cmd)"
+	prev_cmd="$(_zsh_autosuggest_escape_command "$prev_cmd")"
 
 	# Iterate up to the first 200 history event numbers that match $prefix
 	for key in "${(@)history_match_keys[1,200]}"; do
@@ -392,7 +393,7 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 
 		# See if the history entry preceding the suggestion matches the
 		# previous command, and use it if it does
-		if [[ "${history[$((key - 1))]}" == $prev_cmd ]]; then
+		if [[ "${history[$((key - 1))]}" == "$prev_cmd" ]]; then
 			histkey="$key"
 			break
 		fi

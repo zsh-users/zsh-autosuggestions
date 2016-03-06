@@ -19,12 +19,12 @@ _zsh_autosuggest_modify() {
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion
 	if [ $#BUFFER -gt 0 ]; then
-		suggestion=$(_zsh_autosuggest_suggestion "$BUFFER")
+		suggestion="$(_zsh_autosuggest_suggestion "$BUFFER")"
 	fi
 
 	# Add the suggestion to the POSTDISPLAY
 	if [ -n "$suggestion" ]; then
-		POSTDISPLAY=${suggestion#$BUFFER}
+		POSTDISPLAY="${suggestion#$BUFFER}"
 	else
 		unset POSTDISPLAY
 	fi
@@ -63,7 +63,7 @@ _zsh_autosuggest_execute() {
 # Partially accept the suggestion
 _zsh_autosuggest_partial_accept() {
 	# Save the contents of the buffer so we can restore later if needed
-	local original_buffer=$BUFFER
+	local original_buffer="$BUFFER"
 
 	# Temporarily accept the suggestion.
 	BUFFER="$BUFFER$POSTDISPLAY"
@@ -74,13 +74,13 @@ _zsh_autosuggest_partial_accept() {
 	# If we've moved past the end of the original buffer
 	if [ $CURSOR -gt $#original_buffer ]; then
 		# Set POSTDISPLAY to text right of the cursor
-		POSTDISPLAY=$RBUFFER
+		POSTDISPLAY="$RBUFFER"
 
 		# Clip the buffer at the cursor
-		BUFFER=$LBUFFER
+		BUFFER="$LBUFFER"
 	else
 		# Restore the original buffer
-		BUFFER=$original_buffer
+		BUFFER="$original_buffer"
 	fi
 }
 

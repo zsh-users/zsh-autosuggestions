@@ -9,9 +9,10 @@
 _zsh_autosuggest_strategy_default() {
 	local prefix="$(_zsh_autosuggest_escape_command "$1")"
 
-	# Get the hist number of the most recent history item that matches
-	local histkey="${${(@k)history[(R)$prefix*]}[1]}"
+	# Get the keys of the history items that match
+	local -a histkeys
+	histkeys=(${(k)history[(r)$prefix*]})
 
-	# Echo the history entry
-	echo -E "${history[$histkey]}"
+	# Echo the value of the first key
+	echo -E "${history[$histkeys[1]]}"
 }
