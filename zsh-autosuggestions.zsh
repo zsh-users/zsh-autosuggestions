@@ -205,6 +205,57 @@ _zsh_autosuggest_highlight_apply() {
 }
 
 #--------------------------------------------------------------------#
+# Suggestion                                                         #
+#--------------------------------------------------------------------#
+
+# Get a suggestion from history that matches a given prefix
+_zsh_autosuggest_suggestion() {
+	setopt localoptions EXTENDED_GLOB
+
+	# Escape special chars in the string (requires EXTENDED_GLOB)
+	local prefix="${@//(#m)[\\()\[\]|*?]/\\$MATCH}"
+	if [[ -o extended_history ]]; then
+		local -a recent=(${"${(f)$(cat $HISTFILE)}"#*;})
+	else
+		local -a recent=(${"${(f)$(cat $HISTFILE)}"})
+	fi
+	# Echo the first item that matches
+	echo -E ${recent[(R)$prefix*]}
+}
+
+_zle_synchronize_postdisplay() {
+	if [[ -n "$POSTDISPLAY_INTERNAL" && -n $BUFFER ]]; then
+		if [[ $POSTDISPLAY_INTERNAL == "$BUFFER"* ]]; then
+			POSTDISPLAY=${POSTDISPLAY_INTERNAL#$BUFFER}
+		else
+			# The POSTDISPLAY is out-of-date so recompute it
+			unset POSTDISPLAY
+			async_job suggest _zsh_autosuggest_suggestion $BUFFER
+		fi
+	else
+		unset POSTDISPLAY
+	fi
+
+	# Force the highlighting to take place immediately
+	_zsh_autosuggest_highlight_apply
+	zle -R
+}
+
+zle -N _zle_synchronize_postdisplay
+
+_zsh_autosuggest_callback() {
+	# Add the suggestion to the POSTDISPLAY proxy variable
+	# We can't modify ZLE variables in this callback, but
+	# We can through ZLE widgets.
+	POSTDISPLAY_INTERNAL=$3
+	zle _zle_synchronize_postdisplay
+}
+
+async_init
+async_start_worker suggest -u
+async_register_callback suggest _zsh_autosuggest_callback
+
+#--------------------------------------------------------------------#
 # Autosuggest Widget Implementations                                 #
 #--------------------------------------------------------------------#
 
@@ -223,22 +274,16 @@ _zsh_autosuggest_modify() {
 
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion
-	if [ $#BUFFER -gt 0 ]; then
-		suggestion=$(_zsh_autosuggest_suggestion "$BUFFER")
-	fi
-
-	# Add the suggestion to the POSTDISPLAY
-	if [ -n "$suggestion" ]; then
-		POSTDISPLAY=${suggestion#$BUFFER}
-	else
-		unset POSTDISPLAY
+	zle _zle_synchronize_postdisplay
+	if [[ -n $BUFFER ]]; then
+		async_job suggest _zsh_autosuggest_suggestion $BUFFER
 	fi
 }
 
 # Accept the entire suggestion
 _zsh_autosuggest_accept() {
 	# Only accept if the cursor is at the end of the buffer
-	if [ $CURSOR -eq $#BUFFER ]; then
+	if (( $CURSOR == $#BUFFER )); then
 		# Add the suggestion to the buffer
 		BUFFER="$BUFFER$POSTDISPLAY"
 
@@ -264,7 +309,7 @@ _zsh_autosuggest_partial_accept() {
 	_zsh_autosuggest_invoke_original_widget $@
 
 	# If we've moved past the end of the original buffer
-	if [ $CURSOR -gt $#original_buffer ]; then
+	if (( $CURSOR > $#original_buffer )); then
 		# Set POSTDISPLAY to text right of the cursor
 		POSTDISPLAY=$RBUFFER
 
@@ -286,29 +331,6 @@ done
 
 zle -N autosuggest-accept _zsh_autosuggest_widget_accept
 zle -N autosuggest-clear _zsh_autosuggest_widget_clear
-
-#--------------------------------------------------------------------#
-# Suggestion                                                         #
-#--------------------------------------------------------------------#
-
-# Get a suggestion from history that matches a given prefix
-_zsh_autosuggest_suggestion() {
-	local prefix="$(_zsh_autosuggest_escape_command_prefix "$1")"
-
-	# Get all history items (reversed) that match pattern $prefix*
-	local history_matches
-	history_matches=(${(j:\0:s:\0:)history[(R)$prefix*]})
-
-	# Echo the first item that matches
-	echo -E "$history_matches[1]"
-}
-
-_zsh_autosuggest_escape_command_prefix() {
-	setopt localoptions EXTENDED_GLOB
-
-	# Escape special chars in the string (requires EXTENDED_GLOB)
-	echo -E "${1//(#m)[\\()\[\]|*?]/\\$MATCH}"
-}
 
 #--------------------------------------------------------------------#
 # Start                                                              #
