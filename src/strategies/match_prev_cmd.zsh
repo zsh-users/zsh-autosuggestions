@@ -48,4 +48,3 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	# Echo the matched history entry
 	echo -E "$history[$histkey]"
 }
-
