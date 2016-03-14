@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-DIR=${0:a:h}
+DIR="${0:a:h}"
 ROOT_DIR="$DIR/.."
 TEST_DIR="$ROOT_DIR/test"
 
