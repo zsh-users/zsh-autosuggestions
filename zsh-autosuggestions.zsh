@@ -1,6 +1,6 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
 # https://github.com/zsh-users/zsh-autosuggestions
-# v0.2.17
+# v0.3.0
 # Copyright (c) 2013 Thiago de Arruda
 # Copyright (c) 2016 Eric Freese
 # 
