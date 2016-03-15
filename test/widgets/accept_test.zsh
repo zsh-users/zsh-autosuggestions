@@ -54,6 +54,56 @@ testCursorNotAtEnd() {
 		"$POSTDISPLAY"
 }
 
+testViCursorAtEnd() {
+	BUFFER='echo'
+	POSTDISPLAY=' hello'
+	CURSOR=3
+	KEYMAP='vicmd'
+
+	stub _zsh_autosuggest_invoke_original_widget
+
+	_zsh_autosuggest_accept 'original-widget'
+
+	assertTrue \
+		'original widget not invoked' \
+		'stub_called _zsh_autosuggest_invoke_original_widget'
+
+	assertEquals \
+		'BUFFER was not modified' \
+		'echo hello' \
+		"$BUFFER"
+
+	assertEquals \
+		'POSTDISPLAY was not cleared' \
+		'' \
+		"$POSTDISPLAY"
+}
+
+testViCursorNotAtEnd() {
+	BUFFER='echo'
+	POSTDISPLAY=' hello'
+	CURSOR=2
+	KEYMAP='vicmd'
+
+	stub _zsh_autosuggest_invoke_original_widget
+
+	_zsh_autosuggest_accept 'original-widget'
+
+	assertTrue \
+		'original widget not invoked' \
+		'stub_called _zsh_autosuggest_invoke_original_widget'
+
+	assertEquals \
+		'BUFFER was modified' \
+		'echo' \
+		"$BUFFER"
+
+	assertEquals \
+		'POSTDISPLAY was modified' \
+		' hello' \
+		"$POSTDISPLAY"
+}
+
 testWidget() {
 	stub _zsh_autosuggest_highlight_reset
 	stub _zsh_autosuggest_accept

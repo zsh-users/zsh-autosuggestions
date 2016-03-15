@@ -32,8 +32,16 @@ _zsh_autosuggest_modify() {
 
 # Accept the entire suggestion
 _zsh_autosuggest_accept() {
+	local -i max_cursor_pos=$#BUFFER
+
+	# When vicmd keymap is active, the cursor can't move all the way
+	# to the end of the buffer
+	if [ "$KEYMAP" = "vicmd" ]; then
+		max_cursor_pos=$((max_cursor_pos - 1))
+	fi
+
 	# Only accept if the cursor is at the end of the buffer
-	if [ $CURSOR -eq $#BUFFER ]; then
+	if [ $CURSOR -eq $max_cursor_pos ]; then
 		# Add the suggestion to the buffer
 		BUFFER="$BUFFER$POSTDISPLAY"
 
