@@ -47,7 +47,7 @@ fi
 local -i retval=0
 
 for suite in $tests; do
-	header "${suite#"$TEST_DIR"}"
+	header "${suite#"$ROOT_DIR/"}"
 	"$zsh_bin" -f "$suite" || retval=$?
 done
 
