@@ -6,6 +6,15 @@ oneTimeSetUp() {
 	source_autosuggestions
 }
 
+setUp() {
+	BUFFER=''
+	POSTDISPLAY=''
+}
+
+tearDown() {
+	restore _zsh_autosuggest_invoke_original_widget
+}
+
 testClear() {
 	BUFFER='ec'
 	POSTDISPLAY='ho hello'
@@ -46,6 +55,10 @@ testWidget() {
 	assertTrue \
 		'highlight_apply was not called' \
 		'stub_called _zsh_autosuggest_highlight_apply'
+
+	restore _zsh_autosuggest_highlight_reset
+	restore _zsh_autosuggest_clear
+	restore _zsh_autosuggest_highlight_apply
 }
 
 run_tests "$0"

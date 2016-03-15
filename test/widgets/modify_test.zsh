@@ -6,10 +6,17 @@ oneTimeSetUp() {
 	source_autosuggestions
 }
 
-testModify() {
+setUp() {
 	BUFFER=''
 	POSTDISPLAY=''
+}
 
+tearDown() {
+	restore _zsh_autosuggest_invoke_original_widget
+	restore _zsh_autosuggest_suggestion
+}
+
+testModify() {
 	stub_and_eval \
 		_zsh_autosuggest_invoke_original_widget \
 		'BUFFER+="e"'
@@ -34,8 +41,6 @@ testModify() {
 		'cho hello' \
 		"$POSTDISPLAY"
 
-	restore _zsh_autosuggest_invoke_original_widget
-	restore _zsh_autosuggest_suggestion
 }
 
 run_tests "$0"

@@ -6,6 +6,17 @@ oneTimeSetUp() {
 	source_autosuggestions
 }
 
+setUp() {
+	BUFFER=''
+	POSTDISPLAY=''
+	CURSOR=0
+	KEYMAP='main'
+}
+
+tearDown() {
+	restore _zsh_autosuggest_invoke_original_widget
+}
+
 testCursorAtEnd() {
 	BUFFER='echo'
 	POSTDISPLAY=' hello'
@@ -128,6 +139,10 @@ testWidget() {
 	assertTrue \
 		'highlight_apply was not called' \
 		'stub_called _zsh_autosuggest_highlight_apply'
+
+	restore _zsh_autosuggest_highlight_reset
+	restore _zsh_autosuggest_accept
+	restore _zsh_autosuggest_highlight_apply
 }
 
 run_tests "$0"

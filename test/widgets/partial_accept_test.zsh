@@ -6,6 +6,16 @@ oneTimeSetUp() {
 	source_autosuggestions
 }
 
+setUp() {
+	BUFFER=''
+	POSTDISPLAY=''
+	CURSOR=0
+}
+
+tearDown() {
+	restore _zsh_autosuggest_invoke_original_widget
+}
+
 testCursorMovesOutOfBuffer() {
 	BUFFER='ec'
 	POSTDISPLAY='ho hello'
