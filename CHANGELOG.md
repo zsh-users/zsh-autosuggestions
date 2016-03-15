@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.1
+
+- Fixes issue with `vi-next-char` not accepting suggestion (#137).
+- Fixes global variable warning when WARN_CREATE_GLOBAL option enabled (#133).
+- Split out a separate test file for each widget.
+
 ## v0.3.0
 
 - Adds `autosuggest-execute` widget (PR #124).
