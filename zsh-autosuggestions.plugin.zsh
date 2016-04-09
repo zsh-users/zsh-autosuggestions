@@ -1,1 +1,1 @@
-zsh-autosuggestions.zsh
+source $(dirname $0)/zsh-autosuggestions.zsh
