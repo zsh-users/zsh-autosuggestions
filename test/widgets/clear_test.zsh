@@ -31,6 +31,19 @@ testClear() {
 		"$POSTDISPLAY"
 }
 
+testRetval() {
+	stub_and_eval \
+		_zsh_autosuggest_invoke_original_widget \
+		'return 1'
+
+	_zsh_autosuggest_widget_clear 'original-widget'
+
+	assertEquals \
+		'Did not return correct value from original widget' \
+		'1' \
+		"$?"
+}
+
 testWidget() {
 	stub _zsh_autosuggest_highlight_reset
 	stub _zsh_autosuggest_clear

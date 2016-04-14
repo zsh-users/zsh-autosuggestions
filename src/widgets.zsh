@@ -13,8 +13,11 @@ _zsh_autosuggest_clear() {
 
 # Modify the buffer and get a new suggestion
 _zsh_autosuggest_modify() {
+	local -i retval
+
 	# Original widget modifies the buffer
 	_zsh_autosuggest_invoke_original_widget $@
+	retval=$?
 
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion
@@ -28,6 +31,8 @@ _zsh_autosuggest_modify() {
 	else
 		unset POSTDISPLAY
 	fi
+
+	return $retval
 }
 
 # Accept the entire suggestion
@@ -70,6 +75,8 @@ _zsh_autosuggest_execute() {
 
 # Partially accept the suggestion
 _zsh_autosuggest_partial_accept() {
+	local -i retval
+
 	# Save the contents of the buffer so we can restore later if needed
 	local original_buffer="$BUFFER"
 
@@ -78,6 +85,7 @@ _zsh_autosuggest_partial_accept() {
 
 	# Original widget moves the cursor
 	_zsh_autosuggest_invoke_original_widget $@
+	retval=$?
 
 	# If we've moved past the end of the original buffer
 	if [ $CURSOR -gt $#original_buffer ]; then
@@ -90,13 +98,22 @@ _zsh_autosuggest_partial_accept() {
 		# Restore the original buffer
 		BUFFER="$original_buffer"
 	fi
+
+	return $retval
 }
 
 for action in clear modify accept partial_accept execute; do
 	eval "_zsh_autosuggest_widget_$action() {
+		local -i retval
+
 		_zsh_autosuggest_highlight_reset
+
 		_zsh_autosuggest_$action \$@
+		retval=\$?
+
 		_zsh_autosuggest_highlight_apply
+
+		return \$retval
 	}"
 done
 
