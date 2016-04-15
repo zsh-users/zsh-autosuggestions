@@ -58,6 +58,7 @@ ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
 	end-of-line
 	vi-forward-char
 	vi-end-of-line
+	vi-add-eol
 )
 
 # Widgets that accept the entire suggestion and execute it
