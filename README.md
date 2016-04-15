@@ -148,7 +148,7 @@ Pull requests are welcome! If you send a pull request, please:
 
 Testing is performed with [`shunit2`](https://github.com/kward/shunit2) (v2.1.6). Documentation can be found [here](http://shunit2.googlecode.com/svn/trunk/source/2.1/doc/shunit2.html).
 
-The test script lives at `script/test.zsh`. To run the tests, run `make test`.
+The test script lives at `script/test_runner.zsh`. To run the tests, run `make test`.
 
 
 ## License
