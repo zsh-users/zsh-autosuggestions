@@ -1,5 +1,4 @@
 SRC_DIR    := ./src
-TEST_DIR   := ./script
 VENDOR_DIR := ./vendor
 
 SRC_FILES := \
@@ -31,9 +30,6 @@ STUB_SH := $(VENDOR_DIR)/stub.sh/stub.sh
 TEST_PREREQS := \
 	$(SHUNIT2) \
 	$(STUB_SH)
-
-TEST_FILES := \
-	$(TEST_DIR)/**/*.zsh
 
 all: $(ALL_TARGETS)
 
