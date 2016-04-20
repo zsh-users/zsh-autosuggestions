@@ -24,6 +24,7 @@
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
+zmodload zsh/datetime
 
 #--------------------------------------------------------------------#
 # Global Configuration Variables                                     #
@@ -72,6 +73,13 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
 	vi-forward-blank-word
 	vi-forward-blank-word-end
 )
+
+# EPOCH of the last changed widget call
+ZSH_AUTOSUGGEST_LAST_MODIFY_TIME=$EPOCHREALTIME
+
+# Lower bound for the time between changes that will cause autosuggest
+# to suspend suggestions for the current edit.
+ZSH_AUTOSUGGEST_CUTOFF_PERIOD=0.05
 
 #--------------------------------------------------------------------#
 # Handle Deprecated Variables/Widgets                                #
@@ -232,6 +240,14 @@ _zsh_autosuggest_clear() {
 _zsh_autosuggest_modify() {
 	# Original widget modifies the buffer
 	_zsh_autosuggest_invoke_original_widget $@
+
+    local time_passed=$(($EPOCHREALTIME - $ZSH_AUTOSUGGEST_LAST_MODIFY_TIME))
+
+    if (( $time_passed < $ZSH_AUTOSUGGEST_CUTOFF_PERIOD )); then
+        return 1
+    fi
+
+    ZSH_AUTOSUGGEST_LAST_MODIFY_TIME=$EPOCHREALTIME
 
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion

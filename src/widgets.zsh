@@ -16,6 +16,14 @@ _zsh_autosuggest_modify() {
 	# Original widget modifies the buffer
 	_zsh_autosuggest_invoke_original_widget $@
 
+    local time_passed=$(($EPOCHREALTIME - $ZSH_AUTOSUGGEST_LAST_MODIFY_TIME))
+
+    if (( $time_passed < $ZSH_AUTOSUGGEST_CUTOFF_PERIOD )); then
+        return 1
+    fi
+
+    ZSH_AUTOSUGGEST_LAST_MODIFY_TIME=$EPOCHREALTIME
+
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion
 	if [ $#BUFFER -gt 0 ]; then
