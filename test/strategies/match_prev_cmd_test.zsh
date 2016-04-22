@@ -55,64 +55,6 @@ testMostRecentMatch() {
 		'cd quux'
 }
 
-testBackslash() {
-	set_history <<-'EOF'
-		echo "hello\nworld"
-	EOF
-
-	assertSuggestion \
-		'echo "hello\' \
-		'echo "hello\nworld"'
-}
-
-testDoubleBackslash() {
-	set_history <<-'EOF'
-		echo "\\"
-	EOF
-
-	assertSuggestion \
-		'echo "\\' \
-		'echo "\\"'
-}
-
-testTilde() {
-	set_history <<-'EOF'
-		cd ~/something
-	EOF
-
-	assertSuggestion \
-		'cd' \
-		'cd ~/something'
-
-	assertSuggestion \
-		'cd ~' \
-		'cd ~/something'
-
-	assertSuggestion \
-		'cd ~/s' \
-		'cd ~/something'
-}
-
-testParentheses() {
-	set_history <<-'EOF'
-		echo "$(ls foo)"
-	EOF
-
-	assertSuggestion \
-		'echo "$(' \
-		'echo "$(ls foo)"'
-}
-
-testSquareBrackets() {
-	set_history <<-'EOF'
-		echo "$history[123]"
-	EOF
-
-	assertSuggestion \
-		'echo "$history[' \
-		'echo "$history[123]"'
-}
-
 testMatchMostRecentAfterPreviousCmd() {
 	set_history <<-'EOF'
 		echo what
