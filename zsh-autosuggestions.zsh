@@ -230,6 +230,8 @@ _zsh_autosuggest_clear() {
 
 # Modify the buffer and get a new suggestion
 _zsh_autosuggest_modify() {
+    POSTDISPLAY=""
+
 	# Original widget modifies the buffer
 	_zsh_autosuggest_invoke_original_widget $@
 
