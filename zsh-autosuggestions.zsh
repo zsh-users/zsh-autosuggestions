@@ -119,6 +119,10 @@ _zsh_autosuggest_bind_widget() {
 	local autosuggest_action=$2
 	local prefix=$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX
 
+	if zle -l $prefix$widget; then
+		return
+	fi
+
 	# Save a reference to the original widget
 	case $widgets[$widget] in
 		# Already bound
@@ -426,4 +430,5 @@ _zsh_autosuggest_start() {
 }
 
 autoload -Uz add-zsh-hook
+add-zsh-hook -d precmd _zsh_autosuggest_start
 add-zsh-hook precmd _zsh_autosuggest_start
