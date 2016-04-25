@@ -43,30 +43,4 @@ testEscapeCommand() {
 		"$(_zsh_autosuggest_escape_command '?')"
 }
 
-testPrevCommand() {
-	set_history <<-'EOF'
-		ls foo
-		ls bar
-		ls baz
-	EOF
-
-	assertEquals \
-		'Did not output the last command' \
-		'ls baz' \
-		"$(_zsh_autosuggest_prev_command)"
-
-	set_history <<-'EOF'
-		ls foo
-		ls bar
-		ls baz
-		ls quux
-		ls foobar
-	EOF
-
-	assertEquals \
-		'Did not output the last command' \
-		'ls foobar' \
-		"$(_zsh_autosuggest_prev_command)"
-}
-
 run_tests "$0"

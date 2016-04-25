@@ -18,7 +18,7 @@
 #
 
 _zsh_autosuggest_strategy_match_prev_cmd() {
-	local prefix="$(_zsh_autosuggest_escape_command "$1")"
+	local prefix="$1"
 
 	# Get all history event numbers that correspond to history
 	# entries that match pattern $prefix*
@@ -29,8 +29,7 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	local histkey="${history_match_keys[1]}"
 
 	# Get the previously executed command
-	local prev_cmd="$(_zsh_autosuggest_prev_command)"
-	prev_cmd="$(_zsh_autosuggest_escape_command "$prev_cmd")"
+	local prev_cmd="$(_zsh_autosuggest_escape_command "${history[$((HISTCMD-1))]}")"
 
 	# Iterate up to the first 200 history event numbers that match $prefix
 	for key in "${(@)history_match_keys[1,200]}"; do

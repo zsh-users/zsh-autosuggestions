@@ -64,6 +64,16 @@ assertSquareBracketsSuggestion() {
 		'echo "$history[123]"'
 }
 
+assertHashSuggestion() {
+	set_history <<-'EOF'
+		echo "#yolo"
+	EOF
+
+	assertSuggestion \
+		'echo "#' \
+		'echo "#yolo"'
+}
+
 testSpecialCharsForAllStrategies() {
 	local strategies
 	strategies=(
