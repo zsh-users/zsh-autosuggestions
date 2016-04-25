@@ -138,7 +138,7 @@ _zsh_autosuggest_bind_widget() {
 
 		# Completion widget
 		completion:*)
-			eval "zle -C $prefix${(q)widget} ${${widgets[$widget]#*:}/:/ }"
+			eval "zle -C $prefix${(q)widget} ${${(s.:.)widgets[$widget]}[2,3]}"
 			;;
 	esac
 
