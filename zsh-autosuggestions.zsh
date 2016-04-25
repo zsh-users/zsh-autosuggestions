@@ -233,6 +233,9 @@ _zsh_autosuggest_clear() {
 _zsh_autosuggest_modify() {
 	local -i retval
 
+	# Clear suggestion while original widget runs
+	unset POSTDISPLAY
+
 	# Original widget modifies the buffer
 	_zsh_autosuggest_invoke_original_widget $@
 	retval=$?
