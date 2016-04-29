@@ -19,7 +19,7 @@ testClear() {
 	BUFFER='ec'
 	POSTDISPLAY='ho hello'
 
-	_zsh_autosuggest_clear 'original-widget'
+	_zsh_autosuggest_widget_clear 'original-widget'
 
 	assertEquals \
 		'BUFFER was modified' \

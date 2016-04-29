@@ -25,7 +25,7 @@ testCursorMovesOutOfBuffer() {
 		_zsh_autosuggest_invoke_original_widget \
 		'CURSOR=5; LBUFFER="echo "; RBUFFER="hello"'
 
-	_zsh_autosuggest_partial_accept 'original-widget'
+	_zsh_autosuggest_widget_partial_accept 'original-widget'
 
 	assertTrue \
 		'original widget not invoked' \
@@ -51,7 +51,7 @@ testCursorStaysInBuffer() {
 		_zsh_autosuggest_invoke_original_widget \
 		'CURSOR=5; LBUFFER="echo "; RBUFFER="hello"'
 
-	_zsh_autosuggest_partial_accept 'original-widget'
+	_zsh_autosuggest_widget_partial_accept 'original-widget'
 
 	assertTrue \
 		'original widget not invoked' \

@@ -25,7 +25,7 @@ testModify() {
 		_zsh_autosuggest_suggestion \
 		'echo hello'
 
-	_zsh_autosuggest_modify 'original-widget'
+	_zsh_autosuggest_widget_modify 'original-widget'
 
 	assertTrue \
 		'original widget not invoked' \

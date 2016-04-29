@@ -24,7 +24,7 @@ testCursorAtEnd() {
 
 	stub _zsh_autosuggest_invoke_original_widget
 
-	_zsh_autosuggest_accept 'original-widget'
+	_zsh_autosuggest_widget_accept 'original-widget'
 
 	assertTrue \
 		'original widget not invoked' \
@@ -48,7 +48,7 @@ testCursorNotAtEnd() {
 
 	stub _zsh_autosuggest_invoke_original_widget
 
-	_zsh_autosuggest_accept 'original-widget'
+	_zsh_autosuggest_widget_accept 'original-widget'
 
 	assertTrue \
 		'original widget not invoked' \
@@ -73,7 +73,7 @@ testViCursorAtEnd() {
 
 	stub _zsh_autosuggest_invoke_original_widget
 
-	_zsh_autosuggest_accept 'original-widget'
+	_zsh_autosuggest_widget_accept 'original-widget'
 
 	assertTrue \
 		'original widget not invoked' \
@@ -98,7 +98,7 @@ testViCursorNotAtEnd() {
 
 	stub _zsh_autosuggest_invoke_original_widget
 
-	_zsh_autosuggest_accept 'original-widget'
+	_zsh_autosuggest_widget_accept 'original-widget'
 
 	assertTrue \
 		'original widget not invoked' \

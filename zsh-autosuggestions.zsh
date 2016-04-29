@@ -240,17 +240,20 @@ _zsh_autosuggest_modify() {
 	_zsh_autosuggest_invoke_original_widget $@
 	retval=$?
 
-	# Get a new suggestion if the buffer is not empty after modification
-	local suggestion
-	if [ $#BUFFER -gt 0 ]; then
-		suggestion="$(_zsh_autosuggest_suggestion "$BUFFER")"
-	fi
+	# Only fetch suggestions at the first level of widget recursion
+	if [ -z "${funcstack[(rn:2:)_zsh_autosuggest_widget_*]}" ]; then
+		# Get a new suggestion if the buffer is not empty after modification
+		local suggestion
+		if [ $#BUFFER -gt 0 ]; then
+			suggestion="$(_zsh_autosuggest_suggestion "$BUFFER")"
+		fi
 
-	# Add the suggestion to the POSTDISPLAY
-	if [ -n "$suggestion" ]; then
-		POSTDISPLAY="${suggestion#$BUFFER}"
-	else
-		unset POSTDISPLAY
+		# Add the suggestion to the POSTDISPLAY
+		if [ -n "$suggestion" ]; then
+			POSTDISPLAY="${suggestion#$BUFFER}"
+		else
+			unset POSTDISPLAY
+		fi
 	fi
 
 	return $retval
