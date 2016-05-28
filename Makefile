@@ -18,11 +18,6 @@ HEADER_FILES := \
 	LICENSE
 
 PLUGIN_TARGET := zsh-autosuggestions.zsh
-OH_MY_ZSH_LINK_TARGET := zsh-autosuggestions.plugin.zsh
-
-ALL_TARGETS := \
-	$(PLUGIN_TARGET) \
-	$(OH_MY_ZSH_LINK_TARGET)
 
 SHUNIT2 := $(VENDOR_DIR)/shunit2/2.1.6
 STUB_SH := $(VENDOR_DIR)/stub.sh/stub.sh
@@ -31,14 +26,11 @@ TEST_PREREQS := \
 	$(SHUNIT2) \
 	$(STUB_SH)
 
-all: $(ALL_TARGETS)
+all: $(PLUGIN_TARGET)
 
 $(PLUGIN_TARGET): $(HEADER_FILES) $(SRC_FILES)
 	cat $(HEADER_FILES) | sed -e 's/^/# /g' > $@
 	cat $(SRC_FILES) >> $@
-
-$(OH_MY_ZSH_LINK_TARGET): $(PLUGIN_TARGET)
-	ln -s $(PLUGIN_TARGET) $@
 
 $(SHUNIT2):
 	git submodule update --init vendor/shunit2
@@ -48,7 +40,7 @@ $(STUB_SH):
 
 .PHONY: clean
 clean:
-	rm $(ALL_TARGETS)
+	rm $(PLUGIN_TARGET)
 
 .PHONY: test
 test: all $(TEST_PREREQS)
