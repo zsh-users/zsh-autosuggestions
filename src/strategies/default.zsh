@@ -7,7 +7,7 @@
 #
 
 _zsh_autosuggest_strategy_default() {
-	local prefix="$(_zsh_autosuggest_escape_command "$1")"
+	local prefix="$1"
 
 	# Get the keys of the history items that match
 	local -a histkeys

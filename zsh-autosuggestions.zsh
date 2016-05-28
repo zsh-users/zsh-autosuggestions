@@ -1,6 +1,6 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
 # https://github.com/zsh-users/zsh-autosuggestions
-# v0.3.1
+# v0.3.2
 # Copyright (c) 2013 Thiago de Arruda
 # Copyright (c) 2016 Eric Freese
 # 
@@ -58,6 +58,7 @@ ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
 	end-of-line
 	vi-forward-char
 	vi-end-of-line
+	vi-add-eol
 )
 
 # Widgets that accept the entire suggestion and execute it
@@ -131,13 +132,13 @@ _zsh_autosuggest_bind_widget() {
 
 		# Built-in widget
 		builtin)
-			eval "_zsh_autosuggest_orig_$widget() { zle .$widget }"
+			eval "_zsh_autosuggest_orig_${(q)widget}() { zle .${(q)widget} }"
 			zle -N $prefix$widget _zsh_autosuggest_orig_$widget
 			;;
 
 		# Completion widget
 		completion:*)
-			eval "zle -C $prefix$widget ${${widgets[$widget]#*:}/:/ }"
+			eval "zle -C $prefix${(q)widget} ${${(s.:.)widgets[$widget]}[2,3]}"
 			;;
 	esac
 
@@ -147,8 +148,8 @@ _zsh_autosuggest_bind_widget() {
 	# correctly. $WIDGET cannot be trusted because other plugins call
 	# zle without the `-w` flag (e.g. `zle self-insert` instead of
 	# `zle self-insert -w`).
-	eval "_zsh_autosuggest_bound_$widget() {
-		_zsh_autosuggest_widget_$autosuggest_action $prefix$widget \$@
+	eval "_zsh_autosuggest_bound_${(q)widget}() {
+		_zsh_autosuggest_widget_$autosuggest_action $prefix${(q)widget} \$@
 	}"
 
 	# Create the bound widget
@@ -230,8 +231,14 @@ _zsh_autosuggest_clear() {
 
 # Modify the buffer and get a new suggestion
 _zsh_autosuggest_modify() {
+	local -i retval
+
+	# Clear suggestion while original widget runs
+	unset POSTDISPLAY
+
 	# Original widget modifies the buffer
 	_zsh_autosuggest_invoke_original_widget $@
+	retval=$?
 
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion
@@ -245,6 +252,8 @@ _zsh_autosuggest_modify() {
 	else
 		unset POSTDISPLAY
 	fi
+
+	return $retval
 }
 
 # Accept the entire suggestion
@@ -287,6 +296,8 @@ _zsh_autosuggest_execute() {
 
 # Partially accept the suggestion
 _zsh_autosuggest_partial_accept() {
+	local -i retval
+
 	# Save the contents of the buffer so we can restore later if needed
 	local original_buffer="$BUFFER"
 
@@ -295,6 +306,7 @@ _zsh_autosuggest_partial_accept() {
 
 	# Original widget moves the cursor
 	_zsh_autosuggest_invoke_original_widget $@
+	retval=$?
 
 	# If we've moved past the end of the original buffer
 	if [ $CURSOR -gt $#original_buffer ]; then
@@ -307,13 +319,22 @@ _zsh_autosuggest_partial_accept() {
 		# Restore the original buffer
 		BUFFER="$original_buffer"
 	fi
+
+	return $retval
 }
 
 for action in clear modify accept partial_accept execute; do
 	eval "_zsh_autosuggest_widget_$action() {
+		local -i retval
+
 		_zsh_autosuggest_highlight_reset
+
 		_zsh_autosuggest_$action \$@
+		retval=\$?
+
 		_zsh_autosuggest_highlight_apply
+
+		return \$retval
 	}"
 done
 
@@ -327,11 +348,11 @@ zle -N autosuggest-execute _zsh_autosuggest_widget_execute
 
 # Delegate to the selected strategy to determine a suggestion
 _zsh_autosuggest_suggestion() {
-	local prefix="$1"
+	local escaped_prefix="$(_zsh_autosuggest_escape_command "$1")"
 	local strategy_function="_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
 
 	if [ -n "$functions[$strategy_function]" ]; then
-		echo -E "$($strategy_function "$prefix")"
+		echo -E "$($strategy_function "$escaped_prefix")"
 	fi
 }
 
@@ -342,11 +363,6 @@ _zsh_autosuggest_escape_command() {
 	echo -E "${1//(#m)[\\()\[\]|*?]/\\$MATCH}"
 }
 
-# Get the previously executed command
-_zsh_autosuggest_prev_command() {
-	echo -E "${history[$((HISTCMD-1))]}"
-}
-
 #--------------------------------------------------------------------#
 # Default Suggestion Strategy                                        #
 #--------------------------------------------------------------------#
@@ -355,7 +371,7 @@ _zsh_autosuggest_prev_command() {
 #
 
 _zsh_autosuggest_strategy_default() {
-	local prefix="$(_zsh_autosuggest_escape_command "$1")"
+	local prefix="$1"
 
 	# Get the keys of the history items that match
 	local -a histkeys
@@ -384,7 +400,7 @@ _zsh_autosuggest_strategy_default() {
 #
 
 _zsh_autosuggest_strategy_match_prev_cmd() {
-	local prefix="$(_zsh_autosuggest_escape_command "$1")"
+	local prefix="$1"
 
 	# Get all history event numbers that correspond to history
 	# entries that match pattern $prefix*
@@ -395,8 +411,7 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	local histkey="${history_match_keys[1]}"
 
 	# Get the previously executed command
-	local prev_cmd="$(_zsh_autosuggest_prev_command)"
-	prev_cmd="$(_zsh_autosuggest_escape_command "$prev_cmd")"
+	local prev_cmd="$(_zsh_autosuggest_escape_command "${history[$((HISTCMD-1))]}")"
 
 	# Iterate up to the first 200 history event numbers that match $prefix
 	for key in "${(@)history_match_keys[1,200]}"; do

@@ -21,13 +21,13 @@ _zsh_autosuggest_bind_widget() {
 
 		# Built-in widget
 		builtin)
-			eval "_zsh_autosuggest_orig_$widget() { zle .$widget }"
+			eval "_zsh_autosuggest_orig_${(q)widget}() { zle .${(q)widget} }"
 			zle -N $prefix$widget _zsh_autosuggest_orig_$widget
 			;;
 
 		# Completion widget
 		completion:*)
-			eval "zle -C $prefix$widget ${${widgets[$widget]#*:}/:/ }"
+			eval "zle -C $prefix${(q)widget} ${${(s.:.)widgets[$widget]}[2,3]}"
 			;;
 	esac
 
@@ -37,8 +37,8 @@ _zsh_autosuggest_bind_widget() {
 	# correctly. $WIDGET cannot be trusted because other plugins call
 	# zle without the `-w` flag (e.g. `zle self-insert` instead of
 	# `zle self-insert -w`).
-	eval "_zsh_autosuggest_bound_$widget() {
-		_zsh_autosuggest_widget_$autosuggest_action $prefix$widget \$@
+	eval "_zsh_autosuggest_bound_${(q)widget}() {
+		_zsh_autosuggest_widget_$autosuggest_action $prefix${(q)widget} \$@
 	}"
 
 	# Create the bound widget

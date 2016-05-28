@@ -6,6 +6,16 @@ oneTimeSetUp() {
 	source_autosuggestions
 }
 
+setUp() {
+	BUFFER=''
+	POSTDISPLAY=''
+	CURSOR=0
+}
+
+tearDown() {
+	restore _zsh_autosuggest_invoke_original_widget
+}
+
 testCursorMovesOutOfBuffer() {
 	BUFFER='ec'
 	POSTDISPLAY='ho hello'
@@ -56,6 +66,19 @@ testCursorStaysInBuffer() {
 		'POSTDISPLAY was modified' \
 		' world' \
 		"$POSTDISPLAY"
+}
+
+testRetval() {
+	stub_and_eval \
+		_zsh_autosuggest_invoke_original_widget \
+		'return 1'
+
+	_zsh_autosuggest_widget_partial_accept 'original-widget'
+
+	assertEquals \
+		'Did not return correct value from original widget' \
+		'1' \
+		"$?"
 }
 
 run_tests "$0"

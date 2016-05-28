@@ -6,10 +6,17 @@ oneTimeSetUp() {
 	source_autosuggestions
 }
 
-testModify() {
+setUp() {
 	BUFFER=''
 	POSTDISPLAY=''
+}
 
+tearDown() {
+	restore _zsh_autosuggest_invoke_original_widget
+	restore _zsh_autosuggest_suggestion
+}
+
+testModify() {
 	stub_and_eval \
 		_zsh_autosuggest_invoke_original_widget \
 		'BUFFER+="e"'
@@ -33,9 +40,19 @@ testModify() {
 		'POSTDISPLAY does not contain suggestion' \
 		'cho hello' \
 		"$POSTDISPLAY"
+}
 
-	restore _zsh_autosuggest_invoke_original_widget
-	restore _zsh_autosuggest_suggestion
+testRetval() {
+	stub_and_eval \
+		_zsh_autosuggest_invoke_original_widget \
+		'return 1'
+
+	_zsh_autosuggest_widget_modify 'original-widget'
+
+	assertEquals \
+		'Did not return correct value from original widget' \
+		'1' \
+		"$?"
 }
 
 run_tests "$0"

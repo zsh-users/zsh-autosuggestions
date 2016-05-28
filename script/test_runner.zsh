@@ -15,15 +15,40 @@ header() {
 	EOF
 }
 
-local -a tests
+# ZSH binary to use
+local zsh_bin="zsh"
 
-# Test suites to run
-tests=($TEST_DIR/**/*_test.zsh)
-
-local retval=0
-for suite in $tests; do
-	header "${suite#"$TEST_DIR"}"
-	zsh -f "$suite" || retval=$?
+while getopts ":z:" opt; do
+	case $opt in
+		z)
+			zsh_bin="$OPTARG"
+			;;
+		\?)
+			echo "Invalid option: -$OPTARG" >&2
+			exit 1
+			;;
+		:)
+			echo "Option -$OPTARG requires an argument" >&2
+			exit 1
+			;;
+	esac
 done
 
-exit retval
+shift $((OPTIND -1))
+
+# Test suites to run
+local -a tests
+if [ $#@ -gt 0 ]; then
+	tests=($@)
+else
+	tests=($TEST_DIR/**/*_test.zsh)
+fi
+
+local -i retval=0
+
+for suite in $tests; do
+	header "${suite#"$ROOT_DIR/"}"
+	"$zsh_bin" -f "$suite" || retval=$?
+done
+
+exit $retval

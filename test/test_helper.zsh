@@ -54,7 +54,7 @@ assertSuggestion() {
 	local expected_suggestion="$2"
 
 	assertEquals \
-		"Did not get correct suggestion for prefix:<$prefix>" \
+		"Did not get correct suggestion for prefix:<$prefix> using strategy <$ZSH_AUTOSUGGEST_STRATEGY>" \
 		"$expected_suggestion" \
 		"$(_zsh_autosuggest_suggestion "$prefix")"
 }
