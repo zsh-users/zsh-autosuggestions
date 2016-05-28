@@ -139,6 +139,7 @@ Edit the source files in `src/`. Run `make` to build `zsh-autosuggestions.zsh` f
 
 Pull requests are welcome! If you send a pull request, please:
 
+- Request to merge into the `develop` branch (*NOT* `master`)
 - Match the existing coding conventions.
 - Include helpful comments to keep the barrier-to-entry low for people new to the project.
 - Write tests that cover your code as much as possible.
