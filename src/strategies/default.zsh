@@ -7,12 +7,5 @@
 #
 
 _zsh_autosuggest_strategy_default() {
-	local prefix="$1"
-
-	# Get the keys of the history items that match
-	local -a histkeys
-	histkeys=(${(k)history[(r)$prefix*]})
-
-	# Echo the value of the first key
-	echo -E "${history[$histkeys[1]]}"
+	fc -lnrm "$1*" 1 2>/dev/null | head -n 1
 }
