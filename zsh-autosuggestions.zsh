@@ -242,7 +242,7 @@ _zsh_autosuggest_modify() {
 
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion
-	if [ $#BUFFER -gt 0 ]; then
+	if [ $#BUFFER -gt 0 -a $#BUFFER -lt 20 ]; then
 		suggestion="$(_zsh_autosuggest_suggestion "$BUFFER")"
 	fi
 
