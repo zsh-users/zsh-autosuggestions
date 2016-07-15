@@ -9,6 +9,7 @@ oneTimeSetUp() {
 setUp() {
 	BUFFER=''
 	POSTDISPLAY=''
+	ZSH_BUFFER_MAX_SIZE=''
 }
 
 tearDown() {
@@ -39,6 +40,35 @@ testModify() {
 	assertEquals \
 		'POSTDISPLAY does not contain suggestion' \
 		'cho hello' \
+		"$POSTDISPLAY"
+}
+
+testModifyBufferTooLarge() {
+
+	ZSH_BUFFER_MAX_SIZE='20'
+
+	stub_and_eval \
+		_zsh_autosuggest_invoke_original_widget \
+		'BUFFER+="012345678901234567890"'
+
+	stub_and_echo \
+		_zsh_autosuggest_suggestion \
+		'012345678901234567890123456789'
+
+	_zsh_autosuggest_modify 'original-widget'
+
+	assertTrue \
+		'original widget not invoked' \
+		'stub_called _zsh_autosuggest_invoke_original_widget'
+
+	assertEquals \
+		'BUFFER was not modified' \
+		'012345678901234567890' \
+		"$BUFFER"
+
+	assertEquals \
+		'POSTDISPLAY does not contain suggestion' \
+		'' \
 		"$POSTDISPLAY"
 }
 
