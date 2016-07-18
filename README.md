@@ -86,6 +86,12 @@ Widgets not in any of these lists will update the suggestion when invoked.
 **Note:** A widget shouldn't belong to more than one of the above arrays.
 
 
+### Disabling suggestion for large buffers
+
+Set `ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE` to an integer value to disable autosuggestion for large buffers. The default is unset, which means that autosuggestion will be tried for any buffer size. Recommended value is 20.
+This can be useful when pasting large amount of text in the terminal, to avoid triggering autosuggestion for too long strings.
+
+
 ### Key Bindings
 
 This plugin provides three widgets that you can use with `bindkey`:
