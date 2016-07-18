@@ -74,6 +74,9 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
 	vi-forward-blank-word-end
 )
 
+# Max size of buffer to trigger autosuggestion. Leave undefined for no upper bound.
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
+
 #--------------------------------------------------------------------#
 # Handle Deprecated Variables/Widgets                                #
 #--------------------------------------------------------------------#
@@ -243,7 +246,7 @@ _zsh_autosuggest_modify() {
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion
 	if [ $#BUFFER -gt 0 ]; then
-		if [ -z "$ZSH_BUFFER_MAX_SIZE" -o $#BUFFER -lt "$ZSH_BUFFER_MAX_SIZE" ]; then
+		if [ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" -o $#BUFFER -lt "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]; then
 			suggestion="$(_zsh_autosuggest_suggestion "$BUFFER")"
 		fi
 	fi
