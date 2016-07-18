@@ -9,7 +9,7 @@ oneTimeSetUp() {
 setUp() {
 	BUFFER=''
 	POSTDISPLAY=''
-	ZSH_BUFFER_MAX_SIZE=''
+	ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=''
 }
 
 tearDown() {
@@ -45,7 +45,7 @@ testModify() {
 
 testModifyBufferTooLarge() {
 
-	ZSH_BUFFER_MAX_SIZE='20'
+	ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE='20'
 
 	stub_and_eval \
 		_zsh_autosuggest_invoke_original_widget \
