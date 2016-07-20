@@ -26,6 +26,16 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 #--------------------------------------------------------------------#
+# Setup                                                              #
+#--------------------------------------------------------------------#
+
+# Precmd hooks for initializing the library and starting pty's
+autoload -Uz add-zsh-hook
+
+# Asynchronous suggestions are generated in a pty
+zmodload zsh/zpty
+
+#--------------------------------------------------------------------#
 # Global Configuration Variables                                     #
 #--------------------------------------------------------------------#
 
@@ -36,6 +46,9 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 
 # Prefix to use when saving original versions of bound widgets
 ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
+
+# Pty name for calculating autosuggestions asynchronously
+ZSH_AUTOSUGGEST_PTY_NAME=zsh_autosuggest_pty
 
 ZSH_AUTOSUGGEST_STRATEGY=default
 
@@ -86,6 +99,17 @@ ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 
 # Max size of buffer to trigger autosuggestion. Leave undefined for no upper bound.
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
+
+#--------------------------------------------------------------------#
+# Utility Functions                                                  #
+#--------------------------------------------------------------------#
+
+_zsh_autosuggest_escape_command() {
+	setopt localoptions EXTENDED_GLOB
+
+	# Escape special chars in the string (requires EXTENDED_GLOB)
+	echo -E "${1//(#m)[\"\'\\()\[\]|*?~]/\\$MATCH}"
+}
 
 #--------------------------------------------------------------------#
 # Handle Deprecated Variables/Widgets                                #
@@ -260,7 +284,7 @@ _zsh_autosuggest_modify() {
 	local orig_buffer="$BUFFER"
 	local orig_postdisplay="$POSTDISPLAY"
 
-	# Clear suggestion while original widget runs
+	# Clear suggestion while waiting for next one
 	unset POSTDISPLAY
 
 	# Original widget may modify the buffer
@@ -274,16 +298,10 @@ _zsh_autosuggest_modify() {
 	fi
 
 	# Get a new suggestion if the buffer is not empty after modification
-	local suggestion
 	if [ $#BUFFER -gt 0 ]; then
 		if [ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" -o $#BUFFER -lt "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]; then
-			suggestion="$(_zsh_autosuggest_suggestion "$BUFFER")"
+			_zsh_autosuggest_async_fetch_suggestion "$BUFFER"
 		fi
-	fi
-
-	# Add the suggestion to the POSTDISPLAY
-	if [ -n "$suggestion" ]; then
-		POSTDISPLAY="${suggestion#$BUFFER}"
 	fi
 
 	return $retval
@@ -375,26 +393,23 @@ zle -N autosuggest-accept _zsh_autosuggest_widget_accept
 zle -N autosuggest-clear _zsh_autosuggest_widget_clear
 zle -N autosuggest-execute _zsh_autosuggest_widget_execute
 
-#--------------------------------------------------------------------#
-# Suggestion                                                         #
-#--------------------------------------------------------------------#
+_zsh_autosuggest_show_suggestion() {
+	local suggestion=$1
 
-# Delegate to the selected strategy to determine a suggestion
-_zsh_autosuggest_suggestion() {
-	local escaped_prefix="$(_zsh_autosuggest_escape_command "$1")"
-	local strategy_function="_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
+	_zsh_autosuggest_highlight_reset
 
-	if [ -n "$functions[$strategy_function]" ]; then
-		echo -E "$($strategy_function "$escaped_prefix")"
+	if [ -n "$suggestion" ]; then
+		POSTDISPLAY="${suggestion#$BUFFER}"
+	else
+		unset POSTDISPLAY
 	fi
+
+	_zsh_autosuggest_highlight_apply
+
+	zle -R
 }
 
-_zsh_autosuggest_escape_command() {
-	setopt localoptions EXTENDED_GLOB
-
-	# Escape special chars in the string (requires EXTENDED_GLOB)
-	echo -E "${1//(#m)[\\()\[\]|*?~]/\\$MATCH}"
-}
+zle -N _autosuggest-show-suggestion _zsh_autosuggest_show_suggestion
 
 #--------------------------------------------------------------------#
 # Default Suggestion Strategy                                        #
@@ -460,6 +475,59 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 }
 
 #--------------------------------------------------------------------#
+# Async                                                              #
+#--------------------------------------------------------------------#
+
+_zsh_autosuggest_async_fetch_suggestion() {
+	local strategy_function="_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
+	local prefix="$(_zsh_autosuggest_escape_command "$1")"
+
+	# Send the suggestion command to the pty to fetch a suggestion
+	zpty -w -n $ZSH_AUTOSUGGEST_PTY_NAME "$strategy_function '$prefix'"$'\0'
+}
+
+_zsh_autosuggest_async_suggestion_worker() {
+	local last_pid
+
+	while read -d $'\0' cmd; do
+		# Kill last bg process
+		kill -KILL $last_pid &>/dev/null
+
+		# Run suggestion search in the background
+		print -n -- "$(eval "$cmd")"$'\0' &
+
+		# Save the bg process's id so we can kill later
+		last_pid=$!
+	done
+}
+
+_zsh_autosuggest_async_suggestion_ready() {
+	# while zpty -rt $ZSH_AUTOSUGGEST_PTY_NAME suggestion 2>/dev/null; do
+	while read -u $_ZSH_AUTOSUGGEST_PTY_FD -d $'\0' suggestion; do
+		zle _autosuggest-show-suggestion "${suggestion//$'\r'$'\n'/$'\n'}"
+	done
+}
+
+# Recreate the pty to get a fresh list of history events
+_zsh_autosuggest_async_recreate_pty() {
+	typeset -g _ZSH_AUTOSUGGEST_PTY_FD
+
+	# Kill the old pty
+	if [ -n "$_ZSH_AUTOSUGGEST_PTY_FD" ]; then
+		zle -F $_ZSH_AUTOSUGGEST_PTY_FD
+		zpty -d $ZSH_AUTOSUGGEST_PTY_NAME &>/dev/null
+	fi
+
+	# Start a new pty
+	typeset -h REPLY
+	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME _zsh_autosuggest_async_suggestion_worker
+	_ZSH_AUTOSUGGEST_PTY_FD=$REPLY
+	zle -F $_ZSH_AUTOSUGGEST_PTY_FD _zsh_autosuggest_async_suggestion_ready
+}
+
+add-zsh-hook precmd _zsh_autosuggest_async_recreate_pty
+
+#--------------------------------------------------------------------#
 # Start                                                              #
 #--------------------------------------------------------------------#
 
@@ -469,5 +537,4 @@ _zsh_autosuggest_start() {
 	_zsh_autosuggest_bind_widgets
 }
 
-autoload -Uz add-zsh-hook
 add-zsh-hook precmd _zsh_autosuggest_start

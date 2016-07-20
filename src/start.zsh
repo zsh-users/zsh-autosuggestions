@@ -9,5 +9,4 @@ _zsh_autosuggest_start() {
 	_zsh_autosuggest_bind_widgets
 }
 
-autoload -Uz add-zsh-hook
 add-zsh-hook precmd _zsh_autosuggest_start

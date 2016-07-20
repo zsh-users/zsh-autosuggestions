@@ -2,13 +2,15 @@ SRC_DIR    := ./src
 VENDOR_DIR := ./vendor
 
 SRC_FILES := \
+	$(SRC_DIR)/setup.zsh \
 	$(SRC_DIR)/config.zsh \
+	$(SRC_DIR)/util.zsh \
 	$(SRC_DIR)/deprecated.zsh \
 	$(SRC_DIR)/bind.zsh \
 	$(SRC_DIR)/highlight.zsh \
 	$(SRC_DIR)/widgets.zsh \
-	$(SRC_DIR)/suggestion.zsh \
 	$(SRC_DIR)/strategies/*.zsh \
+	$(SRC_DIR)/async.zsh \
 	$(SRC_DIR)/start.zsh
 
 HEADER_FILES := \

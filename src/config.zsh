@@ -11,6 +11,9 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 # Prefix to use when saving original versions of bound widgets
 ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 
+# Pty name for calculating autosuggestions asynchronously
+ZSH_AUTOSUGGEST_PTY_NAME=zsh_autosuggest_pty
+
 ZSH_AUTOSUGGEST_STRATEGY=default
 
 # Widgets that clear the suggestion
