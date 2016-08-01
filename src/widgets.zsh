@@ -15,12 +15,22 @@ _zsh_autosuggest_clear() {
 _zsh_autosuggest_modify() {
 	local -i retval
 
+	# Save the contents of the buffer/postdisplay
+	local orig_buffer="$BUFFER"
+	local orig_postdisplay="$POSTDISPLAY"
+
 	# Clear suggestion while original widget runs
 	unset POSTDISPLAY
 
-	# Original widget modifies the buffer
+	# Original widget may modify the buffer
 	_zsh_autosuggest_invoke_original_widget $@
 	retval=$?
+
+	# Don't fetch a new suggestion if the buffer hasn't changed
+	if [ "$BUFFER" = "$orig_buffer" ]; then
+		POSTDISPLAY="$orig_postdisplay"
+		return $retval
+	fi
 
 	# Get a new suggestion if the buffer is not empty after modification
 	local suggestion
