@@ -33,8 +33,6 @@ _zsh_autosuggest_modify() {
 	# Add the suggestion to the POSTDISPLAY
 	if [ -n "$suggestion" ]; then
 		POSTDISPLAY="${suggestion#$BUFFER}"
-	else
-		unset POSTDISPLAY
 	fi
 
 	return $retval
