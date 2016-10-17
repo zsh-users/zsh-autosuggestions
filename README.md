@@ -69,7 +69,7 @@ Set `ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE` to configure the style that the suggestion
 Set `ZSH_AUTOSUGGEST_STRATEGY` to choose the strategy for generating suggestions. There are currently two to choose from:
 
 - `default`: Chooses the most recent match.
-- `match_prev_cmd`: Chooses the most recent match whose preceding history item matches the most recently executed command ([more info](src/strategies/match_prev_cmd.zsh)).
+- `match_prev_cmd`: Chooses the most recent match whose preceding history item matches the most recently executed command ([more info](src/strategies/match_prev_cmd.zsh)). Note that this strategy won't work as expected with ZSH options that don't preserve the history order such as `HIST_IGNORE_ALL_DUPS` or `HIST_EXPIRE_DUPS_FIRST`.
 
 
 ### Widget Mapping
@@ -80,10 +80,17 @@ This plugin works by triggering custom behavior when certain [zle widgets](http:
 - `ZSH_AUTOSUGGEST_ACCEPT_WIDGETS`: Widgets in this array will accept the suggestion when invoked.
 - `ZSH_AUTOSUGGEST_EXECUTE_WIDGETS`: Widgets in this array will execute the suggestion when invoked.
 - `ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS`: Widgets in this array will partially accept the suggestion when invoked.
+- `ZSH_AUTOSUGGEST_IGNORE_WIDGETS`: Widgets in this array will not trigger any custom behavior.
 
-Widgets not in any of these lists will update the suggestion when invoked.
+Widgets that modify the buffer and are not found in any of these arrays will fetch a new suggestion after they are invoked.
 
 **Note:** A widget shouldn't belong to more than one of the above arrays.
+
+
+### Disabling suggestion for large buffers
+
+Set `ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE` to an integer value to disable autosuggestion for large buffers. The default is unset, which means that autosuggestion will be tried for any buffer size. Recommended value is 20.
+This can be useful when pasting large amount of text in the terminal, to avoid triggering autosuggestion for too long strings.
 
 
 ### Key Bindings

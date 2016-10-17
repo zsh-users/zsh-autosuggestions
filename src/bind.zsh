@@ -47,10 +47,20 @@ _zsh_autosuggest_bind_widget() {
 
 # Map all configured widgets to the right autosuggest widgets
 _zsh_autosuggest_bind_widgets() {
-	local widget;
+	local widget
+	local ignore_widgets
+
+	ignore_widgets=(
+		.\*
+		_\*
+		zle-line-\*
+		autosuggest-\*
+		$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX\*
+		$ZSH_AUTOSUGGEST_IGNORE_WIDGETS
+	)
 
 	# Find every widget we might want to bind and bind it appropriately
-	for widget in ${${(f)"$(builtin zle -la)"}:#(.*|_*|orig-*|autosuggest-*|$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX*|zle-line-*|run-help|which-command|beep|set-local-history|yank)}; do
+	for widget in ${${(f)"$(builtin zle -la)"}:#${(j:|:)~ignore_widgets}}; do
 		if [ ${ZSH_AUTOSUGGEST_CLEAR_WIDGETS[(r)$widget]} ]; then
 			_zsh_autosuggest_bind_widget $widget clear
 		elif [ ${ZSH_AUTOSUGGEST_ACCEPT_WIDGETS[(r)$widget]} ]; then

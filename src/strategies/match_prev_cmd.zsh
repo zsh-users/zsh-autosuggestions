@@ -16,6 +16,9 @@
 # will be 'ls foo' rather than 'ls bar' because your most recently
 # executed command (pwd) was previously followed by 'ls foo'.
 #
+# Note that this strategy won't work as expected with ZSH options that don't
+# preserve the history order such as `HIST_IGNORE_ALL_DUPS` or
+# `HIST_EXPIRE_DUPS_FIRST`.
 
 _zsh_autosuggest_strategy_match_prev_cmd() {
 	local prefix="$1"

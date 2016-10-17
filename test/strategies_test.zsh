@@ -44,6 +44,12 @@ assertTildeSuggestion() {
 		'cd ~/something'
 }
 
+assertTildeSuggestionWithExtendedGlob() {
+	setopt local_options extended_glob
+
+	assertTildeSuggestion
+}
+
 assertParenthesesSuggestion() {
 	set_history <<-'EOF'
 		echo "$(ls foo)"
@@ -87,6 +93,7 @@ testSpecialCharsForAllStrategies() {
 		assertBackslashSuggestion
 		assertDoubleBackslashSuggestion
 		assertTildeSuggestion
+		assertTildeSuggestionWithExtendedGlob
 		assertParenthesesSuggestion
 		assertSquareBracketsSuggestion
 	done
