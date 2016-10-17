@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.3
+- Switch from $history array to fc builtin for better performance with large HISTFILEs (#164)
+- Fix tilde handling when extended_glob is set (#168)
+- Add config option for maximum buffer length to fetch suggestions for (#178)
+- Add config option for list of widgets to ignore (#184)
+- Don't fetch a new suggestion unless a modification widget actually modifies the buffer (#183)
+
 ## v0.3.2
 - Test runner now supports running specific tests and choosing zsh binary
 - Return code from original widget is now correctly passed through (#135)
