@@ -9,6 +9,10 @@ _zsh_autosuggest_bind_widget() {
 	local autosuggest_action=$2
 	local prefix=$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX
 
+	if zle -l $prefix$widget; then
+		return
+	fi
+
 	# Save a reference to the original widget
 	case $widgets[$widget] in
 		# Already bound
