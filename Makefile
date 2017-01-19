@@ -22,7 +22,7 @@ PLUGIN_TARGET := zsh-autosuggestions.zsh
 SHUNIT2 := $(VENDOR_DIR)/shunit2/2.1.6
 STUB_SH := $(VENDOR_DIR)/stub.sh/stub.sh
 
-TEST_PREREQS := \
+UNIT_TEST_PREREQS := \
 	$(SHUNIT2) \
 	$(STUB_SH)
 
@@ -43,5 +43,10 @@ clean:
 	rm $(PLUGIN_TARGET)
 
 .PHONY: test
-test: all $(TEST_PREREQS)
-	script/test_runner.zsh $(TESTS)
+test: rspec unit_test
+
+unit_test: all $(UNIT_TEST_PREREQS)
+	script/test_runner.zsh $(UNIT_TESTS)
+
+rspec: all
+	bundle exec rspec $(RSPEC_TESTS)
