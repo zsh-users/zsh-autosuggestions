@@ -486,6 +486,7 @@ _zsh_autosuggest_async_fetch_suggestion() {
 	zpty -w -n $ZSH_AUTOSUGGEST_PTY_NAME "$strategy_function '$prefix'"$'\0'
 }
 
+# Pty is spawned running this function
 _zsh_autosuggest_async_suggestion_worker() {
 	local last_pid
 
@@ -501,6 +502,9 @@ _zsh_autosuggest_async_suggestion_worker() {
 	done
 }
 
+# Called when new data is ready to be read from the pty
+# First arg will be fd ready for reading
+# Second arg will be passed in case of error
 _zsh_autosuggest_async_suggestion_ready() {
 	# while zpty -rt $ZSH_AUTOSUGGEST_PTY_NAME suggestion 2>/dev/null; do
 	while read -u $_ZSH_AUTOSUGGEST_PTY_FD -d $'\0' suggestion; do
@@ -514,14 +518,23 @@ _zsh_autosuggest_async_recreate_pty() {
 
 	# Kill the old pty
 	if [ -n "$_ZSH_AUTOSUGGEST_PTY_FD" ]; then
+		# Remove the input handler
 		zle -F $_ZSH_AUTOSUGGEST_PTY_FD
+
+		# Destroy the pty
 		zpty -d $ZSH_AUTOSUGGEST_PTY_NAME &>/dev/null
 	fi
 
-	# Start a new pty
+	# REPLY stores the fd to read from
 	typeset -h REPLY
+
+	# Start a new pty running the server function
 	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME _zsh_autosuggest_async_suggestion_worker
+
+	# Store the fd so we can destroy this pty later
 	_ZSH_AUTOSUGGEST_PTY_FD=$REPLY
+
+	# Set up input handler from the pty
 	zle -F $_ZSH_AUTOSUGGEST_PTY_FD _zsh_autosuggest_async_suggestion_ready
 }
 
