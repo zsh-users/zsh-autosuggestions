@@ -12,6 +12,9 @@ _zsh_autosuggest_async_fetch_suggestion() {
 _zsh_autosuggest_async_suggestion_server() {
 	emulate -R zsh
 
+	# Output only newlines (not carriage return + newline)
+	stty -onlcr
+
 	while IFS='' read -r -d $'\0' prefix; do
 		# Kill last bg process
 		kill -KILL %1 &>/dev/null
