@@ -13,17 +13,12 @@ _zsh_autosuggest_async_fetch_suggestion() {
 
 # Pty is spawned running this function
 _zsh_autosuggest_async_suggestion_server() {
-	local last_pid
-
 	while read -d $'\0' cmd; do
 		# Kill last bg process
-		kill -KILL $last_pid &>/dev/null
+		kill -KILL %1 &>/dev/null
 
 		# Run suggestion search in the background
 		print -n -- "$(eval "$cmd")"$'\0' &
-
-		# Save the bg process's id so we can kill later
-		last_pid=$!
 	done
 }
 
