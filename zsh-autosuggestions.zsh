@@ -487,6 +487,8 @@ _zsh_autosuggest_async_fetch_suggestion() {
 
 # Pty is spawned running this function
 _zsh_autosuggest_async_suggestion_server() {
+	emulate -R zsh
+
 	while read -d $'\0' prefix; do
 		# Kill last bg process
 		kill -KILL %1 &>/dev/null
