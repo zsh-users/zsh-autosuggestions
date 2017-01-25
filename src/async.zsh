@@ -15,12 +15,14 @@ _zsh_autosuggest_async_suggestion_server() {
 	# Output only newlines (not carriage return + newline)
 	stty -onlcr
 
+	local strategy=$1
+
 	while IFS='' read -r -d $'\0' prefix; do
 		# Kill last bg process
 		kill -KILL %1 &>/dev/null
 
 		# Run suggestion search in the background
-		echo -n -E "$(_zsh_autosuggest_strategy_default "$prefix")"$'\0' &
+		echo -n -E "$($strategy "$prefix")"$'\0' &
 	done
 }
 
@@ -51,7 +53,7 @@ _zsh_autosuggest_async_recreate_pty() {
 	typeset -h REPLY
 
 	# Start a new pty running the server function
-	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME _zsh_autosuggest_async_suggestion_server
+	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME "_zsh_autosuggest_async_suggestion_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
 
 	# Store the fd so we can destroy this pty later
 	_ZSH_AUTOSUGGEST_PTY_FD=$REPLY
