@@ -12,7 +12,7 @@ _zsh_autosuggest_async_fetch_suggestion() {
 }
 
 # Pty is spawned running this function
-_zsh_autosuggest_async_suggestion_worker() {
+_zsh_autosuggest_async_suggestion_server() {
 	local last_pid
 
 	while read -d $'\0' cmd; do
@@ -54,7 +54,7 @@ _zsh_autosuggest_async_recreate_pty() {
 	typeset -h REPLY
 
 	# Start a new pty running the server function
-	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME _zsh_autosuggest_async_suggestion_worker
+	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME _zsh_autosuggest_async_suggestion_server
 
 	# Store the fd so we can destroy this pty later
 	_ZSH_AUTOSUGGEST_PTY_FD=$REPLY
