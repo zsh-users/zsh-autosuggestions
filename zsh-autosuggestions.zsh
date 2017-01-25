@@ -502,10 +502,10 @@ _zsh_autosuggest_async_suggestion_server() {
 # First arg will be fd ready for reading
 # Second arg will be passed in case of error
 _zsh_autosuggest_async_suggestion_ready() {
-	# while zpty -rt $ZSH_AUTOSUGGEST_PTY_NAME suggestion 2>/dev/null; do
-	while read -u $_ZSH_AUTOSUGGEST_PTY_FD -d $'\0' suggestion; do
-		zle _autosuggest-show-suggestion "${suggestion//$'\r'$'\n'/$'\n'}"
-	done
+	local suggestion
+
+	zpty -rt $ZSH_AUTOSUGGEST_PTY_NAME suggestion '*'$'\0' 2>/dev/null
+	zle _autosuggest-show-suggestion "${suggestion%$'\0'}"
 }
 
 # Recreate the pty to get a fresh list of history events
