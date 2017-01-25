@@ -46,6 +46,20 @@ describe 'default strategy' do
     end
   end
 
+  context 'with a newline hist entry' do
+    before do
+      session.send_string('echo "\n"')
+      session.send_keys('enter')
+
+      session.clear
+    end
+
+    it do
+      session.send_keys('e')
+      wait_for { session.content }.to eq 'echo "\n"'
+    end
+  end
+
   context 'with a hist entry with a backslash' do
     before do
       session.run_command('echo "hello\nworld"')
