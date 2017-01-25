@@ -482,14 +482,14 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 
 _zsh_autosuggest_async_fetch_suggestion() {
 	# Send the prefix to the pty to fetch a suggestion
-	zpty -w -n $ZSH_AUTOSUGGEST_PTY_NAME $1 $'\0'
+	zpty -w -n $ZSH_AUTOSUGGEST_PTY_NAME "${1}"$'\0'
 }
 
 # Pty is spawned running this function
 _zsh_autosuggest_async_suggestion_server() {
 	emulate -R zsh
 
-	while read -d $'\0' prefix; do
+	while IFS='' read -r -d $'\0' prefix; do
 		# Kill last bg process
 		kill -KILL %1 &>/dev/null
 
