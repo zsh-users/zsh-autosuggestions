@@ -16,13 +16,16 @@ _zsh_autosuggest_async_suggestion_server() {
 	stty -onlcr
 
 	local strategy=$1
+	local last_pid
 
 	while IFS='' read -r -d $'\0' prefix; do
 		# Kill last bg process
-		kill -KILL %1 &>/dev/null
+		kill -KILL $last_pid &>/dev/null
 
 		# Run suggestion search in the background
 		(echo -n -E "$($strategy "$prefix")"$'\0') &
+
+		last_pid=$!
 	done
 }
 
