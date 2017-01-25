@@ -291,6 +291,17 @@ _zsh_autosuggest_modify() {
 	_zsh_autosuggest_invoke_original_widget $@
 	retval=$?
 
+	# Optimize if manually typing in the suggestion
+	if [ $#BUFFER -gt $#orig_buffer ]; then
+		local added=${BUFFER#$orig_buffer}
+
+		# If the string added matches the beginning of the postdisplay
+		if [ "$added" = "${orig_postdisplay:0:$#added}" ]; then
+			POSTDISPLAY="${orig_postdisplay:$#added}"
+			return $retval
+		fi
+	fi
+
 	# Don't fetch a new suggestion if the buffer hasn't changed
 	if [ "$BUFFER" = "$orig_buffer" ]; then
 		POSTDISPLAY="$orig_postdisplay"
