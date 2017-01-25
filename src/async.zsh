@@ -22,7 +22,7 @@ _zsh_autosuggest_async_suggestion_server() {
 		kill -KILL %1 &>/dev/null
 
 		# Run suggestion search in the background
-		echo -n -E "$($strategy "$prefix")"$'\0' &
+		(echo -n -E "$($strategy "$prefix")"$'\0') &
 	done
 }
 
