@@ -9,5 +9,12 @@
 _zsh_autosuggest_strategy_default() {
 	setopt localoptions EXTENDED_GLOB
 
-	fc -lnrm "${1//(#m)[\\()\[\]|*?~]/\\$MATCH}*" 1 2>/dev/null | head -n 1
+	local prefix="${1//(#m)[\\()\[\]|*?~]/\\$MATCH}"
+
+	# Get the keys of the history items that match
+	local -a histkeys
+	histkeys=(${(k)history[(r)$prefix*]})
+
+	# Echo the value of the first key
+	echo -E "${history[$histkeys[1]]}"
 }

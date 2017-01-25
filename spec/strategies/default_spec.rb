@@ -30,7 +30,7 @@ describe 'default strategy' do
     end
   end
 
-  xcontext 'with a multiline hist entry' do
+  context 'with a multiline hist entry' do
     before do
       session.send_string('echo "')
       session.send_keys('enter')
