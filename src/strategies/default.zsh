@@ -7,5 +7,7 @@
 #
 
 _zsh_autosuggest_strategy_default() {
-	fc -lnrm "$1*" 1 2>/dev/null | head -n 1
+	setopt localoptions EXTENDED_GLOB
+
+	fc -lnrm "${1//(#m)[\\()\[\]|*?~]/\\$MATCH}*" 1 2>/dev/null | head -n 1
 }

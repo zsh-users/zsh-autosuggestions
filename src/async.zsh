@@ -4,21 +4,18 @@
 #--------------------------------------------------------------------#
 
 _zsh_autosuggest_async_fetch_suggestion() {
-	local strategy_function="_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
-	local prefix="$(_zsh_autosuggest_escape_command "$1")"
-
-	# Send the suggestion command to the pty to fetch a suggestion
-	zpty -w -n $ZSH_AUTOSUGGEST_PTY_NAME "$strategy_function '$prefix'"$'\0'
+	# Send the prefix to the pty to fetch a suggestion
+	zpty -w -n $ZSH_AUTOSUGGEST_PTY_NAME $1 $'\0'
 }
 
 # Pty is spawned running this function
 _zsh_autosuggest_async_suggestion_server() {
-	while read -d $'\0' cmd; do
+	while read -d $'\0' prefix; do
 		# Kill last bg process
 		kill -KILL %1 &>/dev/null
 
 		# Run suggestion search in the background
-		print -n -- "$(eval "$cmd")"$'\0' &
+		echo -n -E "$(_zsh_autosuggest_strategy_default "$prefix")"$'\0' &
 	done
 }
 
