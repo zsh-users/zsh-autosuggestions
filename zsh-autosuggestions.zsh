@@ -394,7 +394,7 @@ zle -N autosuggest-clear _zsh_autosuggest_widget_clear
 zle -N autosuggest-execute _zsh_autosuggest_widget_execute
 
 _zsh_autosuggest_show_suggestion() {
-	local suggestion=$1
+	local suggestion="$1"
 
 	_zsh_autosuggest_highlight_reset
 
