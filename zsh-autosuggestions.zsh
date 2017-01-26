@@ -112,6 +112,25 @@ _zsh_autosuggest_escape_command() {
 }
 
 #--------------------------------------------------------------------#
+# Feature Detection                                                  #
+#--------------------------------------------------------------------#
+
+_zsh_autosuggest_feature_detect() {
+	typeset -g _ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD
+	typeset -h REPLY
+
+	zpty $ZSH_AUTOSUGGEST_PTY_NAME :
+
+	if (( REPLY )); then
+		_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD=1
+	else
+		_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD=0
+	fi
+
+	zpty -d $ZSH_AUTOSUGGEST_PTY_NAME
+}
+
+#--------------------------------------------------------------------#
 # Handle Deprecated Variables/Widgets                                #
 #--------------------------------------------------------------------#
 
@@ -570,6 +589,7 @@ add-zsh-hook precmd _zsh_autosuggest_async_recreate_pty
 _zsh_autosuggest_start() {
 	add-zsh-hook -d precmd _zsh_autosuggest_start
 
+	_zsh_autosuggest_feature_detect
 	_zsh_autosuggest_check_deprecated_config
 	_zsh_autosuggest_bind_widgets
 }
