@@ -566,14 +566,26 @@ _zsh_autosuggest_async_recreate_pty() {
 		zpty -d $ZSH_AUTOSUGGEST_PTY_NAME &>/dev/null
 	fi
 
-	# REPLY stores the fd to read from
+	# With newer versions of zsh, REPLY stores the fd to read from
 	typeset -h REPLY
+
+	# If we won't get a fd back from zpty, try to guess it
+	if [ $_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD -eq 0 ]; then
+		integer -l zptyfd
+		exec {zptyfd}>&1  # Open a new file descriptor (above 10).
+		exec {zptyfd}>&-  # Close it so it's free to be used by zpty.
+	fi
 
 	# Start a new pty running the server function
 	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME "_zsh_autosuggest_async_suggestion_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
 
 	# Store the fd so we can destroy this pty later
-	_ZSH_AUTOSUGGEST_PTY_FD=$REPLY
+	if (( REPLY )); then
+		_ZSH_AUTOSUGGEST_PTY_FD=$REPLY
+	else
+		_ZSH_AUTOSUGGEST_PTY_FD=$zptyfd
+	fi
+
 
 	# Set up input handler from the pty
 	zle -F $_ZSH_AUTOSUGGEST_PTY_FD _zsh_autosuggest_async_suggestion_ready
