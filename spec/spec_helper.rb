@@ -1,3 +1,4 @@
+require 'pry'
 require 'rspec/wait'
 require 'terminal_session'
 
