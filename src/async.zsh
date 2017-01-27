@@ -3,13 +3,8 @@
 # Async                                                              #
 #--------------------------------------------------------------------#
 
-_zsh_autosuggest_async_fetch_suggestion() {
-	# Send the prefix to the pty to fetch a suggestion
-	zpty -w -n $ZSH_AUTOSUGGEST_PTY_NAME "${1}"$'\0'
-}
-
 # Pty is spawned running this function
-_zsh_autosuggest_async_suggestion_server() {
+_zsh_autosuggest_async_server() {
 	emulate -R zsh
 
 	# Output only newlines (not carriage return + newline)
@@ -18,40 +13,37 @@ _zsh_autosuggest_async_suggestion_server() {
 	local strategy=$1
 	local last_pid
 
-	while IFS='' read -r -d $'\0' prefix; do
+	while IFS='' read -r -d $'\0' query; do
 		# Kill last bg process
 		kill -KILL $last_pid &>/dev/null
 
 		# Run suggestion search in the background
-		(echo -n -E "$($strategy "$prefix")"$'\0') &
+		(
+			local suggestion
+			_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$query"
+			echo -n -E "$suggestion"$'\0'
+		) &
 
 		last_pid=$!
 	done
 }
 
+_zsh_autosuggest_async_request() {
+	# Send the query to the pty to fetch a suggestion
+	zpty -w -n $ZSH_AUTOSUGGEST_PTY_NAME "${1}"$'\0'
+}
+
 # Called when new data is ready to be read from the pty
 # First arg will be fd ready for reading
 # Second arg will be passed in case of error
-_zsh_autosuggest_async_suggestion_ready() {
+_zsh_autosuggest_async_response() {
 	local suggestion
 
 	zpty -rt $ZSH_AUTOSUGGEST_PTY_NAME suggestion '*'$'\0' 2>/dev/null
-	zle _autosuggest-show-suggestion "${suggestion%$'\0'}"
+	zle autosuggest-suggest "${suggestion%$'\0'}"
 }
 
-# Recreate the pty to get a fresh list of history events
-_zsh_autosuggest_async_recreate_pty() {
-	typeset -g _ZSH_AUTOSUGGEST_PTY_FD
-
-	# Kill the old pty
-	if [ -n "$_ZSH_AUTOSUGGEST_PTY_FD" ]; then
-		# Remove the input handler
-		zle -F $_ZSH_AUTOSUGGEST_PTY_FD
-
-		# Destroy the pty
-		zpty -d $ZSH_AUTOSUGGEST_PTY_NAME &>/dev/null
-	fi
-
+_zsh_autosuggest_async_pty_create() {
 	# With newer versions of zsh, REPLY stores the fd to read from
 	typeset -h REPLY
 
@@ -63,7 +55,7 @@ _zsh_autosuggest_async_recreate_pty() {
 	fi
 
 	# Start a new pty running the server function
-	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME "_zsh_autosuggest_async_suggestion_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
+	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME "_zsh_autosuggest_async_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
 
 	# Store the fd so we can remove the handler later
 	if (( REPLY )); then
@@ -73,5 +65,29 @@ _zsh_autosuggest_async_recreate_pty() {
 	fi
 
 	# Set up input handler from the pty
-	zle -F $_ZSH_AUTOSUGGEST_PTY_FD _zsh_autosuggest_async_suggestion_ready
+	zle -F $_ZSH_AUTOSUGGEST_PTY_FD _zsh_autosuggest_async_response
+}
+
+_zsh_autosuggest_async_pty_destroy() {
+	if [ -n "$_ZSH_AUTOSUGGEST_PTY_FD" ]; then
+		# Remove the input handler
+		zle -F $_ZSH_AUTOSUGGEST_PTY_FD
+
+		# Destroy the pty
+		zpty -d $ZSH_AUTOSUGGEST_PTY_NAME &>/dev/null
+	fi
+}
+
+_zsh_autosuggest_async_pty_recreate() {
+	_zsh_autosuggest_async_pty_destroy
+	_zsh_autosuggest_async_pty_create
+}
+
+_zsh_autosuggest_async_start() {
+	typeset -g _ZSH_AUTOSUGGEST_PTY_FD
+
+	_zsh_autosuggest_async_pty_create
+
+	# We recreate the pty to get a fresh list of history events
+	add-zsh-hook precmd _zsh_autosuggest_async_pty_recreate
 }

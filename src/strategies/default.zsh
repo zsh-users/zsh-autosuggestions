@@ -15,6 +15,6 @@ _zsh_autosuggest_strategy_default() {
 	local -a histkeys
 	histkeys=(${(k)history[(r)$prefix*]})
 
-	# Echo the value of the first key
-	echo -E "${history[$histkeys[1]]}"
+	# Give back the value of the first key
+	suggestion="${history[$histkeys[1]]}"
 }

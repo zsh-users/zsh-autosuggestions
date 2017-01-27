@@ -47,6 +47,6 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 		fi
 	done
 
-	# Echo the matched history entry
-	echo -E "$history[$histkey]"
+	# Give back the matched history entry
+	suggestion="$history[$histkey]"
 }
