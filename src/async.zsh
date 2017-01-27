@@ -65,13 +65,12 @@ _zsh_autosuggest_async_recreate_pty() {
 	# Start a new pty running the server function
 	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME "_zsh_autosuggest_async_suggestion_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
 
-	# Store the fd so we can destroy this pty later
+	# Store the fd so we can remove the handler later
 	if (( REPLY )); then
 		_ZSH_AUTOSUGGEST_PTY_FD=$REPLY
 	else
 		_ZSH_AUTOSUGGEST_PTY_FD=$zptyfd
 	fi
-
 
 	# Set up input handler from the pty
 	zle -F $_ZSH_AUTOSUGGEST_PTY_FD _zsh_autosuggest_async_suggestion_ready
