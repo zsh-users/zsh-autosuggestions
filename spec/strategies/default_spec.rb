@@ -5,6 +5,8 @@ describe 'default strategy' do
     session.run_command('source zsh-autosuggestions.zsh')
     session.run_command('fc -p')
     session.clear
+
+    wait_for { session.content }.to eq('')
   end
 
   after do
