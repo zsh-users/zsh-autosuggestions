@@ -61,12 +61,12 @@ class TerminalSession
 
   private
 
-  def socket_name
-    @socket_name ||= SecureRandom.hex(6)
+  def tmux_socket_name
+    @tmux_socket_name ||= SecureRandom.hex(6)
   end
 
   def tmux_command(cmd)
-    out = `tmux -u -L #{socket_name} #{cmd}`
+    out = `tmux -u -L #{tmux_socket_name} #{cmd}`
 
     raise('tmux error') unless $?.success?
 
