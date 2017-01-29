@@ -28,6 +28,7 @@ class TerminalSession
 
   def clear
     send_keys('C-l')
+    sleep(0.1) until content == ''
   end
 
   def destroy
