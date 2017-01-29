@@ -10,14 +10,20 @@ class TerminalSession
   def run_command(command)
     send_string(command)
     send_keys('enter')
+
+    self
   end
 
   def send_string(str)
     tmux_command("send-keys -t 0 -l '#{str.gsub("'", "\\'")}'")
+
+    self
   end
 
   def send_keys(*keys)
     tmux_command("send-keys -t 0 #{keys.join(' ')}")
+
+    self
   end
 
   def content(esc_seqs: false)
@@ -29,6 +35,8 @@ class TerminalSession
   def clear
     send_keys('C-l')
     sleep(0.1) until content == ''
+
+    self
   end
 
   def destroy
