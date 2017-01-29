@@ -30,7 +30,7 @@ _zsh_autosuggest_async_server() {
 
 _zsh_autosuggest_async_request() {
 	# Send the query to the pty to fetch a suggestion
-	zpty -w -n $ZSH_AUTOSUGGEST_PTY_NAME "${1}"$'\0'
+	zpty -w -n $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "${1}"$'\0'
 }
 
 # Called when new data is ready to be read from the pty
@@ -39,7 +39,7 @@ _zsh_autosuggest_async_request() {
 _zsh_autosuggest_async_response() {
 	local suggestion
 
-	zpty -rt $ZSH_AUTOSUGGEST_PTY_NAME suggestion '*'$'\0' 2>/dev/null
+	zpty -rt $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME suggestion '*'$'\0' 2>/dev/null
 	zle autosuggest-suggest "${suggestion%$'\0'}"
 }
 
@@ -55,7 +55,7 @@ _zsh_autosuggest_async_pty_create() {
 	fi
 
 	# Start a new pty running the server function
-	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME "_zsh_autosuggest_async_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
+	zpty -b $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "_zsh_autosuggest_async_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
 
 	# Store the fd so we can remove the handler later
 	if (( REPLY )); then
@@ -74,7 +74,7 @@ _zsh_autosuggest_async_pty_destroy() {
 		zle -F $_ZSH_AUTOSUGGEST_PTY_FD
 
 		# Destroy the pty
-		zpty -d $ZSH_AUTOSUGGEST_PTY_NAME &>/dev/null
+		zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null
 	fi
 }
 

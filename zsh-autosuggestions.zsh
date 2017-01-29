@@ -47,9 +47,6 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 # Prefix to use when saving original versions of bound widgets
 ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 
-# Pty name for calculating autosuggestions asynchronously
-ZSH_AUTOSUGGEST_PTY_NAME=zsh_autosuggest_pty
-
 ZSH_AUTOSUGGEST_STRATEGY=default
 
 # Widgets that clear the suggestion
@@ -103,6 +100,9 @@ ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
 # Use asynchronous mode by default. Unset this variable to use sync mode.
 ZSH_AUTOSUGGEST_USE_ASYNC=
 
+# Pty name for calculating autosuggestions asynchronously
+ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_pty
+
 #--------------------------------------------------------------------#
 # Utility Functions                                                  #
 #--------------------------------------------------------------------#
@@ -122,7 +122,7 @@ _zsh_autosuggest_feature_detect() {
 	typeset -g _ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD
 	typeset -h REPLY
 
-	zpty $ZSH_AUTOSUGGEST_PTY_NAME :
+	zpty $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME :
 
 	if (( REPLY )); then
 		_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD=1
@@ -130,7 +130,7 @@ _zsh_autosuggest_feature_detect() {
 		_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD=0
 	fi
 
-	zpty -d $ZSH_AUTOSUGGEST_PTY_NAME
+	zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME
 }
 
 #--------------------------------------------------------------------#
@@ -342,7 +342,7 @@ _zsh_autosuggest_modify() {
 
 # Fetch a new suggestion based on what's currently in the buffer
 _zsh_autosuggest_fetch() {
-	if zpty -t "$ZSH_AUTOSUGGEST_PTY_NAME" &>/dev/null; then
+	if zpty -t "$ZSH_AUTOSUGGEST_ASYNC_PTY_NAME" &>/dev/null; then
 		_zsh_autosuggest_async_request "$BUFFER"
 	else
 		local suggestion
@@ -555,7 +555,7 @@ _zsh_autosuggest_async_server() {
 
 _zsh_autosuggest_async_request() {
 	# Send the query to the pty to fetch a suggestion
-	zpty -w -n $ZSH_AUTOSUGGEST_PTY_NAME "${1}"$'\0'
+	zpty -w -n $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "${1}"$'\0'
 }
 
 # Called when new data is ready to be read from the pty
@@ -564,7 +564,7 @@ _zsh_autosuggest_async_request() {
 _zsh_autosuggest_async_response() {
 	local suggestion
 
-	zpty -rt $ZSH_AUTOSUGGEST_PTY_NAME suggestion '*'$'\0' 2>/dev/null
+	zpty -rt $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME suggestion '*'$'\0' 2>/dev/null
 	zle autosuggest-suggest "${suggestion%$'\0'}"
 }
 
@@ -580,7 +580,7 @@ _zsh_autosuggest_async_pty_create() {
 	fi
 
 	# Start a new pty running the server function
-	zpty -b $ZSH_AUTOSUGGEST_PTY_NAME "_zsh_autosuggest_async_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
+	zpty -b $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "_zsh_autosuggest_async_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
 
 	# Store the fd so we can remove the handler later
 	if (( REPLY )); then
@@ -599,7 +599,7 @@ _zsh_autosuggest_async_pty_destroy() {
 		zle -F $_ZSH_AUTOSUGGEST_PTY_FD
 
 		# Destroy the pty
-		zpty -d $ZSH_AUTOSUGGEST_PTY_NAME &>/dev/null
+		zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null
 	fi
 }
 
