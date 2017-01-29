@@ -3,8 +3,17 @@ require 'securerandom'
 class TerminalSession
   ZSH_BIN = ENV['TEST_ZSH_BIN'] || 'zsh'
 
-  def initialize(width: 80, height: 24, prompt: '', term: 'xterm-256color')
-    tmux_command("new-session -d -x #{width} -y #{height} 'PS1=#{prompt} TERM=#{term} #{ZSH_BIN} -f'")
+  def initialize(opts = {})
+    opts = {
+      width: 80,
+      height: 24,
+      prompt: '',
+      term: 'xterm-256color',
+      zsh_bin: ZSH_BIN
+    }.merge(opts)
+
+    cmd="PS1=#{opts[:prompt]} TERM=#{opts[:term]} #{ZSH_BIN} -f"
+    tmux_command("new-session -d -x #{opts[:width]} -y #{opts[:height]} '#{cmd}'")
   end
 
   def run_command(command)
