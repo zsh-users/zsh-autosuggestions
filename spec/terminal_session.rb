@@ -41,7 +41,7 @@ class TerminalSession
     tmux_command(cmd).strip
   end
 
-  def clear
+  def clear_screen
     send_keys('C-l')
     sleep(0.1) until content == ''
 
@@ -68,7 +68,7 @@ class TerminalSession
   def tmux_command(cmd)
     out = `tmux -u -L #{tmux_socket_name} #{cmd}`
 
-    raise('tmux error') unless $?.success?
+    raise("tmux error running: '#{cmd}'") unless $?.success?
 
     out
   end

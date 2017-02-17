@@ -2,7 +2,7 @@
 # https://github.com/zsh-users/zsh-autosuggestions
 # v0.3.3
 # Copyright (c) 2013 Thiago de Arruda
-# Copyright (c) 2016 Eric Freese
+# Copyright (c) 2016-2017 Eric Freese
 # 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -332,7 +332,7 @@ _zsh_autosuggest_modify() {
 
 	# Get a new suggestion if the buffer is not empty after modification
 	if [ $#BUFFER -gt 0 ]; then
-		if [ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" -o $#BUFFER -lt "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]; then
+		if [ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" -o $#BUFFER -le "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]; then
 			_zsh_autosuggest_fetch
 		fi
 	fi
@@ -460,16 +460,21 @@ zle -N autosuggest-execute _zsh_autosuggest_widget_execute
 #
 
 _zsh_autosuggest_strategy_default() {
-	setopt localoptions EXTENDED_GLOB
+	# Reset options to defaults and enable LOCAL_OPTIONS
+	emulate -L zsh
 
-	local prefix="${1//(#m)[\\()\[\]|*?~]/\\$MATCH}"
+	# Enable globbing flags so that we can use (#m)
+	setopt EXTENDED_GLOB
 
-	# Get the keys of the history items that match
-	local -a histkeys
-	histkeys=(${(k)history[(r)$prefix*]})
+	# Escape backslashes and all of the glob operators so we can use
+	# this string as a pattern to search the $history associative array.
+	# - (#m) globbing flag enables setting references for match data
+	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
 
-	# Give back the value of the first key
-	suggestion="${history[$histkeys[1]]}"
+	# Get the history items that match
+	# - (r) subscript flag makes the pattern match on values
+	suggestion="${history[(r)$prefix*]}"
+
 }
 
 #--------------------------------------------------------------------#
@@ -528,9 +533,19 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 # Async                                                              #
 #--------------------------------------------------------------------#
 
-# Pty is spawned running this function
+# Zpty process is spawned running this function
 _zsh_autosuggest_async_server() {
 	emulate -R zsh
+
+	# There is a bug in zpty module (fixed in zsh/master) by which a
+	# zpty that exits will kill all zpty processes that were forked
+	# before it. Here we set up a zsh exit hook to SIGKILL the zpty
+	# process immediately, before it has a chance to kill any other
+	# zpty processes.
+	zshexit() {
+		kill -KILL $$
+		sleep 1 # Block for long enough for the signal to come through
+	}
 
 	# Output only newlines (not carriage return + newline)
 	stty -onlcr
@@ -554,7 +569,7 @@ _zsh_autosuggest_async_server() {
 }
 
 _zsh_autosuggest_async_request() {
-	# Send the query to the pty to fetch a suggestion
+	# Write the query to the zpty process to fetch a suggestion
 	zpty -w -n $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "${1}"$'\0'
 }
 
@@ -562,10 +577,12 @@ _zsh_autosuggest_async_request() {
 # First arg will be fd ready for reading
 # Second arg will be passed in case of error
 _zsh_autosuggest_async_response() {
+	setopt LOCAL_OPTIONS EXTENDED_GLOB
+
 	local suggestion
 
 	zpty -rt $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME suggestion '*'$'\0' 2>/dev/null
-	zle autosuggest-suggest "${suggestion%$'\0'}"
+	zle autosuggest-suggest "${suggestion%%$'\0'##}"
 }
 
 _zsh_autosuggest_async_pty_create() {
@@ -579,7 +596,7 @@ _zsh_autosuggest_async_pty_create() {
 		exec {zptyfd}>&-  # Close it so it's free to be used by zpty.
 	fi
 
-	# Start a new pty running the server function
+	# Fork a zpty process running the server function
 	zpty -b $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "_zsh_autosuggest_async_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
 
 	# Store the fd so we can remove the handler later
@@ -589,7 +606,7 @@ _zsh_autosuggest_async_pty_create() {
 		_ZSH_AUTOSUGGEST_PTY_FD=$zptyfd
 	fi
 
-	# Set up input handler from the pty
+	# Set up input handler from the zpty
 	zle -F $_ZSH_AUTOSUGGEST_PTY_FD _zsh_autosuggest_async_response
 }
 
@@ -598,7 +615,7 @@ _zsh_autosuggest_async_pty_destroy() {
 		# Remove the input handler
 		zle -F $_ZSH_AUTOSUGGEST_PTY_FD
 
-		# Destroy the pty
+		# Destroy the zpty
 		zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null
 	fi
 }

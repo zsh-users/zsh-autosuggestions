@@ -3,9 +3,19 @@
 # Async                                                              #
 #--------------------------------------------------------------------#
 
-# Pty is spawned running this function
+# Zpty process is spawned running this function
 _zsh_autosuggest_async_server() {
 	emulate -R zsh
+
+	# There is a bug in zpty module (fixed in zsh/master) by which a
+	# zpty that exits will kill all zpty processes that were forked
+	# before it. Here we set up a zsh exit hook to SIGKILL the zpty
+	# process immediately, before it has a chance to kill any other
+	# zpty processes.
+	zshexit() {
+		kill -KILL $$
+		sleep 1 # Block for long enough for the signal to come through
+	}
 
 	# Output only newlines (not carriage return + newline)
 	stty -onlcr
@@ -29,7 +39,7 @@ _zsh_autosuggest_async_server() {
 }
 
 _zsh_autosuggest_async_request() {
-	# Send the query to the pty to fetch a suggestion
+	# Write the query to the zpty process to fetch a suggestion
 	zpty -w -n $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "${1}"$'\0'
 }
 
@@ -37,10 +47,12 @@ _zsh_autosuggest_async_request() {
 # First arg will be fd ready for reading
 # Second arg will be passed in case of error
 _zsh_autosuggest_async_response() {
+	setopt LOCAL_OPTIONS EXTENDED_GLOB
+
 	local suggestion
 
 	zpty -rt $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME suggestion '*'$'\0' 2>/dev/null
-	zle autosuggest-suggest "${suggestion%$'\0'}"
+	zle autosuggest-suggest "${suggestion%%$'\0'##}"
 }
 
 _zsh_autosuggest_async_pty_create() {
@@ -54,7 +66,7 @@ _zsh_autosuggest_async_pty_create() {
 		exec {zptyfd}>&-  # Close it so it's free to be used by zpty.
 	fi
 
-	# Start a new pty running the server function
+	# Fork a zpty process running the server function
 	zpty -b $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "_zsh_autosuggest_async_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
 
 	# Store the fd so we can remove the handler later
@@ -64,7 +76,7 @@ _zsh_autosuggest_async_pty_create() {
 		_ZSH_AUTOSUGGEST_PTY_FD=$zptyfd
 	fi
 
-	# Set up input handler from the pty
+	# Set up input handler from the zpty
 	zle -F $_ZSH_AUTOSUGGEST_PTY_FD _zsh_autosuggest_async_response
 }
 
@@ -73,7 +85,7 @@ _zsh_autosuggest_async_pty_destroy() {
 		# Remove the input handler
 		zle -F $_ZSH_AUTOSUGGEST_PTY_FD
 
-		# Destroy the pty
+		# Destroy the zpty
 		zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null
 	fi
 }
