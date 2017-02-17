@@ -550,6 +550,10 @@ _zsh_autosuggest_async_server() {
 	# Output only newlines (not carriage return + newline)
 	stty -onlcr
 
+
+	# Silence any error messages
+	exec 2>/dev/null
+
 	local strategy=$1
 	local last_pid
 
