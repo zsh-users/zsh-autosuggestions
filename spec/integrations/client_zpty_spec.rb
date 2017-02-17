@@ -1,11 +1,10 @@
 describe 'a running zpty command' do
-  it 'is not affected by running zsh-autosuggestions' do
-    session.run_command('zmodload zsh/zpty')
-    session.run_command('zpty -b kitty cat')
-    session.run_command('zpty -w kitty cat')
-    sleep 1
-    session.run_command('zpty -r kitty')
+  let(:before_sourcing) { -> { session.run_command('zmodload zsh/zpty && zpty -b kitty cat') } }
 
-    wait_for(session.content).to end_with("\ncat")
+  it 'is not affected by running zsh-autosuggestions' do
+    sleep 1 # Give a little time for precmd hooks to run
+    session.run_command('zpty -t kitty; echo $?')
+
+    wait_for(session.content).to end_with("\n0")
   end
 end
