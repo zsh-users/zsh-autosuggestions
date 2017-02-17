@@ -12,7 +12,9 @@ class TerminalSession
       zsh_bin: ZSH_BIN
     }.merge(opts)
 
-    cmd="PS1=#{opts[:prompt]} TERM=#{opts[:term]} #{ZSH_BIN} -f"
+    @opts = opts
+
+    cmd="PS1=\"#{opts[:prompt]}\" TERM=#{opts[:term]} #{ZSH_BIN} -f"
     tmux_command("new-session -d -x #{opts[:width]} -y #{opts[:height]} '#{cmd}'")
   end
 
@@ -65,6 +67,8 @@ class TerminalSession
   end
 
   private
+
+  attr_reader :opts
 
   def tmux_socket_name
     @tmux_socket_name ||= SecureRandom.hex(6)
