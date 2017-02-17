@@ -43,7 +43,12 @@ class TerminalSession
 
   def clear_screen
     send_keys('C-l')
-    sleep(0.1) until content == ''
+
+    i = 0
+    until content == opts[:prompt] || i > 20 do
+      sleep(0.1)
+      i = i + 1
+    end
 
     self
   end
