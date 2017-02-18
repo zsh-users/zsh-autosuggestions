@@ -3,7 +3,7 @@
 # Feature Detection                                                  #
 #--------------------------------------------------------------------#
 
-_zsh_autosuggest_feature_detect() {
+_zsh_autosuggest_feature_detect_zpty_returns_fd() {
 	typeset -g _ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD
 	typeset -h REPLY
 

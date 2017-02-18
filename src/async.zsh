@@ -102,6 +102,7 @@ _zsh_autosuggest_async_pty_recreate() {
 _zsh_autosuggest_async_start() {
 	typeset -g _ZSH_AUTOSUGGEST_PTY_FD
 
+	_zsh_autosuggest_feature_detect_zpty_returns_fd
 	_zsh_autosuggest_async_pty_recreate
 
 	# We recreate the pty to get a fresh list of history events

@@ -118,7 +118,7 @@ _zsh_autosuggest_escape_command() {
 # Feature Detection                                                  #
 #--------------------------------------------------------------------#
 
-_zsh_autosuggest_feature_detect() {
+_zsh_autosuggest_feature_detect_zpty_returns_fd() {
 	typeset -g _ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD
 	typeset -h REPLY
 
@@ -597,6 +597,7 @@ _zsh_autosuggest_async_pty_recreate() {
 _zsh_autosuggest_async_start() {
 	typeset -g _ZSH_AUTOSUGGEST_PTY_FD
 
+	_zsh_autosuggest_feature_detect_zpty_returns_fd
 	_zsh_autosuggest_async_pty_recreate
 
 	# We recreate the pty to get a fresh list of history events
@@ -611,7 +612,6 @@ _zsh_autosuggest_async_start() {
 _zsh_autosuggest_start() {
 	add-zsh-hook -d precmd _zsh_autosuggest_start
 
-	_zsh_autosuggest_feature_detect
 	_zsh_autosuggest_bind_widgets
 
 	# Re-bind widgets on every precmd to ensure we wrap other wrappers.

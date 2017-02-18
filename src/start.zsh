@@ -7,7 +7,6 @@
 _zsh_autosuggest_start() {
 	add-zsh-hook -d precmd _zsh_autosuggest_start
 
-	_zsh_autosuggest_feature_detect
 	_zsh_autosuggest_bind_widgets
 
 	# Re-bind widgets on every precmd to ensure we wrap other wrappers.
