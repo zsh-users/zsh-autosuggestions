@@ -150,6 +150,7 @@ _zsh_autosuggest_bind_widget() {
 
 		# User-defined widget
 		user:*)
+			zle -l "$prefix$widget" && zle -N "$widget" ${widgets[$prefix$widget]#*:}
 			zle -N $prefix$widget ${widgets[$widget]#*:}
 			;;
 
