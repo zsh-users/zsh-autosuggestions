@@ -92,6 +92,10 @@ Widgets that modify the buffer and are not found in any of these arrays will fet
 Set `ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE` to an integer value to disable autosuggestion for large buffers. The default is unset, which means that autosuggestion will be tried for any buffer size. Recommended value is 20.
 This can be useful when pasting large amount of text in the terminal, to avoid triggering autosuggestion for too long strings.
 
+### Disable Asynchronous Mode
+
+As of `v0.4.0`, suggestions are fetched asynchronously using the `zsh/zpty` module. To disable this behavior and fall back to fetching suggestions synchronously, unset the `ZSH_AUTOSUGGEST_USE_ASYNC` variable.
+
 
 ### Key Bindings
 
@@ -154,9 +158,9 @@ Pull requests are welcome! If you send a pull request, please:
 
 ### Testing
 
-Testing is performed with [`shunit2`](https://github.com/kward/shunit2) (v2.1.6). Documentation can be found [here](http://shunit2.googlecode.com/svn/trunk/source/2.1/doc/shunit2.html).
+Tests are written in ruby using the [`rspec`](http://rspec.info/) framework. They use [`tmux`](https://tmux.github.io/) to drive a pseudoterminal, sending simulated keystrokes and making assertions on the terminal content.
 
-The test script lives at `script/test_runner.zsh`. To run the tests, run `make test`.
+Test files live in `spec/`. To run the tests, run `make test`. To run a specific test, run `TESTS=spec/some_spec.rb make test`. You can also specify a `zsh` binary to use by setting the `TEST_ZSH_BIN` environment variable (ex: `TEST_ZSH_BIN=/bin/zsh make test`).
 
 
 ## License

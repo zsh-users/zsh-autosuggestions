@@ -1,6 +1,0 @@
-[submodule "vendor/shunit2"]
-	path = vendor/shunit2
-	url = https://github.com/kward/shunit2
-[submodule "vendor/stub.sh"]
-	path = vendor/stub.sh
-	url = https://github.com/ericfreese/stub.sh

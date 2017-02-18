@@ -21,7 +21,7 @@
 # `HIST_EXPIRE_DUPS_FIRST`.
 
 _zsh_autosuggest_strategy_match_prev_cmd() {
-	local prefix="$1"
+	local prefix="${1//(#m)[\\()\[\]|*?~]/\\$MATCH}"
 
 	# Get all history event numbers that correspond to history
 	# entries that match pattern $prefix*
@@ -47,6 +47,6 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 		fi
 	done
 
-	# Echo the matched history entry
-	echo -E "$history[$histkey]"
+	# Give back the matched history entry
+	suggestion="$history[$histkey]"
 }
