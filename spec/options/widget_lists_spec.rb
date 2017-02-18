@@ -67,3 +67,18 @@ describe 'a zle widget' do
     end
   end
 end
+
+describe 'a modification to the widget lists' do
+  let(:widget) { 'my-widget' }
+  let(:before_sourcing) { -> { session.run_command("#{widget}() {}; zle -N #{widget}; bindkey ^B #{widget}") } }
+  before { session.run_command("ZSH_AUTOSUGGEST_ACCEPT_WIDGETS+=(#{widget})") }
+
+  it 'takes effect on the next cmd line' do
+    with_history('echo hello') do
+      session.send_string('e')
+      wait_for { session.content }.to eq('echo hello')
+      session.send_keys('C-b')
+      wait_for { session.content(esc_seqs: true) }.to eq('echo hello')
+    end
+  end
+end
