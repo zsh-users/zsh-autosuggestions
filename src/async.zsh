@@ -85,9 +85,9 @@ _zsh_autosuggest_async_pty_create() {
 }
 
 _zsh_autosuggest_async_pty_destroy() {
-	if [ -n "$_ZSH_AUTOSUGGEST_PTY_FD" ]; then
+	if zpty -t $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null; then
 		# Remove the input handler
-		zle -F $_ZSH_AUTOSUGGEST_PTY_FD
+		zle -F $_ZSH_AUTOSUGGEST_PTY_FD &>/dev/null
 
 		# Destroy the zpty
 		zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null
@@ -102,7 +102,7 @@ _zsh_autosuggest_async_pty_recreate() {
 _zsh_autosuggest_async_start() {
 	typeset -g _ZSH_AUTOSUGGEST_PTY_FD
 
-	_zsh_autosuggest_async_pty_create
+	_zsh_autosuggest_async_pty_recreate
 
 	# We recreate the pty to get a fresh list of history events
 	add-zsh-hook precmd _zsh_autosuggest_async_pty_recreate
