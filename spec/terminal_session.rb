@@ -26,7 +26,7 @@ class TerminalSession
   end
 
   def send_string(str)
-    tmux_command("send-keys -t 0 -l '#{str.gsub("'", "\\'")}'")
+    tmux_command("send-keys -t 0 -l -- '#{str.gsub("'", "\\'")}'")
 
     self
   end

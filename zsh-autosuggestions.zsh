@@ -550,7 +550,7 @@ _zsh_autosuggest_async_response() {
 	local suggestion
 
 	zpty -rt $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME suggestion '*'$'\0' 2>/dev/null
-	zle autosuggest-suggest "${suggestion%%$'\0'##}"
+	zle autosuggest-suggest -- "${suggestion%%$'\0'##}"
 }
 
 _zsh_autosuggest_async_pty_create() {

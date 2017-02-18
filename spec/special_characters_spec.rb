@@ -51,5 +51,10 @@ describe 'a special character in the buffer' do
       session.send_string('echo "^A')
       wait_for { session.content }.to eq('echo "^A"')
     end
+
+    with_history('-foo() {}') do
+      session.send_string('-')
+      wait_for { session.content }.to eq('-foo() {}')
+    end
   end
 end
