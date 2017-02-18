@@ -355,7 +355,7 @@ _zsh_autosuggest_fetch() {
 _zsh_autosuggest_suggest() {
 	local suggestion="$1"
 
-	if [ -n "$suggestion" ]; then
+	if [ -n "$suggestion" ] && [ $#BUFFER -gt 0 ]; then
 		POSTDISPLAY="${suggestion#$BUFFER}"
 	else
 		unset POSTDISPLAY
