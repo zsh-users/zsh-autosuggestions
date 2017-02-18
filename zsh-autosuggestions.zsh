@@ -122,7 +122,7 @@ _zsh_autosuggest_feature_detect() {
 	typeset -g _ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD
 	typeset -h REPLY
 
-	zpty $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME '{ zshexit() { kill -KILL $$; sleep 1 } }'
+	zpty zsh_autosuggest_feature_detect '{ zshexit() { kill -KILL $$; sleep 1 } }'
 
 	if (( REPLY )); then
 		_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD=1
@@ -130,7 +130,7 @@ _zsh_autosuggest_feature_detect() {
 		_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD=0
 	fi
 
-	zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME
+	zpty -d zsh_autosuggest_feature_detect
 }
 
 #--------------------------------------------------------------------#
