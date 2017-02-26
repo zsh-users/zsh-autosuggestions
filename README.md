@@ -4,6 +4,8 @@ _[Fish](http://fishshell.com/)-like fast/unobtrusive autosuggestions for zsh._
 
 It suggests commands as you type, based on command history.
 
+[![CircleCI](https://circleci.com/gh/zsh-users/zsh-autosuggestions.svg?style=svg)](https://circleci.com/gh/zsh-users/zsh-autosuggestions)
+
 <a href="https://asciinema.org/a/37390" target="_blank"><img src="https://asciinema.org/a/37390.png" width="400" /></a>
 
 

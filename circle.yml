@@ -1,0 +1,12 @@
+machine:
+  environment:
+    ZSH_VERSIONS: 5.0.8 5.1.1 5.2 5.3.1
+
+dependencies:
+  pre:
+    - for v in $(echo $ZSH_VERSIONS | awk "{ for (i=$((1+CIRCLE_NODE_INDEX));i<=NF;i+=$CIRCLE_NODE_TOTAL) print \$i }"); do wget https://sourceforge.net/projects/zsh/files/zsh/$v/zsh-$v.tar.gz && tar xzf zsh-$v.tar.gz && cd zsh-$v && ./configure && sudo make install || exit 1; done
+
+test:
+  override:
+    - for v in $(echo $ZSH_VERSIONS | awk "{ for (i=$((1+CIRCLE_NODE_INDEX));i<=NF;i+=$CIRCLE_NODE_TOTAL) print \$i }"); do TEST_ZSH_BIN=/usr/local/bin/zsh-$v make test || exit 1; done:
+        parallel: true

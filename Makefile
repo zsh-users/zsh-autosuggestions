@@ -32,4 +32,5 @@ clean:
 
 .PHONY: test
 test: all
+	@test -n "$$TEST_ZSH_BIN" && echo "Testing zsh binary: $(TEST_ZSH_BIN)" || true
 	bundle exec rspec $(TESTS)
