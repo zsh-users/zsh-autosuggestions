@@ -66,6 +66,19 @@ describe 'a zle widget' do
       end
     end
   end
+
+  context 'that modifies the buffer' do
+    before { session.run_command("#{widget}() { BUFFER=\"foo\" }") }
+
+    context 'when not added to any of the widget lists' do
+      it 'modifies the buffer and fetches a new suggestion' do
+        with_history('foobar') do
+          session.send_keys('C-b')
+          wait_for { session.content }.to eq('foobar')
+        end
+      end
+    end
+  end
 end
 
 describe 'a modification to the widget lists' do
