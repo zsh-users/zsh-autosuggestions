@@ -18,6 +18,10 @@ class TerminalSession
     tmux_command("new-session -d -x #{opts[:width]} -y #{opts[:height]} '#{cmd}'")
   end
 
+  def tmux_socket_name
+    @tmux_socket_name ||= SecureRandom.hex(6)
+  end
+
   def run_command(command)
     send_string(command)
     send_keys('enter')
@@ -69,10 +73,6 @@ class TerminalSession
   private
 
   attr_reader :opts
-
-  def tmux_socket_name
-    @tmux_socket_name ||= SecureRandom.hex(6)
-  end
 
   def tmux_command(cmd)
     out = `tmux -u -L #{tmux_socket_name} #{cmd}`
