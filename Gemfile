@@ -2,4 +2,4 @@ source 'https://rubygems.org'
 
 gem 'rspec'
 gem 'rspec-wait'
-gem 'pry'
+gem 'pry-byebug'
