@@ -15,6 +15,9 @@ _zsh_autosuggest_clear() {
 _zsh_autosuggest_modify() {
 	local -i retval
 
+	# Only added to zsh very recently
+	local -i KEYS_QUEUED_COUNT
+
 	# Save the contents of the buffer/postdisplay
 	local orig_buffer="$BUFFER"
 	local orig_postdisplay="$POSTDISPLAY"
@@ -25,6 +28,11 @@ _zsh_autosuggest_modify() {
 	# Original widget may modify the buffer
 	_zsh_autosuggest_invoke_original_widget $@
 	retval=$?
+
+	# Don't fetch a new suggestion if there's more input to be read immediately
+	if [[ $PENDING > 0 ]] || [[ $KEYS_QUEUED_COUNT > 0 ]]; then
+		return $retval
+	fi
 
 	# Optimize if manually typing in the suggestion
 	if [ $#BUFFER -gt $#orig_buffer ]; then
