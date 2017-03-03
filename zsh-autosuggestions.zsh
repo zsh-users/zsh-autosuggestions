@@ -281,6 +281,27 @@ _zsh_autosuggest_highlight_apply() {
 # Autosuggest Widget Implementations                                 #
 #--------------------------------------------------------------------#
 
+# Disable suggestions
+_zsh_autosuggest_disable() {
+	typeset -g _ZSH_AUTOSUGGEST_DISABLED
+	_zsh_autosuggest_clear
+}
+
+# Enable suggestions
+_zsh_autosuggest_enable() {
+	unset _ZSH_AUTOSUGGEST_DISABLED
+	_zsh_autosuggest_fetch
+}
+
+# Toggle suggestions (enable/disable)
+_zsh_autosuggest_toggle() {
+	if [ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]; then
+		_zsh_autosuggest_enable
+	else
+		_zsh_autosuggest_disable
+	fi
+}
+
 # Clear the suggestion
 _zsh_autosuggest_clear() {
 	# Remove the suggestion
@@ -327,6 +348,11 @@ _zsh_autosuggest_modify() {
 	if [ "$BUFFER" = "$orig_buffer" ]; then
 		POSTDISPLAY="$orig_postdisplay"
 		return $retval
+	fi
+
+	# Bail out if suggestions are disabled
+	if [ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]; then
+		return $?
 	fi
 
 	# Get a new suggestion if the buffer is not empty after modification
@@ -428,7 +454,7 @@ _zsh_autosuggest_partial_accept() {
 	return $retval
 }
 
-for action in clear modify fetch suggest accept partial_accept execute; do
+for action in clear modify fetch suggest accept partial_accept execute enable disable toggle; do
 	eval "_zsh_autosuggest_widget_$action() {
 		local -i retval
 
@@ -450,6 +476,9 @@ zle -N autosuggest-suggest _zsh_autosuggest_widget_suggest
 zle -N autosuggest-accept _zsh_autosuggest_widget_accept
 zle -N autosuggest-clear _zsh_autosuggest_widget_clear
 zle -N autosuggest-execute _zsh_autosuggest_widget_execute
+zle -N autosuggest-enable _zsh_autosuggest_widget_enable
+zle -N autosuggest-disable _zsh_autosuggest_widget_disable
+zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
 
 #--------------------------------------------------------------------#
 # Default Suggestion Strategy                                        #
