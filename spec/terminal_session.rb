@@ -41,6 +41,13 @@ class TerminalSession
     self
   end
 
+  def paste_string(str)
+    tmux_command("set-buffer -- '#{str}'")
+    tmux_command("paste-buffer -dpr -t 0")
+
+    self
+  end
+
   def content(esc_seqs: false)
     cmd = 'capture-pane -p -t 0'
     cmd += ' -e' if esc_seqs

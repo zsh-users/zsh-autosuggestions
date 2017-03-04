@@ -12,7 +12,10 @@ _zsh_autosuggest_disable() {
 # Enable suggestions
 _zsh_autosuggest_enable() {
 	unset _ZSH_AUTOSUGGEST_DISABLED
-	_zsh_autosuggest_fetch
+
+	if [ $#BUFFER -gt 0 ]; then
+		_zsh_autosuggest_fetch
+	fi
 }
 
 # Toggle suggestions (enable/disable)
