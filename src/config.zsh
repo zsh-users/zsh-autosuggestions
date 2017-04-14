@@ -61,8 +61,5 @@ ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 # Max size of buffer to trigger autosuggestion. Leave undefined for no upper bound.
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
 
-# Use asynchronous mode by default. Unset this variable to use sync mode.
-ZSH_AUTOSUGGEST_USE_ASYNC=
-
 # Pty name for calculating autosuggestions asynchronously
 ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_pty

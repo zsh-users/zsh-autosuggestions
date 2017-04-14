@@ -94,9 +94,9 @@ Widgets that modify the buffer and are not found in any of these arrays will fet
 Set `ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE` to an integer value to disable autosuggestion for large buffers. The default is unset, which means that autosuggestion will be tried for any buffer size. Recommended value is 20.
 This can be useful when pasting large amount of text in the terminal, to avoid triggering autosuggestion for too long strings.
 
-### Disable Asynchronous Mode
+### Enable Asynchronous Mode
 
-As of `v0.4.0`, suggestions are fetched asynchronously using the `zsh/zpty` module. To disable this behavior and fall back to fetching suggestions synchronously, unset the `ZSH_AUTOSUGGEST_USE_ASYNC` variable.
+As of `v0.4.0`, suggestions can be fetched asynchronously using the `zsh/zpty` module. To enable this behavior, set the `ZSH_AUTOSUGGEST_USE_ASYNC` variable (it can be set to anything).
 
 
 ### Key Bindings
