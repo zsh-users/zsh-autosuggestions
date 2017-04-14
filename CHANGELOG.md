@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.4.0
+- High-level integration tests using RSpec and tmux
+- Add continuous integration with Circle CI
+- Experimental support for asynchronous suggestions (#)
+- Fix problems with multi-line suggestions (#)
+- Optimize case where manually typing in suggestion
+- Avoid wrapping any zle-* widgets (#)
+- Remove support for deprecated options from v0.0.x
+- Handle history entries that begin with dashes (#)
+- Gracefully handle being sourced multiple times (#126)
+- Add enable/disable/toggle widgets to disable/enable suggestions (#219)
+
+
 ## v0.3.3
 - Switch from $history array to fc builtin for better performance with large HISTFILEs (#164)
 - Fix tilde handling when extended_glob is set (#168)
