@@ -3,6 +3,30 @@
 # Autosuggest Widget Implementations                                 #
 #--------------------------------------------------------------------#
 
+# Disable suggestions
+_zsh_autosuggest_disable() {
+	typeset -g _ZSH_AUTOSUGGEST_DISABLED
+	_zsh_autosuggest_clear
+}
+
+# Enable suggestions
+_zsh_autosuggest_enable() {
+	unset _ZSH_AUTOSUGGEST_DISABLED
+
+	if [ $#BUFFER -gt 0 ]; then
+		_zsh_autosuggest_fetch
+	fi
+}
+
+# Toggle suggestions (enable/disable)
+_zsh_autosuggest_toggle() {
+	if [ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]; then
+		_zsh_autosuggest_enable
+	else
+		_zsh_autosuggest_disable
+	fi
+}
+
 # Clear the suggestion
 _zsh_autosuggest_clear() {
 	# Remove the suggestion
@@ -15,16 +39,35 @@ _zsh_autosuggest_clear() {
 _zsh_autosuggest_modify() {
 	local -i retval
 
+	# Only added to zsh very recently
+	local -i KEYS_QUEUED_COUNT
+
 	# Save the contents of the buffer/postdisplay
 	local orig_buffer="$BUFFER"
 	local orig_postdisplay="$POSTDISPLAY"
 
-	# Clear suggestion while original widget runs
+	# Clear suggestion while waiting for next one
 	unset POSTDISPLAY
 
 	# Original widget may modify the buffer
 	_zsh_autosuggest_invoke_original_widget $@
 	retval=$?
+
+	# Don't fetch a new suggestion if there's more input to be read immediately
+	if [[ $PENDING > 0 ]] || [[ $KEYS_QUEUED_COUNT > 0 ]]; then
+		return $retval
+	fi
+
+	# Optimize if manually typing in the suggestion
+	if [ $#BUFFER -gt $#orig_buffer ]; then
+		local added=${BUFFER#$orig_buffer}
+
+		# If the string added matches the beginning of the postdisplay
+		if [ "$added" = "${orig_postdisplay:0:$#added}" ]; then
+			POSTDISPLAY="${orig_postdisplay:$#added}"
+			return $retval
+		fi
+	fi
 
 	# Don't fetch a new suggestion if the buffer hasn't changed
 	if [ "$BUFFER" = "$orig_buffer" ]; then
@@ -32,20 +75,41 @@ _zsh_autosuggest_modify() {
 		return $retval
 	fi
 
+	# Bail out if suggestions are disabled
+	if [ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]; then
+		return $?
+	fi
+
 	# Get a new suggestion if the buffer is not empty after modification
-	local suggestion
 	if [ $#BUFFER -gt 0 ]; then
-		if [ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" -o $#BUFFER -lt "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]; then
-			suggestion="$(_zsh_autosuggest_suggestion "$BUFFER")"
+		if [ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" -o $#BUFFER -le "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]; then
+			_zsh_autosuggest_fetch
 		fi
 	fi
 
-	# Add the suggestion to the POSTDISPLAY
-	if [ -n "$suggestion" ]; then
-		POSTDISPLAY="${suggestion#$BUFFER}"
-	fi
-
 	return $retval
+}
+
+# Fetch a new suggestion based on what's currently in the buffer
+_zsh_autosuggest_fetch() {
+	if zpty -t "$ZSH_AUTOSUGGEST_ASYNC_PTY_NAME" &>/dev/null; then
+		_zsh_autosuggest_async_request "$BUFFER"
+	else
+		local suggestion
+		_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$BUFFER"
+		_zsh_autosuggest_suggest "$suggestion"
+	fi
+}
+
+# Offer a suggestion
+_zsh_autosuggest_suggest() {
+	local suggestion="$1"
+
+	if [ -n "$suggestion" ] && [ $#BUFFER -gt 0 ]; then
+		POSTDISPLAY="${suggestion#$BUFFER}"
+	else
+		unset POSTDISPLAY
+	fi
 }
 
 # Accept the entire suggestion
@@ -115,7 +179,7 @@ _zsh_autosuggest_partial_accept() {
 	return $retval
 }
 
-for action in clear modify accept partial_accept execute; do
+for action in clear modify fetch suggest accept partial_accept execute enable disable toggle; do
 	eval "_zsh_autosuggest_widget_$action() {
 		local -i retval
 
@@ -126,10 +190,17 @@ for action in clear modify accept partial_accept execute; do
 
 		_zsh_autosuggest_highlight_apply
 
+		zle -R
+
 		return \$retval
 	}"
 done
 
+zle -N autosuggest-fetch _zsh_autosuggest_widget_fetch
+zle -N autosuggest-suggest _zsh_autosuggest_widget_suggest
 zle -N autosuggest-accept _zsh_autosuggest_widget_accept
 zle -N autosuggest-clear _zsh_autosuggest_widget_clear
 zle -N autosuggest-execute _zsh_autosuggest_widget_execute
+zle -N autosuggest-enable _zsh_autosuggest_widget_enable
+zle -N autosuggest-disable _zsh_autosuggest_widget_disable
+zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle

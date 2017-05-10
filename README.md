@@ -4,6 +4,8 @@ _[Fish](http://fishshell.com/)-like fast/unobtrusive autosuggestions for zsh._
 
 It suggests commands as you type, based on command history.
 
+[![CircleCI](https://circleci.com/gh/zsh-users/zsh-autosuggestions.svg?style=svg)](https://circleci.com/gh/zsh-users/zsh-autosuggestions)
+
 <a href="https://asciinema.org/a/37390" target="_blank"><img src="https://asciinema.org/a/37390.png" width="400" /></a>
 
 
@@ -92,14 +94,22 @@ Widgets that modify the buffer and are not found in any of these arrays will fet
 Set `ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE` to an integer value to disable autosuggestion for large buffers. The default is unset, which means that autosuggestion will be tried for any buffer size. Recommended value is 20.
 This can be useful when pasting large amount of text in the terminal, to avoid triggering autosuggestion for too long strings.
 
+### Enable Asynchronous Mode
+
+As of `v0.4.0`, suggestions can be fetched asynchronously using the `zsh/zpty` module. To enable this behavior, set the `ZSH_AUTOSUGGEST_USE_ASYNC` variable (it can be set to anything).
+
 
 ### Key Bindings
 
-This plugin provides three widgets that you can use with `bindkey`:
+This plugin provides a few widgets that you can use with `bindkey`:
 
 1. `autosuggest-accept`: Accepts the current suggestion.
 2. `autosuggest-execute`: Accepts and executes the current suggestion.
 3. `autosuggest-clear`: Clears the current suggestion.
+4. `autosuggest-fetch`: Fetches a suggestion (works even when suggestions are disabled).
+5. `autosuggest-disable`: Disables suggestions.
+6. `autosuggest-enable`: Re-enables suggestions.
+7. `autosuggest-toggle`: Toggles between enabled/disabled suggestions.
 
 For example, this would bind <kbd>ctrl</kbd> + <kbd>space</kbd> to accept the current suggestion.
 
@@ -154,9 +164,9 @@ Pull requests are welcome! If you send a pull request, please:
 
 ### Testing
 
-Testing is performed with [`shunit2`](https://github.com/kward/shunit2) (v2.1.6). Documentation can be found [here](http://shunit2.googlecode.com/svn/trunk/source/2.1/doc/shunit2.html).
+Tests are written in ruby using the [`rspec`](http://rspec.info/) framework. They use [`tmux`](https://tmux.github.io/) to drive a pseudoterminal, sending simulated keystrokes and making assertions on the terminal content.
 
-The test script lives at `script/test_runner.zsh`. To run the tests, run `make test`.
+Test files live in `spec/`. To run the tests, run `make test`. To run a specific test, run `TESTS=spec/some_spec.rb make test`. You can also specify a `zsh` binary to use by setting the `TEST_ZSH_BIN` environment variable (ex: `TEST_ZSH_BIN=/bin/zsh make test`).
 
 
 ## License
