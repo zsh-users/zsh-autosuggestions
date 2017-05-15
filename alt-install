@@ -1,0 +1,73 @@
+#!/bin/bash
+# An alternative install script for zsh-autocomplete.
+#
+DESCRIPTION="this script adds/removes a   
+.zsh-autosuggestionsrc reference to your .zshrc file."
+ZSHRC=""
+PATH_TO_RC="source $HOME/.zsh-autosuggestions/.zsh-autosuggestionsrc"
+
+function usage()
+{
+        echo $0 : $DESCRIPTION
+        echo "Usage"
+        echo -e "\t" $0 " install   : attempts to install"
+        echo -e "\t" $0 " uninstall : attempts to uninstall"
+        exit 1
+}
+
+function install()
+{
+
+	# check if line exists in zshrc, add it if missing
+	if grep -Fxq "$PATH_TO_RC" "$ZSHRC"
+	then
+		echo "currently installed, see $ZSHRC" 
+	else
+		echo "Backing up $ZSHRC to $ZSHRC.bak"
+		cp "$ZSHRC" "$ZSHRC.bak"
+		echo "Adding $PATH_TO_RC to $ZSHRC"
+		echo "$PATH_TO_RC" >> "$ZSHRC"
+	fi
+}
+
+function uninstall()
+{
+	# check if line exists in zshrc, remove if preset
+	if grep -Fxq "$PATH_TO_RC" "$ZSHRC"
+	then
+		echo "Removing $PATH_TO_RC from $ZSHRC"
+		grep -v "$PATH_TO_RC" "$ZSHRC" > "tmp-zsh-autosuggestion"
+		cat "tmp-zsh-autosuggestion" > "$ZSHRC"
+		rm "tmp-zsh-autosuggestion"
+	else
+		echo "not currently installed, see $ZSHRC"
+	fi
+}
+
+function get_zhsrc()
+{
+	# attempt to find a .zshrc
+	# check if it exists and writeable
+	if [ -w "$HOME/.zshrc" ] ; then
+		ZSHRC="$HOME/.zshrc"
+	elif [ -w "$ZDOTDIR/.zshrc" ] ; then
+		ZSHRC="$ZDOTDIR/.zshrc"
+	else
+		echo "Cannot find .zshrc "
+		exit -1
+	fi
+}
+
+function main()
+{
+	if [ "$1" == "install" ] ; then
+		get_zhsrc
+		install "$@"
+	elif [ "$1" == "uninstall" ] ; then
+		get_zhsrc
+		uninstall "$@"
+	else
+		usage
+	fi
+}
+main "$@" # $@ passes args to main.
