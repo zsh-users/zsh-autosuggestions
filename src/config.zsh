@@ -42,6 +42,7 @@ ZSH_AUTOSUGGEST_EXECUTE_WIDGETS=(
 # Widgets that accept the suggestion as far as the cursor moves
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
 	forward-word
+	emacs-forward-word
 	vi-forward-word
 	vi-forward-word-end
 	vi-forward-blank-word
