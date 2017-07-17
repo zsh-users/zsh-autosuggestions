@@ -63,7 +63,7 @@ _zsh_autosuggest_async_pty_create() {
 	typeset -h REPLY
 
 	# If we won't get a fd back from zpty, try to guess it
-	if [ $_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD -eq 0 ]; then
+	if (( ! $_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD )); then
 		integer -l zptyfd
 		exec {zptyfd}>&1  # Open a new file descriptor (above 10).
 		exec {zptyfd}>&-  # Close it so it's free to be used by zpty.
