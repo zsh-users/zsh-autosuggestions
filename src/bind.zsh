@@ -88,13 +88,13 @@ _zsh_autosuggest_bind_widgets() {
 
 	# Find every widget we might want to bind and bind it appropriately
 	for widget in ${${(f)"$(builtin zle -la)"}:#${(j:|:)~ignore_widgets}}; do
-		if [[ ${ZSH_AUTOSUGGEST_CLEAR_WIDGETS[(r)$widget]} ]]; then
+		if [[ -n ${ZSH_AUTOSUGGEST_CLEAR_WIDGETS[(r)$widget]} ]]; then
 			_zsh_autosuggest_bind_widget $widget clear
-		elif [[ ${ZSH_AUTOSUGGEST_ACCEPT_WIDGETS[(r)$widget]} ]]; then
+		elif [[ -n ${ZSH_AUTOSUGGEST_ACCEPT_WIDGETS[(r)$widget]} ]]; then
 			_zsh_autosuggest_bind_widget $widget accept
-		elif [[ ${ZSH_AUTOSUGGEST_EXECUTE_WIDGETS[(r)$widget]} ]]; then
+		elif [[ -n ${ZSH_AUTOSUGGEST_EXECUTE_WIDGETS[(r)$widget]} ]]; then
 			_zsh_autosuggest_bind_widget $widget execute
-		elif [[ ${ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS[(r)$widget]} ]]; then
+		elif [[ -n ${ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS[(r)$widget]} ]]; then
 			_zsh_autosuggest_bind_widget $widget partial_accept
 		else
 			# Assume any unspecified widget might modify the buffer
@@ -112,7 +112,7 @@ _zsh_autosuggest_invoke_original_widget() {
 
 	shift
 
-	if [[ -n $widgets[$original_widget_name] ]]; then
+	if (( ${+widgets[$original_widget_name]} )); then
 		zle $original_widget_name -- $@
 	fi
 }
