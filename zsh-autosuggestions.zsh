@@ -411,6 +411,7 @@ _zsh_autosuggest_accept() {
 	fi
 
 	_zsh_autosuggest_invoke_original_widget $@
+	_zsh_highlight
 }
 
 # Accept the entire suggestion and execute it
