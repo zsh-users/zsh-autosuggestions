@@ -48,7 +48,7 @@ It suggests commands as you type, based on command history.
 1. Install the [`zsh-autosuggestions`](https://aur.archlinux.org/packages/zsh-autosuggestions/) or the [`zsh-autosuggestions-git`](https://aur.archlinux.org/packages/zsh-autosuggestions-git/) packages from the [AUR](https://wiki.archlinux.org/index.php/Arch_User_Repository).
 
     ```sh
-    pacuar -S zsh-autosuggestions
+    pacaur -S zsh-autosuggestions
     ```
     or
     ```
