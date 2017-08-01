@@ -1,9 +1,9 @@
 describe 'rebinding [' do
   context 'initialized before sourcing the plugin' do
     before do
-      session.send_string("function [ { test \"$@\" }")
+      session.send_string("function [ { $commands[\\[] \"$@\" }")
       session.send_keys("'enter'")
-      session.run_command("clear")
+      session.clear_screen
     end
 
     it 'executes the custom behavior and the built-in behavior' do
