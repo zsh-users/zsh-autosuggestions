@@ -54,12 +54,12 @@ _zsh_autosuggest_modify() {
 	retval=$?
 
 	# Don't fetch a new suggestion if there's more input to be read immediately
-	if [[ $PENDING > 0 ]] || [[ $KEYS_QUEUED_COUNT > 0 ]]; then
+	if (( $PENDING > 0 )) || (( $KEYS_QUEUED_COUNT > 0 )); then
 		return $retval
 	fi
 
 	# Optimize if manually typing in the suggestion
-	if [[ $#BUFFER > $#orig_buffer ]]; then
+	if (( $#BUFFER > $#orig_buffer )); then
 		local added=${BUFFER#$orig_buffer}
 
 		# If the string added matches the beginning of the postdisplay
@@ -81,8 +81,8 @@ _zsh_autosuggest_modify() {
 	fi
 
 	# Get a new suggestion if the buffer is not empty after modification
-	if [[ $#BUFFER > 0 ]]; then
-		if [[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || [[ "$#BUFFER" -le "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]]; then
+	if (( $#BUFFER > 0 )); then
+		if [[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
 			_zsh_autosuggest_fetch
 		fi
 	fi
