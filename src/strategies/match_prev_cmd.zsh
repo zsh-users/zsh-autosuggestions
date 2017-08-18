@@ -26,7 +26,7 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	# Get all history event numbers that correspond to history
 	# entries that match pattern $prefix*
 	local history_match_keys
-	history_match_keys=(${(k)history[(R)$prefix*]})
+	history_match_keys=(${(k)history[(R)${(b)prefix}*]})
 
 	# By default we use the first history number (most recent history entry)
 	local histkey="${history_match_keys[1]}"
