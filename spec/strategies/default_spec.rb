@@ -1,3 +1,5 @@
+require 'strategies/special_characters_helper'
+
 describe 'the default suggestion strategy' do
   it 'suggests the last matching history entry' do
     with_history('ls foo', 'ls bar', 'echo baz') do
@@ -5,4 +7,6 @@ describe 'the default suggestion strategy' do
       wait_for { session.content }.to eq('ls bar')
     end
   end
+
+  include_examples 'special characters'
 end

@@ -1,3 +1,5 @@
+require 'strategies/special_characters_helper'
+
 describe 'the match_prev_cmd strategy' do
   let(:options) { ['ZSH_AUTOSUGGEST_STRATEGY=match_prev_cmd'] }
 
@@ -14,4 +16,6 @@ describe 'the match_prev_cmd strategy' do
       wait_for { session.content }.to eq('ls bar')
     end
   end
+
+  include_examples 'special characters'
 end
