@@ -2,29 +2,29 @@
 #   Enabled: true
 
 AllCops:
-	TargetRubyVersion: 2.3
-	Include:
-		- '**/Rakefile'
-		- '**/config.ru'
-		- '**/Gemfile'
+  TargetRubyVersion: 2.3
+  Include:
+    - '**/Rakefile'
+    - '**/config.ru'
+    - '**/Gemfile'
 
 Metrics/LineLength:
-	Max: 120
+  Max: 120
 
 Style/Documentation:
-	Enabled: false
+  Enabled: false
 
 Style/DotPosition:
-	EnforcedStyle: trailing
+  EnforcedStyle: trailing
 
 Style/FrozenStringLiteralComment:
-	Enabled: false
+  Enabled: false
 
 Style/Lambda:
-	Enabled: false
+  Enabled: false
 
 Style/MultilineMethodCallIndentation:
-	EnforcedStyle: indented
+  EnforcedStyle: indented
 
 Style/TrailingUnderscoreVariable:
-	Enabled: false
+  Enabled: false
