@@ -102,17 +102,6 @@ ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
 ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_pty
 
 #--------------------------------------------------------------------#
-# Utility Functions                                                  #
-#--------------------------------------------------------------------#
-
-_zsh_autosuggest_escape_command() {
-	setopt localoptions EXTENDED_GLOB
-
-	# Escape special chars in the string (requires EXTENDED_GLOB)
-	echo -E "${1//(#m)[\"\'\\()\[\]|*?~]/\\$MATCH}"
-}
-
-#--------------------------------------------------------------------#
 # Feature Detection                                                  #
 #--------------------------------------------------------------------#
 
@@ -489,21 +478,11 @@ zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
 #
 
 _zsh_autosuggest_strategy_default() {
-	# Reset options to defaults and enable LOCAL_OPTIONS
-	emulate -L zsh
-
-	# Enable globbing flags so that we can use (#m)
-	setopt EXTENDED_GLOB
-
-	# Escape backslashes and all of the glob operators so we can use
-	# this string as a pattern to search the $history associative array.
-	# - (#m) globbing flag enables setting references for match data
-	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
+	local prefix="$1"
 
 	# Get the history items that match
 	# - (r) subscript flag makes the pattern match on values
-	suggestion="${history[(r)$prefix*]}"
-
+	suggestion="${history[(r)${(b)prefix}*]}"
 }
 
 #--------------------------------------------------------------------#
@@ -528,18 +507,18 @@ _zsh_autosuggest_strategy_default() {
 # `HIST_EXPIRE_DUPS_FIRST`.
 
 _zsh_autosuggest_strategy_match_prev_cmd() {
-	local prefix="${1//(#m)[\\()\[\]|*?~]/\\$MATCH}"
+	local prefix="$1"
 
 	# Get all history event numbers that correspond to history
 	# entries that match pattern $prefix*
 	local history_match_keys
-	history_match_keys=(${(k)history[(R)$prefix*]})
+	history_match_keys=(${(k)history[(R)${(b)prefix}*]})
 
 	# By default we use the first history number (most recent history entry)
 	local histkey="${history_match_keys[1]}"
 
 	# Get the previously executed command
-	local prev_cmd="$(_zsh_autosuggest_escape_command "${history[$((HISTCMD-1))]}")"
+	local prev_cmd="${history[$((HISTCMD-1))]}"
 
 	# Iterate up to the first 200 history event numbers that match $prefix
 	for key in "${(@)history_match_keys[1,200]}"; do

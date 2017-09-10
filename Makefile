@@ -3,7 +3,6 @@ SRC_DIR    := ./src
 SRC_FILES := \
 	$(SRC_DIR)/setup.zsh \
 	$(SRC_DIR)/config.zsh \
-	$(SRC_DIR)/util.zsh \
 	$(SRC_DIR)/features.zsh \
 	$(SRC_DIR)/bind.zsh \
 	$(SRC_DIR)/highlight.zsh \
