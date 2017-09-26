@@ -23,14 +23,5 @@ describe 'pasting using bracketed-paste-magic' do
         expect(session.content).to eq("echo #{'a' * 60}")
       end
     end
-
-    it 'shows a suggestion after a non-modifying keystroke' do
-      with_history('echo hello') do
-        session.paste_string('echo')
-        sleep 1
-        session.send_keys('left')
-        wait_for { session.content }.to eq('echo hello')
-      end
-    end
   end
 end
