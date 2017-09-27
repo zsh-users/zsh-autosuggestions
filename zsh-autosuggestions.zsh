@@ -131,14 +131,14 @@ _zsh_autosuggest_incr_bind_count() {
 		_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]=1
 	fi
 
-	bind_count=$_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]
+	typeset -gi bind_count=$_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]
 }
 
 _zsh_autosuggest_get_bind_count() {
 	if ((${+_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]})); then
-		bind_count=$_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]
+		typeset -gi bind_count=$_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]
 	else
-		bind_count=0
+		typeset -gi bind_count=0
 	fi
 }
 
@@ -257,7 +257,7 @@ _zsh_autosuggest_highlight_apply() {
 	typeset -g _ZSH_AUTOSUGGEST_LAST_HIGHLIGHT
 
 	if [ $#POSTDISPLAY -gt 0 ]; then
-		_ZSH_AUTOSUGGEST_LAST_HIGHLIGHT="$#BUFFER $(($#BUFFER + $#POSTDISPLAY)) $ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE"
+		typeset -g _ZSH_AUTOSUGGEST_LAST_HIGHLIGHT="$#BUFFER $(($#BUFFER + $#POSTDISPLAY)) $ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE"
 		region_highlight+=("$_ZSH_AUTOSUGGEST_LAST_HIGHLIGHT")
 	else
 		unset _ZSH_AUTOSUGGEST_LAST_HIGHLIGHT
@@ -482,7 +482,7 @@ _zsh_autosuggest_strategy_default() {
 
 	# Get the history items that match
 	# - (r) subscript flag makes the pattern match on values
-	suggestion="${history[(r)${(b)prefix}*]}"
+	typeset -g suggestion="${history[(r)${(b)prefix}*]}"
 }
 
 #--------------------------------------------------------------------#
@@ -534,7 +534,7 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	done
 
 	# Give back the matched history entry
-	suggestion="$history[$histkey]"
+	typeset -g suggestion="$history[$histkey]"
 }
 
 #--------------------------------------------------------------------#

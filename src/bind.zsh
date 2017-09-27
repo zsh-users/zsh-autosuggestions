@@ -10,14 +10,14 @@ _zsh_autosuggest_incr_bind_count() {
 		_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]=1
 	fi
 
-	bind_count=$_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]
+	typeset -gi bind_count=$_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]
 }
 
 _zsh_autosuggest_get_bind_count() {
 	if ((${+_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]})); then
-		bind_count=$_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]
+		typeset -gi bind_count=$_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]
 	else
-		bind_count=0
+		typeset -gi bind_count=0
 	fi
 }
 
