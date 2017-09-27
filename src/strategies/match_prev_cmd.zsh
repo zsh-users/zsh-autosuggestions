@@ -48,5 +48,5 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	done
 
 	# Give back the matched history entry
-	suggestion="$history[$histkey]"
+	typeset -g suggestion="$history[$histkey]"
 }

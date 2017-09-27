@@ -11,5 +11,5 @@ _zsh_autosuggest_strategy_default() {
 
 	# Get the history items that match
 	# - (r) subscript flag makes the pattern match on values
-	suggestion="${history[(r)${(b)prefix}*]}"
+	typeset -g suggestion="${history[(r)${(b)prefix}*]}"
 }
