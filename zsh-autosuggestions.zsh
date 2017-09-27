@@ -304,7 +304,7 @@ _zsh_autosuggest_clear() {
 _zsh_autosuggest_modify() {
 	local -i retval
 
-	# Only added to zsh very recently
+	# Only available in zsh >= 5.4
 	local -i KEYS_QUEUED_COUNT
 
 	# Save the contents of the buffer/postdisplay
