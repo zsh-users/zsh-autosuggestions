@@ -19,11 +19,23 @@ HEADER_FILES := \
 
 PLUGIN_TARGET := zsh-autosuggestions.zsh
 
+ZSD := $(shell command -v zsd 2> /dev/null)
+
 all: $(PLUGIN_TARGET)
 
 $(PLUGIN_TARGET): $(HEADER_FILES) $(SRC_FILES)
 	cat $(HEADER_FILES) | sed -e 's/^/# /g' > $@
 	cat $(SRC_FILES) >> $@
+
+.PHONY: doc
+doc: zsdoc/$(PLUGIN_TARGET).adoc
+
+zsdoc/$(PLUGIN_TARGET).adoc: $(PLUGIN_TARGET)
+ifndef ZSD
+    $(error Zshelldoc is not available please install from: https://github.com/zdharma/zshelldoc)
+endif
+	rm -rf zsdoc/data zsdoc/*.adoc
+	zsd -q --cignore '\#[[:space:]-]##*[[:space:]-]##\#' $<
 
 .PHONY: clean
 clean:

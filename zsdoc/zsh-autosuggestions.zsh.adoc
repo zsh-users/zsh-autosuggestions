@@ -1,0 +1,492 @@
+zsh-autosuggestions.zsh(1)
+==========================
+:compat-mode!:
+
+NAME
+----
+zsh-autosuggestions.zsh - a shell script
+
+SYNOPSIS
+--------
+Documentation automatically generated with `zshelldoc'
+
+FUNCTIONS
+---------
+
+ _zsh_autosuggest_accept
+ _zsh_autosuggest_async_pty_create
+ _zsh_autosuggest_async_pty_destroy
+ _zsh_autosuggest_async_request
+ _zsh_autosuggest_async_response
+ _zsh_autosuggest_async_server
+ _zsh_autosuggest_async_start
+ _zsh_autosuggest_bind_widget
+ _zsh_autosuggest_clear
+ _zsh_autosuggest_disable
+ _zsh_autosuggest_enable
+ _zsh_autosuggest_execute
+ _zsh_autosuggest_feature_detect_zpty_returns_fd
+ _zsh_autosuggest_fetch
+ _zsh_autosuggest_get_bind_count
+ _zsh_autosuggest_highlight_apply
+ _zsh_autosuggest_highlight_reset
+ _zsh_autosuggest_incr_bind_count
+ _zsh_autosuggest_invoke_original_widget
+ _zsh_autosuggest_modify
+ _zsh_autosuggest_partial_accept
+ _zsh_autosuggest_strategy_default
+ _zsh_autosuggest_strategy_match_prev_cmd
+ _zsh_autosuggest_suggest
+ _zsh_autosuggest_toggle
+AUTOLOAD add-zsh-hook
+PRECMD-HOOK _zsh_autosuggest_async_pty_recreate
+PRECMD-HOOK _zsh_autosuggest_bind_widgets
+PRECMD-HOOK _zsh_autosuggest_start
+
+DETAILS
+-------
+
+Script Body
+~~~~~~~~~~~
+
+Has 72 line(s). Calls functions:
+
+ Script-Body
+ `-- add-zsh-hook
+
+_zsh_autosuggest_accept
+~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Accept the entire suggestion
+____
+
+Has 11 line(s). Calls functions:
+
+ _zsh_autosuggest_accept
+ `-- _zsh_autosuggest_invoke_original_widget
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+_zsh_autosuggest_async_pty_create
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Has 13 line(s). Doesn't call other functions.
+
+Uses feature(s): _zle_, _zpty_
+
+Called by:
+
+ _zsh_autosuggest_async_pty_recreate
+
+_zsh_autosuggest_async_pty_destroy
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Has 4 line(s). Doesn't call other functions.
+
+Uses feature(s): _zle_, _zpty_
+
+Called by:
+
+ _zsh_autosuggest_async_pty_recreate
+
+_zsh_autosuggest_async_pty_recreate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Has 2 line(s). *Is a precmd hook*. Calls functions:
+
+ _zsh_autosuggest_async_pty_recreate
+ |-- _zsh_autosuggest_async_pty_create
+ `-- _zsh_autosuggest_async_pty_destroy
+
+Called by:
+
+ _zsh_autosuggest_async_start
+
+_zsh_autosuggest_async_request
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Has 1 line(s). Doesn't call other functions.
+
+Uses feature(s): _zpty_
+
+Called by:
+
+ _zsh_autosuggest_fetch
+
+_zsh_autosuggest_async_response
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Called when new data is ready to be read from the pty
+ # First arg will be fd ready for reading
+ # Second arg will be passed in case of error
+____
+
+Has 6 line(s). Doesn't call other functions.
+
+Uses feature(s): _zle_, _zpty_
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+_zsh_autosuggest_async_server
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Zpty process is spawned running this function
+____
+
+Has 21 line(s). Doesn't call other functions.
+
+Uses feature(s): _kill_
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+_zsh_autosuggest_async_start
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Has 5 line(s). Calls functions:
+
+ _zsh_autosuggest_async_start
+ |-- _zsh_autosuggest_async_pty_recreate
+ |   |-- _zsh_autosuggest_async_pty_create
+ |   `-- _zsh_autosuggest_async_pty_destroy
+ |-- _zsh_autosuggest_feature_detect_zpty_returns_fd
+ `-- add-zsh-hook
+
+Called by:
+
+ _zsh_autosuggest_start
+
+_zsh_autosuggest_bind_widget
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Bind a single widget to an autosuggest widget, saving a reference to the original widget
+____
+
+Has 29 line(s). Calls functions:
+
+ _zsh_autosuggest_bind_widget
+ |-- _zsh_autosuggest_get_bind_count
+ `-- _zsh_autosuggest_incr_bind_count
+
+Uses feature(s): _eval_, _zle_
+
+Called by:
+
+ _zsh_autosuggest_bind_widgets
+
+_zsh_autosuggest_bind_widgets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Map all configured widgets to the right autosuggest widgets
+____
+
+Has 24 line(s). *Is a precmd hook*. Calls functions:
+
+ _zsh_autosuggest_bind_widgets
+ `-- _zsh_autosuggest_bind_widget
+     |-- _zsh_autosuggest_get_bind_count
+     `-- _zsh_autosuggest_incr_bind_count
+
+Called by:
+
+ _zsh_autosuggest_start
+
+_zsh_autosuggest_clear
+~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Clear the suggestion
+____
+
+Has 3 line(s). Calls functions:
+
+ _zsh_autosuggest_clear
+ `-- _zsh_autosuggest_invoke_original_widget
+
+Called by:
+
+ _zsh_autosuggest_disable
+
+_zsh_autosuggest_disable
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Disable suggestions
+____
+
+Has 2 line(s). Calls functions:
+
+ _zsh_autosuggest_disable
+ `-- _zsh_autosuggest_clear
+     `-- _zsh_autosuggest_invoke_original_widget
+
+Called by:
+
+ _zsh_autosuggest_toggle
+
+_zsh_autosuggest_enable
+~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Enable suggestions
+____
+
+Has 5 line(s). Calls functions:
+
+ _zsh_autosuggest_enable
+ `-- _zsh_autosuggest_fetch
+     |-- _zsh_autosuggest_async_request
+     `-- _zsh_autosuggest_suggest
+
+Called by:
+
+ _zsh_autosuggest_toggle
+
+_zsh_autosuggest_execute
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Accept the entire suggestion and execute it
+____
+
+Has 3 line(s). Calls functions:
+
+ _zsh_autosuggest_execute
+ `-- _zsh_autosuggest_invoke_original_widget
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+_zsh_autosuggest_feature_detect_zpty_returns_fd
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Has 12 line(s). Doesn't call other functions.
+
+Uses feature(s): _zpty_
+
+Called by:
+
+ _zsh_autosuggest_async_start
+
+_zsh_autosuggest_fetch
+~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Fetch a new suggestion based on what's currently in the buffer
+____
+
+Has 7 line(s). Calls functions:
+
+ _zsh_autosuggest_fetch
+ |-- _zsh_autosuggest_async_request
+ `-- _zsh_autosuggest_suggest
+
+Uses feature(s): _zpty_
+
+Called by:
+
+ _zsh_autosuggest_enable
+ _zsh_autosuggest_modify
+
+_zsh_autosuggest_get_bind_count
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Has 5 line(s). Doesn't call other functions.
+
+Called by:
+
+ _zsh_autosuggest_bind_widget
+
+_zsh_autosuggest_highlight_apply
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # If there's a suggestion, highlight it
+____
+
+Has 8 line(s). Doesn't call other functions.
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+_zsh_autosuggest_highlight_reset
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # If there was a highlight, remove it
+____
+
+Has 6 line(s). Doesn't call other functions.
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+_zsh_autosuggest_incr_bind_count
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Has 7 line(s). Doesn't call other functions.
+
+Called by:
+
+ _zsh_autosuggest_bind_widget
+
+_zsh_autosuggest_invoke_original_widget
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Given the name of an original widget and args, invoke it, if it exists
+____
+
+Has 9 line(s). Doesn't call other functions.
+
+Uses feature(s): _zle_
+
+Called by:
+
+ _zsh_autosuggest_accept
+ _zsh_autosuggest_clear
+ _zsh_autosuggest_execute
+ _zsh_autosuggest_modify
+ _zsh_autosuggest_partial_accept
+
+_zsh_autosuggest_modify
+~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Modify the buffer and get a new suggestion
+____
+
+Has 31 line(s). Calls functions:
+
+ _zsh_autosuggest_modify
+ |-- _zsh_autosuggest_fetch
+ |   |-- _zsh_autosuggest_async_request
+ |   `-- _zsh_autosuggest_suggest
+ `-- _zsh_autosuggest_invoke_original_widget
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+_zsh_autosuggest_partial_accept
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Partially accept the suggestion
+____
+
+Has 13 line(s). Calls functions:
+
+ _zsh_autosuggest_partial_accept
+ `-- _zsh_autosuggest_invoke_original_widget
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+_zsh_autosuggest_start
+~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Start the autosuggestion widgets
+____
+
+Has 8 line(s). *Is a precmd hook*. Calls functions:
+
+ _zsh_autosuggest_start
+ |-- _zsh_autosuggest_async_start
+ |   |-- _zsh_autosuggest_async_pty_recreate
+ |   |   |-- _zsh_autosuggest_async_pty_create
+ |   |   `-- _zsh_autosuggest_async_pty_destroy
+ |   |-- _zsh_autosuggest_feature_detect_zpty_returns_fd
+ |   `-- add-zsh-hook
+ |-- _zsh_autosuggest_bind_widgets
+ |   `-- _zsh_autosuggest_bind_widget
+ |       |-- _zsh_autosuggest_get_bind_count
+ |       `-- _zsh_autosuggest_incr_bind_count
+ `-- add-zsh-hook
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+_zsh_autosuggest_strategy_default
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Suggests the most recent history item that matches the given
+ # prefix.
+____
+
+Has 2 line(s). Doesn't call other functions.
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+_zsh_autosuggest_strategy_match_prev_cmd
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Suggests the most recent history item that matches the given
+ # prefix and whose preceding history item also matches the most
+ # recently executed command.
+ #
+ # For example, suppose your history has the following entries:
+ #   - pwd
+ #   - ls foo
+ #   - ls bar
+ #   - pwd
+ #
+ # Given the history list above, when you type 'ls', the suggestion
+ # will be 'ls foo' rather than 'ls bar' because your most recently
+ # executed command (pwd) was previously followed by 'ls foo'.
+ #
+ # Note that this strategy won't work as expected with ZSH options that don't
+ # preserve the history order such as `HIST_IGNORE_ALL_DUPS` or
+ # `HIST_EXPIRE_DUPS_FIRST`.
+____
+
+Has 13 line(s). Doesn't call other functions.
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+_zsh_autosuggest_suggest
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Offer a suggestion
+____
+
+Has 7 line(s). Doesn't call other functions.
+
+Called by:
+
+ _zsh_autosuggest_fetch
+
+_zsh_autosuggest_toggle
+~~~~~~~~~~~~~~~~~~~~~~~
+
+____
+ # Toggle suggestions (enable/disable)
+____
+
+Has 5 line(s). Calls functions:
+
+ _zsh_autosuggest_toggle
+ |-- _zsh_autosuggest_disable
+ |   `-- _zsh_autosuggest_clear
+ |       `-- _zsh_autosuggest_invoke_original_widget
+ `-- _zsh_autosuggest_enable
+     `-- _zsh_autosuggest_fetch
+         |-- _zsh_autosuggest_async_request
+         `-- _zsh_autosuggest_suggest
+
+Not called by script or any function, may be a hook or Zle widget, etc.
+
+add-zsh-hook
+~~~~~~~~~~~~
+
+Has 93 line(s). Doesn't call other functions.
+
+Uses feature(s): _autoload_
+
+Called by:
+
+ Script-Body
+ _zsh_autosuggest_async_start
+ _zsh_autosuggest_start
+
