@@ -132,14 +132,11 @@ _zsh_autosuggest_accept() {
 
 		# Move the cursor to the end of the buffer
 		CURSOR=${#BUFFER}
+
+	  _zsh_autosuggest_invoke_original_widget end-of-line
 	fi
 
 	_zsh_autosuggest_invoke_original_widget $@
-
-	# If zsh-syntax-highlighting is installed, we need to refresh the highlighting here
-	if [ `whence _zsh_highlight` ]; then
-		_zsh_highlight
-	fi
 }
 
 # Accept the entire suggestion and execute it
