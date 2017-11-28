@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.4.1
+- Switch to [[ and (( conditionals instead of [ (#257)
+- Avoid warnnestedvar warnings with `typeset -g` (#275)
+- Replace tabs with spaces in yaml (#268)
+- Clean up and fix escaping of special characters (#267)
+- Add `emacs-forward-word` to default list of partial accept widgets (#246)
+
 ## v0.4.0
 - High-level integration tests using RSpec and tmux
 - Add continuous integration with Circle CI
