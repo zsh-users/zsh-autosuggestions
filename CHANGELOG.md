@@ -3,12 +3,12 @@
 ## v0.4.0
 - High-level integration tests using RSpec and tmux
 - Add continuous integration with Circle CI
-- Experimental support for asynchronous suggestions (#)
-- Fix problems with multi-line suggestions (#)
+- Experimental support for asynchronous suggestions (#170)
+- Fix problems with multi-line suggestions (#225)
 - Optimize case where manually typing in suggestion
-- Avoid wrapping any zle-* widgets (#)
+- Avoid wrapping any zle-* widgets (#206)
 - Remove support for deprecated options from v0.0.x
-- Handle history entries that begin with dashes (#)
+- Handle history entries that begin with dashes
 - Gracefully handle being sourced multiple times (#126)
 - Add enable/disable/toggle widgets to disable/enable suggestions (#219)
 
