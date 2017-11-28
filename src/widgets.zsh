@@ -13,14 +13,14 @@ _zsh_autosuggest_disable() {
 _zsh_autosuggest_enable() {
 	unset _ZSH_AUTOSUGGEST_DISABLED
 
-	if [ $#BUFFER -gt 0 ]; then
+	if (( $#BUFFER )); then
 		_zsh_autosuggest_fetch
 	fi
 }
 
 # Toggle suggestions (enable/disable)
 _zsh_autosuggest_toggle() {
-	if [ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]; then
+	if [[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]]; then
 		_zsh_autosuggest_enable
 	else
 		_zsh_autosuggest_disable
@@ -39,7 +39,7 @@ _zsh_autosuggest_clear() {
 _zsh_autosuggest_modify() {
 	local -i retval
 
-	# Only added to zsh very recently
+	# Only available in zsh >= 5.4
 	local -i KEYS_QUEUED_COUNT
 
 	# Save the contents of the buffer/postdisplay
@@ -54,35 +54,35 @@ _zsh_autosuggest_modify() {
 	retval=$?
 
 	# Don't fetch a new suggestion if there's more input to be read immediately
-	if [[ $PENDING > 0 ]] || [[ $KEYS_QUEUED_COUNT > 0 ]]; then
+	if (( $PENDING > 0 )) || (( $KEYS_QUEUED_COUNT > 0 )); then
 		return $retval
 	fi
 
 	# Optimize if manually typing in the suggestion
-	if [ $#BUFFER -gt $#orig_buffer ]; then
+	if (( $#BUFFER > $#orig_buffer )); then
 		local added=${BUFFER#$orig_buffer}
 
 		# If the string added matches the beginning of the postdisplay
-		if [ "$added" = "${orig_postdisplay:0:$#added}" ]; then
+		if [[ "$added" = "${orig_postdisplay:0:$#added}" ]]; then
 			POSTDISPLAY="${orig_postdisplay:$#added}"
 			return $retval
 		fi
 	fi
 
 	# Don't fetch a new suggestion if the buffer hasn't changed
-	if [ "$BUFFER" = "$orig_buffer" ]; then
+	if [[ "$BUFFER" = "$orig_buffer" ]]; then
 		POSTDISPLAY="$orig_postdisplay"
 		return $retval
 	fi
 
 	# Bail out if suggestions are disabled
-	if [ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]; then
+	if [[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]]; then
 		return $?
 	fi
 
 	# Get a new suggestion if the buffer is not empty after modification
-	if [ $#BUFFER -gt 0 ]; then
-		if [ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" -o $#BUFFER -le "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]; then
+	if (( $#BUFFER > 0 )); then
+		if [[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
 			_zsh_autosuggest_fetch
 		fi
 	fi
@@ -105,7 +105,7 @@ _zsh_autosuggest_fetch() {
 _zsh_autosuggest_suggest() {
 	local suggestion="$1"
 
-	if [ -n "$suggestion" ] && [ $#BUFFER -gt 0 ]; then
+	if [[ -n "$suggestion" ]] && (( $#BUFFER )); then
 		POSTDISPLAY="${suggestion#$BUFFER}"
 	else
 		unset POSTDISPLAY
@@ -118,12 +118,12 @@ _zsh_autosuggest_accept() {
 
 	# When vicmd keymap is active, the cursor can't move all the way
 	# to the end of the buffer
-	if [ "$KEYMAP" = "vicmd" ]; then
+	if [[ "$KEYMAP" = "vicmd" ]]; then
 		max_cursor_pos=$((max_cursor_pos - 1))
 	fi
 
 	# Only accept if the cursor is at the end of the buffer
-	if [ $CURSOR -eq $max_cursor_pos ]; then
+	if [[ $CURSOR = $max_cursor_pos ]]; then
 		# Add the suggestion to the buffer
 		BUFFER="$BUFFER$POSTDISPLAY"
 
@@ -165,7 +165,7 @@ _zsh_autosuggest_partial_accept() {
 	retval=$?
 
 	# If we've moved past the end of the original buffer
-	if [ $CURSOR -gt $#original_buffer ]; then
+	if (( $CURSOR > $#original_buffer )); then
 		# Set POSTDISPLAY to text right of the cursor
 		POSTDISPLAY="$RBUFFER"
 

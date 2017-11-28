@@ -21,18 +21,18 @@
 # `HIST_EXPIRE_DUPS_FIRST`.
 
 _zsh_autosuggest_strategy_match_prev_cmd() {
-	local prefix="${1//(#m)[\\()\[\]|*?~]/\\$MATCH}"
+	local prefix="$1"
 
 	# Get all history event numbers that correspond to history
 	# entries that match pattern $prefix*
 	local history_match_keys
-	history_match_keys=(${(k)history[(R)$prefix*]})
+	history_match_keys=(${(k)history[(R)${(b)prefix}*]})
 
 	# By default we use the first history number (most recent history entry)
 	local histkey="${history_match_keys[1]}"
 
 	# Get the previously executed command
-	local prev_cmd="$(_zsh_autosuggest_escape_command "${history[$((HISTCMD-1))]}")"
+	local prev_cmd="${history[$((HISTCMD-1))]}"
 
 	# Iterate up to the first 200 history event numbers that match $prefix
 	for key in "${(@)history_match_keys[1,200]}"; do
@@ -48,5 +48,5 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	done
 
 	# Give back the matched history entry
-	suggestion="$history[$histkey]"
+	typeset -g suggestion="$history[$histkey]"
 }
