@@ -109,6 +109,7 @@ _zsh_autosuggest_invoke_original_widget() {
 	[ $# -gt 0 ] || return
 
 	local original_widget_name="$1"
+	print $original_widget_name
 
 	shift
 

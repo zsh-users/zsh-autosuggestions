@@ -113,30 +113,67 @@ _zsh_autosuggest_suggest() {
 }
 
 # Accept the entire suggestion
+# _zsh_autosuggest_accept() {
+# 	local -i max_cursor_pos=$#BUFFER
+# 
+# 	# When vicmd keymap is active, the cursor can't move all the way
+# 	# to the end of the buffer
+# 	if [ "$KEYMAP" = "vicmd" ]; then
+# 		max_cursor_pos=$((max_cursor_pos - 1))
+# 	fi
+# 
+# 	# Only accept if the cursor is at the end of the buffer
+# 	if [ $CURSOR -eq $max_cursor_pos ]; then
+# 		# Add the suggestion to the buffer
+# 		BUFFER="$BUFFER$POSTDISPLAY"
+# 
+# 		# Remove the suggestion
+# 		unset POSTDISPLAY
+# 
+# 		# Move the cursor to the end of the buffer
+# 		CURSOR=${#BUFFER}
+# 
+#     print "a"
+# 	  _zsh_autosuggest_invoke_original_widget "end-of-line"
+#     print "b"
+# 	fi
+# 
+#   print "1"
+# 	_zsh_autosuggest_invoke_original_widget $@
+#   print "2"
+# }
+# 
+# 	# When vicmd keymap is active, the cursor can't move all the way
+# 	# to the end of the buffer
+# 	if [ "$KEYMAP" = "vicmd" ]; then
+# 		max_cursor_pos=$((max_cursor_pos - 1))
+# 	fi
+# 
+# 	# Only accept if the cursor is at the end of the buffer
+# 	if [ $CURSOR -eq $max_cursor_pos ]; then
+# 		# Add the suggestion to the buffer
+# 		BUFFER="$BUFFER$POSTDISPLAY"
+# 
+# 		# Remove the suggestion
+# 		unset POSTDISPLAY
+# 
+# 		# Move the cursor to the end of the buffer
+# 		CURSOR=${#BUFFER}
+# 
+#     print "a"
+# 	  _zsh_autosuggest_invoke_original_widget "end-of-line"
+#     print "b"
+# 	fi
+# 
+#   print "1"
+# 	_zsh_autosuggest_invoke_original_widget $@
+#   print "2"
+# }
 _zsh_autosuggest_accept() {
-	local -i max_cursor_pos=$#BUFFER
-
-	# When vicmd keymap is active, the cursor can't move all the way
-	# to the end of the buffer
-	if [ "$KEYMAP" = "vicmd" ]; then
-		max_cursor_pos=$((max_cursor_pos - 1))
-	fi
-
-	# Only accept if the cursor is at the end of the buffer
-	if [ $CURSOR -eq $max_cursor_pos ]; then
-		# Add the suggestion to the buffer
-		BUFFER="$BUFFER$POSTDISPLAY"
-
-		# Remove the suggestion
-		unset POSTDISPLAY
-
-		# Move the cursor to the end of the buffer
-		CURSOR=${#BUFFER}
-
-	  _zsh_autosuggest_invoke_original_widget end-of-line
-	fi
-
-	_zsh_autosuggest_invoke_original_widget $@
+  # Accepting the whole line is basically a specific case of
+  # accepting partially with "end-of-line" widget
+#  _zsh_autosuggest_partial_accept ".end-of-line"
+  _zsh_autosuggest_partial_accept "end-of-line"
 }
 
 # Accept the entire suggestion and execute it
