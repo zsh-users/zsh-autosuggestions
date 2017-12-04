@@ -172,8 +172,8 @@ _zsh_autosuggest_suggest() {
 _zsh_autosuggest_accept() {
   # Accepting the whole line is basically a specific case of
   # accepting partially with "end-of-line" widget
-#  _zsh_autosuggest_partial_accept ".end-of-line"
-  _zsh_autosuggest_partial_accept "end-of-line"
+  # TODO : find a non-hardcoded way to call this widget
+  _zsh_autosuggest_partial_accept "autosuggest-orig-1-end-of-line"
 }
 
 # Accept the entire suggestion and execute it
