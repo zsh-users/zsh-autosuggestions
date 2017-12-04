@@ -116,6 +116,8 @@ _zsh_autosuggest_suggest() {
 _zsh_autosuggest_accept() {
   # Accepting the whole line is basically a specific case of
   # accepting partially with "end-of-line" widget
+  # NB : we can't directly call end-of-line because since we wrap it,
+  # it would cause a recursive call to it
   # TODO : find a non-hardcoded way to call this widget
   _zsh_autosuggest_partial_accept "autosuggest-orig-1-end-of-line"
 }
