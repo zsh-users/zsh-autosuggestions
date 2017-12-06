@@ -11,6 +11,8 @@ It suggests commands as you type, based on command history.
 
 ## Installation
 
+Requirements: Zsh v4.3.11 or later
+
 ### Manual
 
 1. Clone this repository somewhere on your machine. This guide will assume `~/.zsh/zsh-autosuggestions`.

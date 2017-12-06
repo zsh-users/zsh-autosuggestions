@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.2
+- Fix bug in zsh versions older than 5.0.8 (#296)
+- Officially support back to zsh v4.3.11
+
 ## v0.4.1
 - Switch to [[ and (( conditionals instead of [ (#257)
 - Avoid warnnestedvar warnings with `typeset -g` (#275)
