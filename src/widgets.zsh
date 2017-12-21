@@ -114,12 +114,25 @@ _zsh_autosuggest_suggest() {
 
 # Accept the entire suggestion
 _zsh_autosuggest_accept() {
-  # Accepting the whole line is basically a specific case of
-  # accepting partially with "end-of-line" widget
-  # NB : we can't directly call end-of-line because since we wrap it,
-  # it would cause a recursive call to it
-  # TODO : find a non-hardcoded way to call this widget
-  _zsh_autosuggest_partial_accept "autosuggest-orig-1-end-of-line"
+	local -i max_cursor_pos=$#BUFFER
+
+	# When vicmd keymap is active, the cursor can't move all the way
+	# to the end of the buffer
+	if [[ "$KEYMAP" = "vicmd" ]]; then
+		max_cursor_pos=$((max_cursor_pos - 1))
+	fi
+
+	# Only accept if the cursor is at the end of the buffer
+	if [[ $CURSOR = $max_cursor_pos ]]; then
+    # Accepting the whole line is basically a specific case of
+    # accepting partially with "end-of-line" widget
+    # NB : we can't directly call end-of-line because since we wrap it,
+    # it would cause a recursive call to it
+    # TODO : find a non-hardcoded way to call this widget
+    _zsh_autosuggest_partial_accept "autosuggest-orig-1-end-of-line"
+	fi
+
+	_zsh_autosuggest_invoke_original_widget $@
 }
 
 # Accept the entire suggestion and execute it
