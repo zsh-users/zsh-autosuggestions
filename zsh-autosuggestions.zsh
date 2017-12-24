@@ -97,6 +97,7 @@ ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 	set-local-history
 	which-command
 	yank
+	yank-pop
 )
 
 # Max size of buffer to trigger autosuggestion. Leave undefined for no upper bound.
