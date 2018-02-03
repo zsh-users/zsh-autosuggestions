@@ -571,9 +571,12 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 # configuration:
 # 
 # ZSH_AUTOSUGGEST_PREDEFINE_NAME  - auto generated predefine file name
-# ZSH_AUTOSUGGEST_PREDEFINE_PATH  - user defined files joined by semicolon
+# ZSH_AUTOSUGGEST_PREDEFINE_PATH  - user defined files separated by semicolon
 #
 # "$HOME/.zsh_autosuggest" will be generated at the first time
+#
+# zsh-autosuggestions/predefined.txt is generated from tldr pages and
+# will ship with predefined.zsh .
 #
 
 _zsh_autosuggest_script_path="${0:A:h}"
@@ -617,11 +620,12 @@ _zsh_autosuggest_predefined_generate() {
         done
     done
     cd "${pwd}"
+
+	# TODO: generate command parameters from completion database
 	
 	print -l $suggests >> "$pname"
 }
 
-# echo "sourced predefined"
 
 _zsh_autosuggest_strategy_predefined() {
     emulate -L zsh
