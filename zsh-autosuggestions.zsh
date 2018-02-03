@@ -589,6 +589,11 @@ _zsh_autosuggest_predefined_generate() {
 
 	echo "autosuggestions is generating: $pname"
 
+	# copy builtin predefine database
+	local txt="${_zsh_autosuggest_script_path}/predefined.txt"
+
+	[ -f "$txt" ] && cat "$txt" > "$pname"
+
 	# enumerate commands in $PATH and add them to ~/.zsh_autosuggest
     for p ("${(@s/:/)PATH}"); do
         cd "$p"
@@ -613,11 +618,7 @@ _zsh_autosuggest_predefined_generate() {
     done
     cd "${pwd}"
 	
-	print -l $suggests > "$pname"
-	
-	# copy builtin predefine database
-	local txt="${_zsh_autosuggest_script_path}/predefined.txt"
-	cat "$txt" >> "$pname"
+	print -l $suggests >> "$pname"
 }
 
 # echo "sourced predefined"
@@ -627,7 +628,6 @@ _zsh_autosuggest_strategy_predefined() {
     setopt EXTENDED_GLOB
     local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
     local result="${history[(r)${prefix}*]}"
-    result=""
 
     if [[ $result == "" ]]; then
         if (( ! ${+_ZSH_AUTOSUGGEST_PREDEFINE} )); then
