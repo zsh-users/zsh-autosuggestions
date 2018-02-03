@@ -23,11 +23,6 @@ _zsh_autosuggest_predefined_generate() {
 
 	echo "autosuggestions is generating: $pname"
 
-	# copy builtin predefine database
-	local txt="${_zsh_autosuggest_script_path}/predefined.txt"
-
-	[ -f "$txt" ] && cat "$txt" > "$pname" || touch "$pname"
-
 	# enumerate commands in $PATH and add them to ~/.zsh_autosuggest
     for p ("${(@s/:/)PATH}"); do
         cd "$p"
@@ -52,7 +47,11 @@ _zsh_autosuggest_predefined_generate() {
     done
     cd "${pwd}"
 	
-	print -l $suggests >> "$pname"
+	print -l $suggests > "$pname"
+	
+	# copy builtin predefine database
+	local txt="${_zsh_autosuggest_script_path}/predefined.txt"
+	cat "$txt" >> "$pname"
 }
 
 # echo "sourced predefined"
