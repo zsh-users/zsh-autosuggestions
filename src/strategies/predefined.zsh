@@ -67,7 +67,7 @@ _zsh_autosuggest_strategy_predefined() {
     local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
     local result="${history[(r)${prefix}*]}"
 
-    if [[ $result == "" ]]; then
+    if [[ -z "$result" ]]; then
         if (( ! ${+_ZSH_AUTOSUGGEST_PREDEFINE} )); then
             typeset -g _ZSH_AUTOSUGGEST_PREDEFINE=()
             local pname="$HOME/.zsh_autosuggest"
