@@ -74,8 +74,8 @@ _zsh_autosuggest_strategy_predefined() {
             pname="${ZSH_AUTOSUGGEST_PREDEFINE_NAME:-$pname}"
             local names="${ZSH_AUTOSUGGEST_PREDEFINE_PATH};$pname"
             local array=()
-            for i ("${(@s/;/)names}"); do
-                if [ -n "$i" ] && [ -f "$i" ]; then
+            for i ("${(s:;:)names}"); do
+                if [[ -n "$i" ]] && [[ -f "$i" ]]; then
                     local temp=(${(f)"$(<$i)"})
                     array+=($temp)
                 fi
