@@ -65,8 +65,11 @@ _zsh_autosuggest_strategy_predefined() {
     emulate -L zsh
     setopt EXTENDED_GLOB
     local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
+
+	# search the history at first
     local result="${history[(r)${prefix}*]}"
 
+	# search the predefine files if nothing found in history
     if [[ -z "$result" ]]; then
         if (( ! ${+_ZSH_AUTOSUGGEST_PREDEFINE} )); then
             typeset -g _ZSH_AUTOSUGGEST_PREDEFINE=()
