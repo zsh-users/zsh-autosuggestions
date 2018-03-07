@@ -593,7 +593,7 @@ _zsh_autosuggest_predefined_generate() {
 	# skip when ~/.zsh_autosuggest exists
 	[ -f "$pname" ] && return
 
-	# echo "autosuggestions is generating: $pname"
+	echo "autosuggestions is generating: $pname"
 
 	# copy builtin predefine database
 	local txt="${_zsh_autosuggest_script_path}/predefined.txt"
@@ -602,25 +602,26 @@ _zsh_autosuggest_predefined_generate() {
 
 	# enumerate commands in $PATH and add them to ~/.zsh_autosuggest
     for p ("${(@s/:/)PATH}"); do
-        cd "$p"
-        local files=("${(@f)$(ls -la | awk -F ' ' '{print $9}')}")
-        for fn in ${files}; do
-            if [ -x "$fn" ] && [[ "${fn:l}" != *.dll ]]; then
-                if [ -f "$fn" ] && [[ "${fn:l}" != *.nls ]]; then
-                    # trim cygwin .exe/.cmd/.bat postfix
-                    if [[ "$fn" == *.exe ]]; then
-                        fn=${fn/%.exe/}
-                    elif [[ "$fn" == *.cmd ]]; then
-                        fn=${fn/%.cmd/}
-                    elif [[ "$fn" == *.bat ]]; then
-                        fn=${fn/%.bat/}
-                    fi
-                    if [[ ${#fn} -gt 1 ]]; then
-                        suggests+=$fn
-                    fi
-                fi
-            fi
-        done
+		[ ! -d "$p" ] && continue
+		cd "$p"
+		local files=("${(@f)$(ls -la | awk -F ' ' '{print $9}')}")
+		for fn in ${files}; do
+			if [ -x "$fn" ] && [[ "${fn:l}" != *.dll ]]; then
+				if [ -f "$fn" ] && [[ "${fn:l}" != *.nls ]]; then
+					# trim cygwin .exe/.cmd/.bat postfix
+					if [[ "$fn" == *.exe ]]; then
+						fn=${fn/%.exe/}
+					elif [[ "$fn" == *.cmd ]]; then
+						fn=${fn/%.cmd/}
+					elif [[ "$fn" == *.bat ]]; then
+						fn=${fn/%.bat/}
+					fi
+					if [[ ${#fn} -gt 1 ]]; then
+						suggests+=$fn
+					fi
+				fi
+			fi
+		done
     done
     cd "${pwd}"
 
@@ -644,7 +645,7 @@ _zsh_autosuggest_strategy_predefined() {
 	# search the predefine files if nothing found in history
     if [[ -z "$result" ]]; then
         if (( ! ${+_ZSH_AUTOSUGGEST_PREDEFINE} )); then
-			_zsh_autosuggest_predefined_generate
+			# _zsh_autosuggest_predefined_generate
             typeset -g _ZSH_AUTOSUGGEST_PREDEFINE=()
 			local pbase="$_zsh_autosuggest_data_home"
 			local pname="$pbase/predefined"
@@ -665,7 +666,7 @@ _zsh_autosuggest_strategy_predefined() {
 }
 
 
-# _zsh_autosuggest_predefined_generate
+_zsh_autosuggest_predefined_generate
 
 #  vim: set ts=4 sw=4 tw=0 noet :
 
