@@ -570,32 +570,35 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 #
 # configuration:
 # 
-# ZSH_AUTOSUGGEST_PREDEFINE_NAME  - auto generated predefine file name
 # ZSH_AUTOSUGGEST_PREDEFINE_PATH  - user defined files separated by semicolon
 #
-# "$HOME/.zsh_autosuggest" will be generated at the first time
+# "~/.local/share/zsh_autosuggest/predefined" will be generated at the first time
 #
 # zsh-autosuggestions/predefined.txt is generated from tldr pages and
 # will ship with predefined.zsh .
 #
 
 _zsh_autosuggest_script_path="${0:A:h}"
+_zsh_autosuggest_data_home="${XDG_DATA_HOME:-$HOME/.local/share}/zsh_autosuggest"
 
 _zsh_autosuggest_predefined_generate() {
-    local pname="$HOME/.zsh_autosuggest"
-    pname="${ZSH_AUTOSUGGEST_PREDEFINE_NAME:-$pname}"
+	local pbase="$_zsh_autosuggest_data_home"
+    local pname="$pbase/predefined"
+	local ptemp="$pbase/predefined.$[RANDOM]"
     local suggests=()
     local pwd=$(pwd)
+
+	[ ! -d "$pbase" ] && mkdir -p "$pbase" 2> /dev/null
 	
 	# skip when ~/.zsh_autosuggest exists
 	[ -f "$pname" ] && return
 
-	echo "autosuggestions is generating: $pname"
+	# echo "autosuggestions is generating: $pname"
 
 	# copy builtin predefine database
 	local txt="${_zsh_autosuggest_script_path}/predefined.txt"
 
-	[ -f "$txt" ] && cat "$txt" > "$pname"
+	[ -f "$txt" ] && cat "$txt" > "$ptemp"
 
 	# enumerate commands in $PATH and add them to ~/.zsh_autosuggest
     for p ("${(@s/:/)PATH}"); do
@@ -623,7 +626,10 @@ _zsh_autosuggest_predefined_generate() {
 
 	# TODO: generate command parameters from completion database
 	
-	print -l $suggests >> "$pname"
+	print -l $suggests >> "$ptemp"
+
+	# atomic change file name
+	mv -f "$ptemp" "$pname"
 }
 
 
@@ -638,9 +644,10 @@ _zsh_autosuggest_strategy_predefined() {
 	# search the predefine files if nothing found in history
     if [[ -z "$result" ]]; then
         if (( ! ${+_ZSH_AUTOSUGGEST_PREDEFINE} )); then
+			_zsh_autosuggest_predefined_generate
             typeset -g _ZSH_AUTOSUGGEST_PREDEFINE=()
-            local pname="$HOME/.zsh_autosuggest"
-            pname="${ZSH_AUTOSUGGEST_PREDEFINE_NAME:-$pname}"
+			local pbase="$_zsh_autosuggest_data_home"
+			local pname="$pbase/predefined"
             local names="${ZSH_AUTOSUGGEST_PREDEFINE_PATH};$pname"
             local array=()
             for i ("${(s:;:)names}"); do
@@ -658,7 +665,7 @@ _zsh_autosuggest_strategy_predefined() {
 }
 
 
-_zsh_autosuggest_predefined_generate
+# _zsh_autosuggest_predefined_generate
 
 #  vim: set ts=4 sw=4 tw=0 noet :
 
