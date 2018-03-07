@@ -38,7 +38,7 @@ _zsh_autosuggest_predefined_generate() {
     for p ("${(@s/:/)PATH}"); do
         [ ! -d "$p" ] && continue
         cd "$p"
-        local files=("${(@f)$(ls -la | awk -F ' ' '{print $9}')}")
+        local files=($(command ls))
         for fn in ${files}; do
             if [ -x "$fn" ] && [[ "${fn:l}" != *.dll ]]; then
                 if [ -f "$fn" ] && [[ "${fn:l}" != *.nls ]]; then
