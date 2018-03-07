@@ -593,7 +593,7 @@ _zsh_autosuggest_predefined_generate() {
     # skip when ~/.zsh_autosuggest exists
     [ -f "$pname" ] && return
 
-    echo "autosuggestions is generating: $pname"
+    # echo "autosuggestions is generating: $pname"
 
     # copy builtin predefine database
     local txt="${_zsh_autosuggest_script_path}/predefined.txt"
@@ -642,10 +642,15 @@ _zsh_autosuggest_strategy_predefined() {
     # search the history at first
     local result="${history[(r)${prefix}*]}"
 
+    # check if necessary to generate predefine database
+    if (( ! ${+_ZSH_AUTOSUGGEST_GENERATED} )); then
+        _ZSH_AUTOSUGGEST_GENERATED=1
+        _zsh_autosuggest_predefined_generate
+    fi
+
     # search the predefine files if nothing found in history
     if [[ -z "$result" ]]; then
         if (( ! ${+_ZSH_AUTOSUGGEST_PREDEFINE} )); then
-            # _zsh_autosuggest_predefined_generate
             typeset -g _ZSH_AUTOSUGGEST_PREDEFINE=()
             local pbase="$_zsh_autosuggest_data_home"
             local pname="$pbase/predefined"
@@ -666,7 +671,7 @@ _zsh_autosuggest_strategy_predefined() {
 }
 
 
-_zsh_autosuggest_predefined_generate
+# _zsh_autosuggest_predefined_generate
 
 #  vim: set ts=4 sw=4 tw=0 et :
 
