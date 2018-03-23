@@ -57,6 +57,8 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
 	history-beginning-search-backward
 	history-substring-search-up
 	history-substring-search-down
+	up-line-or-beginning-search
+	down-line-or-beginning-search
 	up-line-or-history
 	down-line-or-history
 	accept-line
