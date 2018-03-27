@@ -23,7 +23,6 @@ _zsh_autosuggest_async_server() {
 	# Silence any error messages
 	exec 2>/dev/null
 
-	local strategy=$1
 	local last_pid
 
 	while IFS='' read -r -d $'\0' query; do
@@ -70,7 +69,7 @@ _zsh_autosuggest_async_pty_create() {
 	fi
 
 	# Fork a zpty process running the server function
-	zpty -b $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "_zsh_autosuggest_async_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
+	zpty -b $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME _zsh_autosuggest_async_server
 
 	# Store the fd so we can remove the handler later
 	if (( REPLY )); then
