@@ -166,13 +166,14 @@ _zsh_autosuggest_partial_accept() {
 
 	# In vicmd keymap, the cursor is placed on the current character
 	# instead of after it. We increment it by 1 to keep the following logic
-	# working even in thi case.
+	# working even in this case.
+	CURSOR_POS=$CURSOR
 	if [ $KEYMAP = 'vicmd' ]; then
-		(( CURSOR++ ))
+		(( CURSOR_POS++ ))
 	fi
 
 	# If we've moved past the end of the original buffer
-	if (( $CURSOR > $#original_buffer )); then
+	if (( $CURSOR_POS > $#original_buffer )); then
 		# Set POSTDISPLAY to text right of the cursor
 		POSTDISPLAY="$RBUFFER"
 
@@ -181,11 +182,6 @@ _zsh_autosuggest_partial_accept() {
 	else
 		# Restore the original buffer
 		BUFFER="$original_buffer"
-	fi
-
-	# Restore CURSOR
-	if [ $KEYMAP = 'vicmd' ]; then
-		(( CURSOR-- ))
 	fi
 
 	return $retval
