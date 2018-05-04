@@ -438,25 +438,16 @@ _zsh_autosuggest_partial_accept() {
 	# Temporarily accept the suggestion.
 	BUFFER="$BUFFER$POSTDISPLAY"
 
-	print keymap: $KEYMAP >> /tmp/zsh_autosuggest_log
-  print original widget name: $@ >> /tmp/zsh_autosuggest_log
-  print original buffer: $original_buffer >> /tmp/zsh_autosuggest_log
-  print original postdisplay: $POSTDISPLAY >> /tmp/zsh_autosuggest_log
-  print original cursor: $CURSOR >> /tmp/zsh_autosuggest_log
-
 	# Original widget moves the cursor
 	_zsh_autosuggest_invoke_original_widget $@
 	retval=$?
 
-	# In vicmd keymap, the cursor is placed on the last character, not after
-	# For this reason, we need to increment it by 1 for our tests on it to
-	# keep working, then roll it back to its initial value
+	# In vicmd keymap, the cursor is placed on the current character
+	# instead of after it. We increment it by 1 to keep the following logic
+	# working even in thi case.
 	if [ $KEYMAP = 'vicmd' ]; then
 		(( CURSOR++ ))
 	fi
-
-	print retval: $retval >>  /tmp/zsh_autosuggest_log
-  print final cursor: $CURSOR >> /tmp/zsh_autosuggest_log
 
 	# If we've moved past the end of the original buffer
 	if (( $CURSOR > $#original_buffer )); then
@@ -470,11 +461,11 @@ _zsh_autosuggest_partial_accept() {
 		BUFFER="$original_buffer"
 	fi
 
+	# Restore CURSOR
 	if [ $KEYMAP = 'vicmd' ]; then
 		(( CURSOR-- ))
 	fi
 
-  print '' >>  /tmp/zsh_autosuggest_log
 	return $retval
 }
 
