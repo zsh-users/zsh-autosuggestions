@@ -168,7 +168,7 @@ _zsh_autosuggest_partial_accept() {
 	# instead of after it. We increment it by 1 to keep the following logic
 	# working even in this case.
 	CURSOR_POS=$CURSOR
-	if [ $KEYMAP = 'vicmd' ]; then
+	if [[ "$KEYMAP" = "vicmd" ]]; then
 		(( CURSOR_POS++ ))
 	fi
 
