@@ -167,7 +167,7 @@ _zsh_autosuggest_partial_accept() {
 	# In vicmd keymap, the cursor is placed on the current character
 	# instead of after it. We increment it by 1 to keep the following logic
 	# working even in thi case.
-	if [ $KEYMAP = 'vicmd' ]; then
+	if [[ "$KEYMAP" = "vicmd" ]]; then
 		(( CURSOR++ ))
 	fi
 
@@ -184,7 +184,7 @@ _zsh_autosuggest_partial_accept() {
 	fi
 
 	# Restore CURSOR
-	if [ $KEYMAP = 'vicmd' ]; then
+	if [[ "$KEYMAP" = "vicmd" ]]; then
 		(( CURSOR-- ))
 	fi
 
