@@ -136,7 +136,7 @@ _zsh_autosuggest_accept() {
 		unset POSTDISPLAY
 
 		# Move the cursor to the end of the buffer
-		CURSOR=${#BUFFER}
+		CURSOR=${max_cursor_pos}
 	fi
 
 	_zsh_autosuggest_invoke_original_widget $@
