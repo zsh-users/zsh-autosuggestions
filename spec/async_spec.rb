@@ -26,6 +26,16 @@ context 'with asynchronous suggestions enabled' do
       end
     end
   end
+
+  describe 'exiting a subshell' do
+    it 'should not cause error messages to be printed' do
+      session.run_command('$(exit)')
+
+      sleep 1
+
+      expect(session.content).to eq('$(exit)')
+    end
+  end
 end
 
 

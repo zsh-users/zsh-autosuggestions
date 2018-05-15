@@ -83,13 +83,11 @@ _zsh_autosuggest_async_pty_create() {
 }
 
 _zsh_autosuggest_async_pty_destroy() {
-	if zpty -t $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null; then
-		# Remove the input handler
-		zle -F $_ZSH_AUTOSUGGEST_PTY_FD &>/dev/null
+	# Remove the input handler
+	zle -F $_ZSH_AUTOSUGGEST_PTY_FD &>/dev/null
 
-		# Destroy the zpty
-		zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null
-	fi
+	# Destroy the zpty
+	zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null
 }
 
 _zsh_autosuggest_async_pty_recreate() {
