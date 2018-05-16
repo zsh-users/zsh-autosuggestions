@@ -3,7 +3,7 @@ context 'when async suggestions are enabled' do
 
   describe 'the zpty for async suggestions' do
     it 'is created with the default name' do
-      session.run_command('zpty -t zsh_autosuggest_pty &>/dev/null; echo $?')
+      session.run_command('zpty -t zsh_autosuggest_async_pty &>/dev/null; echo $?')
       wait_for { session.content }.to end_with("\n0")
     end
 
