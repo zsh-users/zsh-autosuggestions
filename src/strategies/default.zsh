@@ -2,24 +2,16 @@
 #--------------------------------------------------------------------#
 # Default Suggestion Strategy                                        #
 #--------------------------------------------------------------------#
-# Suggests the most recent history item that matches the given
-# prefix.
+# Will provide suggestions from your history. If no matches are found
+# in history, will provide a suggestion from the completion engine.
 #
 
 _zsh_autosuggest_strategy_default() {
-	# Reset options to defaults and enable LOCAL_OPTIONS
-	emulate -L zsh
+	typeset -g suggestion
 
-	# Enable globbing flags so that we can use (#m)
-	setopt EXTENDED_GLOB
+	_zsh_autosuggest_strategy_history "$1"
 
-	# Escape backslashes and all of the glob operators so we can use
-	# this string as a pattern to search the $history associative array.
-	# - (#m) globbing flag enables setting references for match data
-	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
-	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
-
-	# Get the history items that match
-	# - (r) subscript flag makes the pattern match on values
-	typeset -g suggestion="${history[(r)${prefix}*]}"
+	if [[ -z "$suggestion" ]]; then
+		_zsh_autosuggest_strategy_completion "$1"
+	fi
 }
