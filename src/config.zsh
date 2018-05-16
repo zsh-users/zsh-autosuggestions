@@ -68,4 +68,7 @@ ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
 
 # Pty name for calculating autosuggestions asynchronously
-ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_pty
+ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_async_pty
+
+# Pty name for capturing completions for completion suggestion strategy
+ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME=zsh_autosuggest_completion_pty
