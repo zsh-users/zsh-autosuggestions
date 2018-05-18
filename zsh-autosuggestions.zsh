@@ -510,7 +510,7 @@ _zsh_autosuggest_capture_completion() {
 
 	setopt rcquotes
 	() {
-		# Setup, blocking until null byte to signal completion
+		# Initialize the pty env, blocking until null byte is seen
 		zpty -w $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME "source $1"
 		zpty -r $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME line '*'$'\0'
 	} =( <<< '
@@ -562,7 +562,6 @@ _zsh_autosuggest_capture_completion() {
 	# Signal setup completion by sending null byte
 	echo $''\0''
 	')
-
 
 	# Send the string and a tab to trigger completion
 	zpty -w $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME "$*"$'\t'
