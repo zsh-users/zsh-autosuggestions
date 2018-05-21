@@ -43,6 +43,7 @@ Set `ZSH_AUTOSUGGEST_STRATEGY` to choose the strategy for generating suggestions
 
 - `default`: Chooses the most recent match.
 - `match_prev_cmd`: Chooses the most recent match whose preceding history item matches the most recently executed command ([more info](src/strategies/match_prev_cmd.zsh)). Note that this strategy won't work as expected with ZSH options that don't preserve the history order such as `HIST_IGNORE_ALL_DUPS` or `HIST_EXPIRE_DUPS_FIRST`.
+- `predefined`: Chooses the most recent match in history and predefined database which is generated from available commands in $PATH and their help at the first time `predefined` strategy is used.
 
 
 ### Widget Mapping

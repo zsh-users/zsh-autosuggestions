@@ -1,0 +1,2327 @@
+7z a {{archived.7z}} {{path/to/file}}
+7z x {{archived}}
+7z x {{archived}} -o{{path/to/output}}
+7za a -t{{zip|gzip|bzip2|tar|...}} {{archived}} {{path/to/file}}
+7za a {{archived.7z}} {{path/to/file}}
+7za x {{archived}}
+7zr a {{archived.7z}} {{path/to/file}}
+7zr l {{archived.7z}}
+7zr x {{archived.7z}}
+Alt + M
+C-x C-c
+Ctrl + C
+Ctrl + F "{{pattern}}" <Enter>
+Ctrl + K
+Ctrl + R
+Ctrl + w {{h|l|k|j}}
+F1
+FTP_PASSWORD={{ftp_login_password}} PASSPHRASE={{encryption_password}} duplicity {{path/to/source/directory}} {{ftps://user@hostname/target/directory/path/}}
+FTP_PASSWORD={{webdav_login_password}} duplicity remove-older-than {{1Y}} --force {{webdav[s]://user@hostname[:port]/some_dir}}
+G (end), g (start)
+R --version
+R -f {{file.R}}
+ab -n 100 -c 10 {{url}}
+ab -n 100 {{url}}
+ack --ruby {{each_with_object}}
+ack -ch {{foo}}
+ack {{foo}}
+adb kill-server
+adb shell
+adb start-server
+add archive {{archive.tar.gz}} as {{alias}};
+add file {{file_name}} as {{alias}};
+add user {{user_name}};
+adduser --home {{path/to/home}} {{username}}
+adduser --no-create-home {{username}}
+adduser {{username}}
+ag -i -o {{FOO}}
+ag -l {{foo}}
+ag {{foo}}
+airpaste < {{file.txt}}
+airpaste > {{file.txt}}
+airpaste {{channel_name}}
+airport -I
+airport -s
+airport sniff {{1}}
+alias {{word}}
+alias {{word}}="{{command}}"
+alpine
+alpine {{email@example.net}}
+alter table {{table_name}} add partition ({{partition_spec}});
+ansible {{group}} --list-hosts
+ansible {{group}} -m ping
+ansible {{group}} -m setup
+ansible-galaxy install {{username.role_name}}
+ansible-galaxy list
+ansible-galaxy remove {{username.role_name}}
+ansible-playbook {{playbook}}
+ansible-playbook {{playbook}} -e "{{variable1}}={{value1}} {{variable2}}={{value2}}"
+ansible-playbook {{playbook}} -i {{inventory_file}}
+apachectl restart
+apachectl start
+apachectl stop
+apg
+apg -M SNCL
+apg -m {{16}}
+apm install {{package_name}}
+apm remove {{package_name}}
+apm upgrade {{package_name}}
+apropos -l {{regular_expression}}
+apropos {{regular_expression}}
+apt search {{package}}
+apt show {{package}}
+apt-cache policy {{package}}
+apt-cache search {{query}}
+apt-cache show {{package}}
+apt-get install {{package}}
+apt-get remove {{package}}
+apt-get update
+apt-key add {{public_key_file.asc}}
+apt-key del {{key_id}}
+apt-key list
+aptitude install {{package}}
+aptitude search {{package}}
+aptitude update
+ar -r {{libfoo.a}} {{foo.o}} {{bar.o}} {{baz.o}}
+ar -t {{libfoo.a}}
+ar -x {{libfoo.a}}
+archey
+archey
+archey --macports
+archey --nocolor
+aria2c -i {{filename}}
+aria2c {{url_1}} {{url_2}}
+aria2c {{url}}
+arp -a
+arp -d {{address}}
+arp-scan --localnet
+arp-scan {{127.0.0.0}}-{{127.0.0.31}}
+arp-scan {{192.168.1.1}}/{{24}}
+assimp export {{input_file.stl}} {{output_file.obj}}
+assimp listexport
+assimp listext
+astyle --style=allman {{path/to/file}}
+astyle --style=java {{path/to/file}}
+astyle {{source_file}}
+at -f {{path/to/file}} 9:30 PM Tue
+at now + 5 min
+at {{hh:mm:ss}}
+at {{hh:mm:ss}} -f {{path/to/file}}
+at {{hh:mm:ss}} -m
+atom -n {{path/to/file_or_folder}}
+atom {{path/to/file_or_folder}}
+atq
+atq -q {{a}}
+atrm {{10}}
+atrm {{15}} {{17}} {{22}}
+autoflake --remove-all-unused-imports {{file1.py}} {{file2.py}} {{file3.py}}
+autoflake --remove-unused-variables --in-place {{file.py}}
+autoflake --remove-unused-variables {{file.py}}
+autossh -M {{monitor_port}} -L {{local_port}}:localhost:{{remote_port}} {{user}}@{{host}}
+autossh -M {{monitor_port}} {{ssh_command}}
+autossh -f -M {{monitor_port}} -N {{ssh_command}}
+avrdude -p \?
+avrdude -p {{AVR_device}} -c {{programmer}} -U flash:r:{{file.hex}}:i
+avrdude -p {{AVR_device}} -c {{programmer}} -U flash:w:{{file.hex}}
+awk '/{{something}}/ {print $2}' {{filename}}
+awk '{print $5}' {{filename}}
+awk -F ',' '{print $NF}' {{filename}}
+aws s3 ls {{bucket_name}}
+aws s3 sync s3://{{bucket_name}} {{path/to/target}}
+aws s3 sync {{path/to/files}} s3://{{bucket_name}}
+axel -n {{connections_num}} {{url}}
+axel {{url}}
+axel {{url}} -o {{filename}}
+base32 -d {{filename}}
+base32 {{filename}}
+base64 -D -i {{base64_file}}
+base64 -d {{filename}}
+base64 -i {{plain_file}}
+base64 {{filename}}
+basename {{path/to/file}}
+basename {{path/to/file}} {{suffix}}
+bash
+bash -c "{{command}}"
+bash {{file.sh}}
+batch
+batch -f {{path/to/file}}
+bc -l
+bc <<< "(1 + 2) * 2 ^ 2"
+bc <<< "scale=10; 5 / 3"
+bedtools intersect -a {{path/to/file_1}} -b {{path/to/file_2}} -lof > {{path/to/output_file}}
+bedtools intersect -a {{path/to/file_1}} -b {{path/to/file_2}} -s > {{path/to/output_file}}
+bedtools intersect -a {{path/to/file_1}} -b {{path/to/file_2}} -sorted > {{path/to/output_file}}
+beep
+beep -f {{frequency}} -l {{duration}}
+beep -r {{repetitions}}
+bg
+bg {{job_id}}
+binary
+blender -b {{filename}}.blend -a
+blender -b {{filename}}.blend -o //{{render/frame_###.png}} -a
+blender -b {{filename}}.blend -o {{/path/to/output_folder}} -f {{10}}
+bmaptool copy --bmap {{blockmap.bmap}} {{source.img.gz}} {{/dev/sdb}}
+bmaptool copy --bmap {{blockmap.bmap}} {{source.img}} {{/dev/sdb}}
+bmaptool create -o {{blockmap.bmap}} {{source.img}}
+bmon -a
+bmon -b
+bmon -p {{interface_1,interface_2,interface_3}}
+boot cljs --help
+boot jar
+boot repl
+borg create --progress {{/path/to/repo_folder}}::{{Monday}} {{/path/to/source_folder}}
+borg init {{/path/to/repo_folder}}
+borg list {{/path/to/repo_folder}}
+bosh alias-env {{environment-name}} -e {{ip address or url}} --ca-cert {{ca_certificate}}
+bosh environments
+bosh login -e {{environment}}
+bower install
+bower install {{package}} {{package}}
+bower uninstall {{package}} {{package}}
+brew cask install {{cask_name}}
+brew cask list
+brew cask search {{text}}
+brew install {{formula}}
+brew install {{formula}}
+brew list
+brew list
+brew search {{text}}
+brew search {{text}}
+browser-sync init
+browser-sync start --server --files '{{path/to/directory/*.css}}'
+browser-sync start --server {{path/to/directory}} --files {{path/to/directory}}
+bundle install
+bundle update
+bundle update --source {{gemname}}
+bzip2 -d {{path/to/compressed_file.bz2}}
+bzip2 -dc {{path/to/compressed_file.bz2}}
+bzip2 {{path/to/file_to_compress}}
+c99 -c {{file.c}}
+c99 -o {{executable_name}} {{file.c}}
+c99 {{file.c}}
+cabal info {{package_name}}
+cabal install {{package_name}}
+cabal list {{search_string}}
+caffeinate -i
+caffeinate -s {{command}}
+caffeinate -u -t {{3600}}
+cal
+cal
+cal --monday
+cal --three
+cal -m {{month}}
+cal -y
+calc
+calc -p '{{85 * (36 / 4)}}'
+calibre-server
+calibre-server --port {{port}}
+calibre-server --username {{username}} --password {{password}}
+calibredb list
+calibredb list --search {{search_term}}
+calibredb search {{search_term}}
+cargo install --list
+cargo install {{crate_name}}
+cargo search {{search_string}}
+carthage update
+carthage update --no-build
+carthage update --platform ios
+cat {{/path/to/file}} | lwp-request -m POST {{http://example.com/some/path}}
+cat {{file1}} {{file2}} > {{target_file}}
+cat {{file1}} {{file2}} >> {{target_file}}
+cat {{file1}} | comm -12 - {{file2}}
+cat {{file}}
+cat {{file}} | jq
+cat {{file}} | jq --slurp
+cat {{file}} | jq .[]
+cat {{file}} | nl {{options}} -
+cat {{file}} | xsel -ib
+cat {{index.html}} | pup '{{div#id}}'
+cat {{index.html}} | pup '{{tag}}'
+cat {{index.html}} | pup --color
+cc {{path/to/lex.yy.c}} --output {{executable}}
+cc {{path/to/lex.yy.c}} --output {{executable}}
+cd
+cd ..
+cd {{path/to/directory}}
+chage -l {{user_name}}
+chattr +i {{path}}
+chattr -R +i {{folder}}
+chattr -i {{path}}
+chgrp -R {{group}} {{path/to/folder}}
+chgrp -h {{user}} {{path/to/symlink}}
+chgrp {{group}} {{path/to/file}}
+chmod g-x {{file}}
+chmod u+rw {{file}}
+chmod u+x {{file}}
+chown -R {{user}} {{path/to/folder}}
+chown {{user}} {{path/to/file}}
+chown {{user}}:{{group}} {{path/to/file}}
+chroot --userspec={{user:group}}
+chroot {{/path/to/new/root}} {{command}}
+chsh -s {{path/to/shell_binary}} {{username}}
+cksum {{filename}}
+clang {{input_source.c}} -Wall -o {{output_executable}}
+clang {{input_source.c}} -o {{output_executable}}
+clang {{input_source.c}} -o {{output_executable}} -I{{header_path}} -L{{library_path}} -l{{library_name}}
+clear
+clear
+cloc --diff {{/directory/one}} {{/directory/two}}
+cloc --progress=1 {{/path/to/directory}}
+cloc {{/path/to/directory}}
+cmake && make
+cmake -H. -B{{build}} && make -C {{build}}
+cmake -i
+cmp -l {{file1}} {{file2}}
+cmp {{file1}} {{file2}}
+cmus {{path/to/directory}}
+code
+code .
+code {{path/to/file_or_folder}}
+codesign -s {{"My Company Name"}} {{/path/to/App.app}}
+codesign -v {{/path/to/App.app}}
+comm -12 {{file1}} {{file2}}
+comm {{file1}} {{file2}}
+command1 | pv -s {{expected_amount_of_data_for_eta}} | command2
+compose {{filename}}
+composer install
+composer remove {{user/package-name}}
+composer require {{user/package-name}}
+conda create --name {{environment_name}} {{python=2.7 matplotlib}}
+conda info --envs
+consul --help
+consul --version
+consul kv delete {{key}}
+consul kv get {{key}}
+consul kv put {{key}} {{value}}
+consul {{sub-command}} --help
+convert {{image.jpg}} {{image.png}}
+convert {{image.png}} -resize 50% {{image2.png}}
+convert {{image.png}} -resize 640x480 {{image2.png}}
+convmv -f {{from_encoding}} -t {{to_encoding}} --notest {{input_file}}
+convmv -f {{from_encoding}} -t {{to_encoding}} {{input_file}}
+cordova create {{path}} {{package.name}} {{project.name}}
+cordova info
+cordova platform add {{platform}}
+couchdb
+couchdb -b
+couchdb -i
+cowsay "Hello world!"
+cowsay -l
+cp -r {{path/to/folder}} {{path/to/copy}}
+cp {{path/to/file.ext}} {{path/to/copy.ext}}
+cp {{path/to/file.ext}} {{path/to/target/parent/folder}}
+cpio -idv < {{archive.cpio}}
+cppcheck --enable={{error|warning|style|performance|portability|information|all}} {{path/to/file.cpp}}
+cppcheck --quiet {{path/to/folder}}
+cppcheck . 2> cppcheck.log
+cppclean {{main.cpp}}
+cppclean {{path/to/project}}
+cppclean {{path/to/project}} --include-path={{inc1}} --include-path={{inc2}}
+cpufreq-info
+cpufreq-info -c {{cpu_number}}
+cpufreq-info -l
+cpuid
+cpuid -1
+cpuid -r
+create function {{func_name}} as {{path.to.package.Func}} using '{{package.jar}}';
+create function {{func_name}} as {{script.Func}} using '{{script.py}}';
+create table {{table_name}} ({{col}} {{type}}) partitioned by ({{col}} {{type}}) lifecycle {{days}};
+create table {{table_name}} like {{another_table}};
+crontab -e
+crontab -l
+crontab -r
+cryptsetup luksClose {{target}}
+cryptsetup luksFormat {{/dev/sda1}}
+cryptsetup luksOpen {{/dev/sda1}} {{target}}
+csslint --list-rules
+csslint {{file.css}}
+csslint {{file1.css}} {{file2.css}} {{file3.css}}
+csvclean -n {{bad.csv}}
+csvclean {{bad.csv}}
+csvcut -C {{4}} {{data.csv}}
+csvcut -c {{1,3}} {{data.csv}}
+csvcut -n {{data.csv}}
+csvformat -D "{{custom_character}}" {{data.csv}}
+csvformat -M "{{\r\n}}" {{data.csv}}
+csvformat -T {{data.csv}}
+csvgrep -c {{1}} -m {{string_to_match}} {{data.csv}}
+csvgrep -c {{3,4}} -r {{regex_pattern}} {{data.csv}}
+csvgrep -i -c {{name}} -m {{"John Doe"}} {{data.csv}}
+csvlook {{data.csv}}
+csvpy --dict {{data.csv}}
+csvpy {{data.csv}}
+csvsort -c {{2,4}} {{data.csv}}
+csvsort -c {{9}} {{data.csv}}
+csvsort -r -c {{name}} {{data.csv}}
+csvstat --sum {{data.csv}}
+csvstat -c {{2,4}} {{data.csv}}
+csvstat {{data.csv}}
+curl -O -L -C - {{http://example.com/filename}}
+curl -O {{http://example.com/filename}}
+curl {{http://example.com}} -o {{filename}}
+cut -c {{1-16}}
+cut -c {{1-16}} {{file}}
+cut -c{{3-}}
+dash
+dash -c "{{command}}"
+dash {{file.sh}}
+date +"%c"
+date +"%c"
+date +%s
+date +%s
+date -u +"%Y-%m-%dT%H:%M:%SZ"
+date -u +"%Y-%m-%dT%H:%M:%SZ"
+dc
+dc -f {{file}}
+dd if=/dev/urandom of={{random_file}} bs=100 count=1
+dd if=/dev/urandom of={{random_file}} bs=100 count=1
+dd if=/dev/{{source_drive}} of=/dev/{{dest_drive}} bs=4M conv=noerror status=progress
+dd if=/dev/{{source_drive}} of=/dev/{{dest_drive}} bs=4m conv=noerror
+dd if={{file.iso}} of=/dev/{{usb_drive}}
+dd if={{file.iso}} of=/dev/{{usb_drive}} status=progress
+deactivate
+defaults read -app {{application}} {{option}}
+defaults read {{application}} {{option}}
+defaults write {{application}} {{option}} {{-type}} {{value}}
+deluser -r {{name}}
+deluser {{name}}
+deluser {{name}} {{group}}
+dep ensure
+dep init
+dep status
+desc instance {{instance_id}};
+df
+df -h
+df {{path/to/file_or_folder}}
+dhcpwn --interface {{network_interface}} flood --count {{number_of_requests}}
+dhcpwn --interface {{network_interface}} sniff
+diff -w {{file1}} {{file2}}
+diff -y {{file1}} {{file2}}
+diff {{file1}} {{file2}}
+diff {{file1}} {{file2}} | diffstat
+diff {{file1}} {{file2}} | diffstat -t
+dig +short {{hostname.com}}
+dig +short {{hostname.com}} MX
+dig {{hostname.com}} ANY
+dirs
+dirs +{{N}}
+dirs -p
+diskutil list
+diskutil repairVolume {{/dev/diskX}}
+diskutil unmountDisk {{/dev/diskX}}
+ditto -V {{path/to/source}} {{path/to/destination}}
+ditto -rsrc {{path/to/source}} {{path/to/destination}}
+ditto {{path/to/source}} {{path/to/destination}}
+dmesg
+dmesg
+dmesg --level err
+dmesg -w
+dmesg | grep -i memory
+dmesg | less
+dnf -y install {{package}}
+dnf install {{package}}
+dnf update
+docker container ls
+docker container ls -a
+docker container start {{container}}
+docker-compose --file {{path/to/file}} up
+docker-compose up --build
+docker-compose up -d
+dokku apps
+dokku apps:create {{app_name}}
+dokku apps:destroy {{app_name}}
+dot -Tpng -O {{path/to/file.dot}}
+dot -Tsvg -o{{path/to/out_file.svg}} {{path/to/file.dot}}
+dotnet new {{template_short_name}}
+dotnet restore
+dotnet run
+doxygen -g
+doxygen -g {{path/to/config_file}}
+doxygen {{path/to/config_file}}
+dpkg -i {{/path/to/file}}
+dpkg -l {{pattern}}
+dpkg -r {{package_name}}
+dpkg-query -L {{package_name}}
+dpkg-query -l
+dpkg-query -l '{{pattern}}'
+drush dl {{foo}}
+drush dl {{foo}}-7.x-2.1-beta1
+drush en {{foo}}
+drutil burn -noverify -eject -iso9660
+drutil eject
+du -h {{path/to/folder}}
+du -h {{path/to/folder}}
+du -sh {{path/to/folder}}
+du -sh {{path/to/folder}}
+du -{{b|k|m}} {{path/to/folder}}
+du -{{k|m|g}} {{path/to/folder}}
+duplicity --full-if-older-than {{1M}} --use-new-style s3://{{bucket_name[/prefix]}}
+ebook-convert {{source}} {{destination}}
+echo "4 5 * 17 - p"| dc
+echo "Hello!" | cowsay -f dragon
+echo "example" | tee -a {{FILE}}
+echo "example" | tee >(xargs mkdir) >(wc -c)
+echo "example" | tee {{FILE}}
+echo "hello" | rev
+echo "test" | lp
+echo "{{./make_db_backup.sh}}" | at 1000
+echo "{{./make_db_backup.sh}}" | batch
+echo "{{content}}" | mailx -s "{{subject}}" {{to_addr}}
+echo "{{file1}} {{file2}} {{file3}}" | cpio -o > {{archive.cpio}}
+echo "{{message}}" | wall
+echo $(expr index {{string}} {{substring}})
+echo -n {{"Hello World"}}
+echo -n {{plain_text}} | base64
+echo 123 | xclip
+echo 123 | xclip -sel clip
+echo 123 | xclip -selection {{primary|secondary|clipboard}}
+echo 123 | xsel -ib
+echo {{"Hello World"}}
+echo {{"Hello world"}} | msmtp --account={{account_name}} {{to@example.org}}
+echo {{"Hello world"}} | msmtp --host={{localhost}} --port={{999}} --from={{from@example.org}} {{to@example.org}}
+echo {{"Hello world"}} | msmtp {{to@example.org}}
+echo {{"My path is $PATH"}}
+echo {{log_entry}} | logger
+echo {{log_entry}} | logger
+echo {{log_entry}} | logger --server {{hostname}} --port {{port}}
+echo {{log_entry}} | logger -h {{hostname}} -P {{port}}
+ed
+ed -p :
+ed -p : {{path/to/file}}
+edit {{filename}}
+edquota --user $(whoami)
+electrum -w {{new_wallet.dat}} create
+electrum -w {{recovery_wallet.dat}} restore -o
+electrum mktx {{recipient}} {{amount}} -f 0.0000001 -F {{from}} -o
+elinks
+elinks -dump -dump-color-mode {{1}} {{url}}
+emacs -nw
+emacs {{filename}}
+emacsclient -n {{filename}}
+emacsclient -nw {{filename}}
+emacsclient {{filename}}
+ember addon {{my_new_addon}}
+ember build
+ember new {{my_new_app}}
+emerge --resume --skipfirst
+emerge --sync
+emerge -uDNav @world
+enca -L {{language}} -x {{to_encoding}} {{file(s)}}
+enca -L {{language}} {{file(s)}}
+enca {{file(s)}}
+env
+env -i {{program}}
+env {{program}}
+equery depends {{package_name}}
+equery list '*'
+equery list -po {{package_name}}
+eslint --fix
+eslint --init
+eslint {{filename}}.js {{filename1}}.js
+espeak "I like to ride my bike."
+espeak -f {{filename}}
+espeak -w {{filename.wav}} "It's GNU plus Linux"
+eval "$(thefuck --alias)"
+eval "{{echo foo}}"
+eval "{{foo=bar}}"
+exa --all
+exa --long --all
+exa --oneline
+exiftool "-AllDates+=0:0:0 1:0:0" {{directory}}
+exiftool "-AllDates-=0:0:1 2:0:0" -ext jpg
+exiftool -All= {{file}}
+expand
+expand -i {{file}}
+expand {{file}}
+export -n {{VARIABLE}}
+export -n {{VARIABLE}}
+export PATH=$PATH:{{path/to/append}}
+export PATH=$PATH:{{path/to/append}}
+export {{VARIABLE}}={{value}}
+export {{VARIABLE}}={{value}}
+expr length {{string}}
+expr {{first_argument}} {{operator}} {{second_argument}}
+eyeD3 --album {{"Album Name"}} {{*.mp3}}
+eyeD3 --title {{"A Title"}} {{filename.mp3}}
+eyeD3 {{filename.mp3}}
+fastboot oem lock
+fastboot oem unlock
+fastboot reboot bootloader
+fatlabel {{/dev/sda1}}
+fatlabel {{/dev/sdc3}} "{{new_label}}"
+fc-list | grep '{{DejaVu Serif}}'
+fc-match -s '{{DejaVu Serif}}'
+fc-pattern -d '{{DejaVu Serif}}'
+fd --extension {{.ext}} {{pattern}}
+fd {{'^foo'}}
+fd {{pattern}}
+fdupes -r {{directory}}
+fdupes {{directory1}} {{directory2}}
+fdupes {{directory}}
+feh --borderless {{path/to/images}}
+feh --borderless {{path/to/images}}
+feh --recursive {{path/to/images}}
+feh --recursive {{path/to/images}}
+feh {{path/to/images}}
+feh {{path/to/images}}
+ffmpeg -i {{frame_%d.jpg}} -f image2 {{video.mpg|video.gif}}
+ffmpeg -i {{video.mp4}} -vn {{sound}}.mp3
+ffmpeg -i {{video.mpg|video.gif}} {{frame_%d.png}}
+ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=noprint_wrappers=1:nokey=1 {{input.mp4}}
+ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {{input.mp4}}
+ffprobe -v error -show_entries {{input.mp4}}
+fg
+fg {{job_id}}
+figlet {{input_text}}
+figlet {{input_text}} -f {{font_file_name}}
+file -s {{filename}}
+file -s {{filename}}
+file -z {{foo.zip}}
+file -z {{foo.zip}}
+file {{filename}}
+file {{filename}}
+find . -name {{'*.backup'}} | xargs rm -v
+find . -type t -name "*.png" | pbcopy
+find {{path/to/directory}} | cpio -ov > {{archive.cpio}}
+find {{path/to/search_files}} -type f | fzf -m > {{filename}}
+find {{path/to/search}} -type f | fzf
+find {{root_path}} -name '{{*.ext}}'
+find {{root_path}} -name '{{*.ext}}' -exec {{wc -l {} }}\;
+find {{root_path}} -path '{{**/lib/**/*.ext}}'
+findmnt
+findmnt {{/dev/sdb1}}
+findmnt {{/}}
+firewall-cmd --get-active-zones
+firewall-cmd --list-all
+firewall-cmd --permanent --zone={{public}} --add-service={{https}}
+fish
+fish -c "{{command}}"
+fish {{file.fish}}
+flac -d -o {{path/to/output.wav}} {{path/to/file.flac}}
+flac -o {{path/to/output.flac}} {{path/to/file.wav}}
+flac {{path/to/file.wav}}
+flex {{analyser.l}}
+flex {{analyser.l}} --outfile {{analyser.c}}
+fly --target {{target_name}} login --team-name {{team_name}} -c {{https://ci.example.com}}
+fly -t {{target_name}} pipelines
+fly targets
+fold -w30 {{file}}
+fold -w5 -s {{file}}
+fold {{file}}
+for argument in 1 2 3; do {{command $argument}}; done
+for d in *; do (cd $d; {{command}}); done
+foreman start
+foreman start -f {{Procfile}}
+foreman start {{process}}
+fortune
+fortune -l
+fortune -o
+fping -a -g 192.168.1.0/24
+fping -a -g 192.168.1.1 192.168.1.254
+fping -u -g 192.168.1.0/24
+free
+free -h
+free -{{b|k|m|g}}
+fsck -a {{/dev/sda}}
+fsck -f {{/dev/sda}}
+fsck -fy {{/dev/sda}}
+fsck -r {{/dev/sda}}
+fsck {{/dev/sda}}
+fsck {{/dev/sda}}
+fswatch -0 {{path/to/directory}} | xargs -0 -I {} {{bash_command}}
+fswatch -0 {{path/to/file}} {{path/to/directory}} {{path/to/another_directory/**/*.js}} | xargs -0 {{bash_command}}
+fswatch -0 {{path/to/file}} | xargs -0 {{bash_command}}
+fswebcam -d {{device}} {{filename}}
+fswebcam -r {{width}}x{{height}} {{filename}}
+fswebcam {{filename}}
+ftp {{ftp.example.com}}
+fuck
+fuser -n tcp {{port}}
+fusermount -u {{mountpoint}}
+g {{bookmark_name}}
+g++ {{source.cpp}} -Wall -o {{output_executable}}
+g++ {{source.cpp}} -o {{output_executable}}
+g++ {{source.cpp}} -std={{language_standard}} -o {{output_executable}}
+gatsby develop
+gatsby new {{site_name}}
+gatsby new {{site_name}} {{url_of_starter_github_repo}}
+gcc {{source.c}} -Wall -Og -o {{executable}}
+gcc {{source.c}} -o {{executable}} -I{{header_path}} -L{{library_path}} -l{{library_name}}
+gcc {{source1.c}} {{source2.c}} -o {{executable}}
+gdb -ex "{{commands}}" {{executable}}
+gdb -p {{procID}}
+gdb {{executable}}
+gem install {{gemname}}
+gem install {{gemname}} -v {{1.0.0}}
+gem update {{gemname}}
+get {{/path/remote_file}}
+getenet group {{group_name}}
+getent group
+getent services
+getfacl -n {{path/to/file_or_folder}}
+getfacl -t {{path/to/file_or_folder}}
+getfacl {{path/to/file_or_folder}}
+geth
+geth --testnet
+geth account new
+gh configure
+gh notifications
+ghc -O {{file.hs}}
+ghc Main
+ghc {{file.hs}}
+gifsicle --delay={{10}} --loop *.gif > {{anim.gif}}
+gifsicle -b {{anim.gif}} --replace '#0' {{new.gif}}
+gifsicle {{anim.gif}} '#0' > {{firstframe.gif}}
+gist --login
+gist -p -d {{"A meaningful description"}} {{file.txt}}
+gist {{file.txt}} {{file2.txt}}
+git --help
+git --version
+git add -A
+git add -u
+git add {{path/to/file}}
+git bisect reset
+git bisect start {{bad_commit}} {{good_commit}}
+git bisect {{good|bad}}
+git blame -e {{file}}
+git blame {{file}}
+git branch
+git branch -a
+git branch {{branch_name}}
+git checkout --track {{remote_name}}/{{branch_name}}
+git checkout -b {{branch_name}}
+git checkout {{branch_name}}
+git cherry-pick {{commit_1}} {{commit_2}}
+git cherry-pick {{commit}}
+git cherry-pick {{start_commit}}~..{{end_commit}}
+git clean
+git clean --dry-run
+git clean -i
+git clone --recursive {{remote_repository_location}}
+git clone -l
+git clone {{remote_repository_location}}
+git commit --amend
+git commit -a -m {{message}}
+git commit -m {{message}}
+git config --list
+git config --list --global
+git config --list --local
+git diff
+git diff --staged
+git diff HEAD
+git fetch
+git fetch --all
+git fetch {{remote_name}}
+git gc
+git gc --aggressive
+git gc --no-prune
+git help {{command}}
+git imerge diagram
+git imerge merge {{branch_to_be_merged}}
+git imerge rebase {{branch_to_rebase_onto}}
+git init
+git init --bare
+git log
+git log --oneline
+git log -p {{path}}
+git merge -e {{branch_name}}
+git merge {{branch_name}}
+git mv --force {{file}} {{target}}
+git mv {{filename}} {{new_filename}}
+git mv {{path/to/file}} {{new/path/to/file}}
+git pull
+git pull --rebase
+git pull {{remote_name}} {{branch}}
+git push
+git push {{remote_name}} -u {{remote_branch}}
+git push {{remote_name}} {{local_branch}}
+git rebase --continue
+git rebase -i {{target_base_branch}}
+git rebase {{master}}
+git remote -v
+git remote add {{remote_name}} {{remote_url}}
+git remote set-url {{remote_name}} {{new_url}}
+git reset
+git reset -p {{path/to/file}}
+git reset {{path/to/file(s)}}
+git rm --cached {{file}}
+git rm -r {{directory}}
+git rm {{file}}
+git show
+git show {{commit}}
+git show {{tag}}
+git stash -p
+git stash -u
+git stash [save {{optional_stash_message}}]
+git status
+git status -s
+git submodule add {{repository_url}}
+git submodule add {{repository_url}} {{path/to/directory}}
+git submodule update --init --recursive
+git svn clone -r{{1234}}:HEAD {{https://svn.example.net/subversion/repo}} {{local_dir}}
+git svn clone {{https://example.com/subversion_repo}} {{local_dir}}
+git svn rebase
+git tag
+git tag {{tag_name}}
+git tag {{tag_name}} {{commit}}
+git worktree add {{path/to/folder}} -b {{new_branch}}
+git worktree add {{path/to/folder}} {{branch}}
+git worktree list
+gitk
+gitk --since={{"1 week ago"}}
+gitk {{path/to/file_or_folder}}
+gitsome
+glances
+glances -s
+glances -w
+go build -o {{executable}} {{file}}.go
+go get {{package_path}}
+go run {{file}}.go
+gofmt -s -w {{source.go}}
+gofmt -w {{source.go}}
+gofmt {{source.go}}
+gource -c {{time_scale_multiplier}}
+gource -{{width}}x{{height}}
+gource {{path/to/repository}}
+gpg --clearsign {{doc.txt}}
+gpg --encrypt --recipient {{alice@example.com}} {{doc.txt}}
+gpg --symmetric {{doc.txt}}
+gradle build
+gradle build --offline
+gradle build -x {{test}}
+grant {{action_list}} on {{object_type}} {{object_name}} to user {{user_name}};
+grep -i {{search_string}} {{path/to/file}}
+grep -rI {{search_string}} .
+grep {{search_string}} {{path/to/file}}
+groff -man -T ascii {{manpage.1}} | less
+groff -man -T html {{manpage.1}} > {{page.html}}
+groff -man -T utf8 {{manpage.1}}
+groupadd {{group_name}}
+groupadd {{group_name}} -g {{group_id}}
+groupdel {{group_name}}
+groupmod -g {{new_group_id}} {{old_group_name}}
+groupmod -n {{new_group_name}} {{old_group_name}}
+gtop
+gulp
+gulp {{task}} {{othertask}}
+gunzip -c {{archive.tar.gz}} > {{archive.tar}}
+gunzip -l {{file.txt.gz}}
+gunzip {{archive.tar.gz}}
+gzip -c {{file.ext}} > {{compressed_file.ext}}.gz
+gzip -d {{file.ext}}.gz
+gzip {{file.ext}}
+halt
+halt --reboot
+handbrakecli --preset-list
+handbrakecli -i {{input.avi}} -o {{output.mkv}} -e x264 -q 20 -B 160
+handbrakecli -i {{input.mp4}} -o {{output.mp4} -w 320 -l 240
+hangups
+hangups --token-path {{/path/to/token}}
+hangups -h
+hardinfo
+hardinfo -r
+hardinfo -r -f html > hardinfo.html
+haxelib install {{libname}}
+haxelib search {{keyword}}
+haxelib upgrade
+head -c {{number_in_bytes}} {{filename}}
+head -c {{size_in_bytes}} {{filename}}
+head -n -{{count_of_lines}} {{filename}}
+head -n {{count_of_lines}} {{filename}}
+head -n {{count_of_lines}} {{filename}}
+heroku create
+heroku login
+heroku logs --app {{app_name}}
+hg add --exclude {{pattern}}
+hg add --include {{pattern}}
+hg add {{path/to/file}}
+hg branch
+hg branch {{branch_name}}
+hg clone --branch {{branch}} {{remote_repository_source}}
+hg clone --noupdate {{remote_repository_source}}
+hg clone {{remote_repository_source}} {{destination_path}}
+hg commit
+hg commit --message {{message}}
+hg commit {{path/to/file}}
+hg help
+hg help {{command}}
+hg init
+hg init {{path/to/directory}}
+hg log
+hg log --graph
+hg log --include {{pattern}}
+hg pull
+hg pull --update
+hg pull {{path/to/source_repository}}
+hg push
+hg push --new-branch
+hg push {{path/to/destination_repository}}
+hg remove --exclude {{pattern}}
+hg remove --include {{pattern}}
+hg remove {{path/to/file}}
+hg serve
+hg serve --address {{address}}
+hg serve --port {{port}}
+hg update
+hg update --clean
+hg update --rev {{revision}}
+hg {{command}}
+history
+history -c
+history -w
+hn
+hn --keep-open
+hn --limit {{number}}
+home [{{num_of_last_tweets}}]
+host -t {{field}} {{domain}}
+host {{domain}}
+host {{ip_address}}
+hostname
+hostname
+hostname -I
+hostname -i
+hostname {{new_hostname}}
+hostnamectl
+htop
+htop -u {{user_name}}
+htpasswd -b {{path/to/file}} {{user_name}} {{password}}
+htpasswd -c {{path/to/file}} {{user_name}}
+htpasswd {{path/to/file}} {{user_name}}
+http -d {{example.org}}
+http -f {{example.org}} {{name='bob'}} {{profile_picture@'bob.png'}}
+http {{example.org}} {{name='bob'}}
+http {{https://example.com}}
+http {{https://example.com}} < {{file.json}}
+http {{https://example.com}} {{hello=World}}
+http-prompt
+http-prompt {{http://example.com}}
+http-prompt {{localhost:8000/api}} --auth {{username:password}}
+hub clone {{repo_name}}
+hub clone {{username}}/{{repo_name}}
+hub fork
+hugo new site {{path/to/site}}
+hugo new theme {{theme_name}}
+hugo new {{section_name}}/{{filename}}
+hwclock
+hwclock --hctosys
+hwclock --systohc
+iconv -f {{from_encoding}} -t {{to_encoding}} {{input_file}}
+iconv -f {{from_encoding}} {{input_file}} > {{output_file}}
+iconv -l
+id -g
+id -u
+id3tag --album={{album}} {{*.mp3}}
+id3tag --artist={{artist}} --title={{title}} {{path/to/file.mp3}}
+id3tag --help
+if {{condition}}; then echo "true"; else echo "false"; fi
+ifconfig -a
+ifconfig eth0
+ifconfig eth0 down
+ifdown -a
+ifdown {{eth0}}
+ifup -a
+ifup {{eth0}}
+ignite add {{plugin_name}}
+ignite generate {{plugin_name}} {{file_name}}
+ignite new {{project_name}}
+imgcat {{filename}}
+import -window root -display {{remote_host}}:{screen}.{display} {{output.png}}
+import -window root {{output.postscript}}
+import -window {{window_id}} {{output.jpg}}
+in2csv --sheet={{sheet_name}} {{data.xlsx}}
+in2csv {{data.dbf}} > {{data.csv}}
+in2csv {{data.xls}}
+inkscape {{filename.svg}}
+inkscape {{filename.svg}} -e {{filename.png}}
+inkscape {{filename.svg}} -e {{filename.png}} -w {{600}} -h {{400}}
+install -g {{user}} {{path/to/source}} {{path/to/destination}}
+install -o {{user}} {{path/to/source}} {{path/to/destination}}
+install {{path/to/source}} {{path/to/destination}}
+ionice -c {{scheduling_class}} -n {{priority}} {{command}}
+ionice -c {{scheduling_class}} -p {{pid}}
+ionice -p {{pid}}
+ioping -R /dev/sda
+ioping -c 10 -s 1M /tmp
+ioping .
+iostat
+iostat -c
+iostat -m
+ip a
+ip link set {{interface}} up/down
+ip r
+ipcs -a
+ipcs -qi 32768
+irb
+irssi --help
+irssi -c {{server.name.com}} -p {{port}}
+irssi -n {{nickname}} -c {{server.name.com}}
+isoinfo -d -i {{path/to/image.iso}}
+isoinfo -f -i {{path/to/image.iso}}
+isoinfo -i {{path/to/image.iso}} -x {{/PATH/TO/FILE/INSIDE/ISO.EXT}}
+j --purge
+j {{pattern}}
+jar -xvf *.jar
+java -jar {{filename.jar}}
+java -version
+java {{classname}}
+javac {{*.java}}
+javac {{file.java}}
+javac {{file1.java}} {{file2.java}} {{file3.java}}
+jc {{pattern}}
+jekyll build
+jekyll serve
+jekyll serve --incremental
+jhat -J-mx8G {{dump_file.bin}}
+jhat -p {{port}} {{dump_file.bin}}
+jhat {{dump_file.bin}}
+jmap -heap {{filename.jar}} {{java_pid}}
+jmap -histo {{java_pid}}
+jmap {{java_pid}}
+jobs
+jobs
+jobs -l
+jobs -l
+jobs -n
+jobs {{job_id}}
+journalctl -b
+journalctl -b -1
+journalctl -f
+jpegoptim --all-progressive {{image1.jpeg}} {{image2.jpeg}} {{imageN.jpeg}}
+jpegoptim --strip-all {{image1.jpeg}} {{image2.jpeg}} {{imageN.jpeg}}
+jpegoptim {{image1.jpeg}} {{image2.jpeg}} {{imageN.jpeg}}
+jps
+jps -m
+jps -q
+jstack -m {{java_pid}}
+jstack {{/usr/bin/java}} {{file.core}}
+jstack {{java_pid}}
+julia
+julia {{program.jl}}
+julia {{program.jl}} {{arguments}}
+jupyter notebook
+jupyter notebook --port={{port}}
+jupyter notebook {{example.ipynb}}
+keepass2
+keepass2 {{path/to/database.kbdx}}
+keepass2 {{path/to/database.kbdx}} -keyfile:{{path/to/key/file.key}}
+kexec -e
+kexec -l {{path/to/kernel}} --initrd={{path/to/initrd}} --command-line={{arguments}}
+kexec -l {{path/to/kernel}} --initrd={{path/to/initrd}} --reuse-cmdline
+keybase follow {{username}}
+keybase prove {{service}} {{service_username}}
+keybase sign --infile {{input_file}} --outfile {{output_file}}
+kill --CONT {{runit_pid}}
+kill --CONT {{runit_pid}}
+kill -l
+kill -{{1|HUP}} {{process_id}}
+kill {{process_id}}
+killall --list
+killall -i {{process_name}}
+killall {{process_name}}
+kubectl get pods --all-namespaces
+kubectl get pods -o wide
+kubectl label pods {{name}} unhealthy=true
+last
+last -F -a
+last -n {{login_count}}
+lastlog
+lastlog -b {{7}}
+lastlog -u {{username}}
+latexmk
+latexmk -pdf {{source.tex}}
+latexmk {{source.tex}}
+launchctl load ~/Library/LaunchAgents/{{my_script}}.plist
+ldconfig -p | grep {{library_name}}
+ldd -u {{path/to/binary}}
+ldd {{path/to/binary}}
+leave +{{amount_of_time}}
+leave {{1200}}
+leave {{time_to_leave}}
+lein new {{template_name}} {{project_name}}
+lein repl
+lein run {{args}}
+less {{source_file}}
+lex {{analyser.l}}
+lex {{analyser.l}} --outfile {{analyser.c}}
+license -o {{filename}} {{license_name}}
+license ls
+license {{license_name}}
+light
+light -S {{50}}
+light -U {{20}}
+list functions;
+list resources;
+live-server
+live-server --open={{about.html}}
+live-server --port={{8081}}
+lldb -p {{pid}}
+lldb -p {{pid}}
+lldb -w -n {{process_name}}
+lldb -w -n {{process_name}}
+lldb {{executable}}
+lldb {{executable}}
+ln -s {{path/to/file}} {{path/to/symlink}}
+ln -sf {{path/to/new_file}} {{path/to/symlink}}
+ln {{path/to/file}} {{path/to/hardlink}}
+locate */{{filename}}
+locate */{{filename}}
+locate {{pattern}}
+locate {{pattern}}
+locust --host={{http://example.com}}
+locust --locustfile={{test_file.py}} --host={{http://example.com}}
+locust --no-web --clients={{100}} --hatch-rate={{1}} --host={{http://example.com}}
+logger {{message}}
+logger {{message}}
+logstash --configtest --config {{logstash_config.conf}}
+logwatch --range {{all}} --service {{apache|pam_unix|etc}}
+logwatch --range {{yesterday|today|all|help}} --detail {{low|medium|others}}'
+look -f {{prefix}} {{file}}
+look {{prefix}} {{file}}
+losetup -a
+lp -d {{printer_name}} {{path/to/filename}}
+lp {{path/to/filename}}
+lpass login {{username}}
+lpass ls
+lpass status
+lpstat -d
+lpstat -p
+lpstat -t
+ls *.txt | parallel -j4 gzip
+ls -1
+ls -a
+ls -la
+lsattr
+lsattr -R
+lsattr {{path}}
+lsb_release -a
+lsb_release -d
+lsb_release -i -s
+lsblk
+lsblk -a
+lsblk -b
+lscpu
+lscpu --extended
+lscpu --extended --offline
+lsmod
+lsmod | grep -i zram
+lsof -i :{{port}}
+lsof -t {{path/to/file}}
+lsof {{path/to/file}}
+lspci
+lspci -k
+lspci -v
+lsscsi
+lsscsi -L
+lsscsi -s
+ltrace -c {{/path/to/program}}
+ltrace -e malloc+free-@libc.so* {{/path/to/program}}
+ltrace ./{{program}}
+lua
+lua -e '{{print( "Hello World" )}}
+lua {{script_name.lua}} {{--optional-argument}}
+lvcreate -L {{10G}} {{vg1}}
+lvcreate -L {{1500}} -n {{mylv}} {{vg1}}
+lvcreate -l {{60%VG}} -n {{mylv}} {{vg1}}
+lwp-request -H 'User-Agent: {{user_agent}} -m {{METHOD}} {{http://example.com/some/path}}
+lwp-request -m GET {{http://example.com/some/path}}
+lxc image list [{{remote}}:]{{match_string}}
+lxc launch [{{remote}}:]{{image}} {{container}}
+lxc list {{match_string}}
+mailx -s "{{subject}}" {{to_addr}}
+mailx -s "{{subject}}" {{to_addr}} < {{content.txt}}
+make
+make -J{{4}} {{target}}
+make {{target}}
+man --path
+man -w {{command}}
+man {{command}}
+mas install {{app_name}} {{app_identifier}}
+mas list
+mas search {{app_name}}
+mc
+md5 -q {{filename}}
+md5 {{filename1}} {{filename2}}
+md5 {{filename}}
+md5sum -c {{filename.md5}}
+md5sum {{filename1}}
+md5sum {{filename1}} {{filename2}}
+mdadm --create {{/path/to/raid_device_file}} --level {{raid_level}} --raid-devices {{number_of_disks}} {{/path/to/disk_device_file}}
+mdadm -S {{/path/to/raid_device_file}}
+mdadm {{/path/to/raid_device_file}} -f {{/path/to/disk_device_file}}
+mdfind -name {{file}}
+mdfind -onlyin {{directory}} {{query}}
+mdfind {{query}}
+mdp --invert {{presentation.md}}
+mdp --nofade {{presentation.md}}
+mdp {{presentation.md}}
+mediainfo --Info-Parameters
+mediainfo --Logfile={{out.txt}} {{file}}
+mediainfo {{file}}
+meshlabserver -d {{filename}}
+meshlabserver -i {{input.stl}} -o {{output.obj}}
+meshlabserver -i {{input.wrl}} -o {{output.off}} -om vn fn
+meteor
+meteor create {{path/to/directory}}
+meteor list
+micro {{file}}
+microcom --port {{path/to/serial_port}} --speed {{baud_rate}}
+microcom --telnet {{hostname}}:{{port}}
+mitmdump -nc {{filename}}
+mitmdump -nr {{input_filename}} -w {{output_filename}} {{"~m post"}}
+mitmdump -w {{filename}}
+mitmproxy
+mitmproxy -b {{ip_address}} -p {{port}}
+mix compile
+mix new {{project_name}}
+mix run {{my_script.exs}}
+mkdir -p {{path/to/directory}}
+mkdir {{directory}}
+mkfifo {{path/to/pipe}}
+mkfs.cramfs -n {{volume_name}} {{/dev/sdb1}}
+mkfs.cramfs {{/dev/sdb1}}
+mkfs.exfat -i {{volume_id}} {{/dev/sdb1}}
+mkfs.exfat -n {{volume_name}} {{/dev/sdb1}}
+mkfs.exfat {{/dev/sdb1}}
+mkfs.ext2 {{/dev/sdb1}}
+mkfs.ext3 {{/dev/sdb1}}
+mkfs.ext3 {{/dev/sdb1}}
+mkfs.fat -i {{volume_id}} {{/dev/sdb1}}
+mkfs.fat -n {{volume_name}} {{/dev/sdb1}}
+mkfs.fat {{/dev/sdb1}}
+mkfs.minix {{/dev/sdb1}}
+mkfs.ntfs -L {{volume_label}} {{/dev/sdb1}}
+mkfs.ntfs -U {{UUID}} {{/dev/sdb1}}
+mkfs.ntfs {{/dev/sdb1}}
+mkfs.vfat -i {{volume_id}} {{/dev/sdb1}}
+mkfs.vfat -n {{volume_name}} {{/dev/sdb1}}
+mkfs.vfat {{/dev/sdb1}}
+mkisofs -o {{filename.iso}} -V {{"label_name"}} {{path/to/source_folder}}
+mkisofs -o {{filename.iso}} {{path/to/source_folder}}
+mktemp
+mktemp --suffix "{{.txt}}"
+mktemp -d
+mmv "*{{.old_extension}}" "#1{{.new_extension}}"
+mmv -a {{"*.txt"}} {{"all.txt"}}
+mmv -c {{"report*part*.txt"}} {{"./french/rapport#1partie#2.txt"}}
+mocha
+mocha --grep {{^regex$}}
+mocha {{folder/with/tests}}
+modinfo -F {{author|description|license|parm|filename}} {{kernel_module}}
+modinfo {{kernel_module}}
+mogrify -format {{jpg}} {{*.png}}
+mogrify -resize {{50%}} {{*.jpg}}
+mogrify -resize {{800x600}} {{DSC*}}
+mongo --host {{host}} --port {{port}} {{database}}
+mongo --username {{username}} {{database}} --password
+mongo {{database}}
+mongod --config {{filename}}
+mongod --port {{port}}
+mongod --profile {{0|1|2}}
+mongodump
+mongodump --db {{database_name}}
+mongodump --out {{path/to/folder}}
+mongorestore --db {{database_name}} {{path/to/file}}
+mongorestore --db {{database_name}} {{path/to/folder}}
+mongorestore --host {{database_host:port}} --db {{database_name}} --username {{username}} {{path/to/folder}} --password
+montage {{image1.png}} {{image2.jpg}} {{imageN.png}} -geometry +0+0 montage.jpg
+montage {{image1.png}} {{image2.jpg}} {{imageN.png}} -geometry 640x480+0+0 montage.jpg
+montage {{image1.png}} {{image2.jpg}} {{imageN.png}} montage.jpg
+more {{source_file}}
+moro
+moro
+moro hi {{09:30}}
+mosh --ssh="ssh -i {{/path/to/key_file}}" {{username}}@{{remote_host}}
+mosh --ssh="ssh -p {{2222}}" {{username}}@{{remote_host}}
+mosh {{username}}@{{remote_host}}
+most {{file}} +/{{string}}
+most {{path/to/file1}} {{path/to/file2}}
+most {{path/to/file}}
+mount
+mount -t {{filesystem_type}} {{path/to/device_file}} {{path/to/target_directory}}
+mount -t {{iso9660}} -o ro {{/dev/cdrom}} {{/cdrom}}
+mp4box -add {{input1.mp4}}#audio -add {{input2.mp4}}#video {{output.mp4}
+mp4box -add {{input_subs.srt}}:lang=eng -add {{input.mp4}} {{output.mp4}}
+mp4box -info {{filename}}
+mpc status
+mpc stop
+mpc toggle
+mpstat -P {{0}} {{2}} {{5}}
+mpstat {{2}}
+mpstat {{2}} {{5}}
+mr -j{{5}} update
+mr register
+mr status
+mtr -n {{host}}
+mtr -w {{host}}
+mtr {{host}}
+mutt -a {{file1}} {{file2}} -- {{recipient@example.com}}
+mutt -f {{mailbox}}
+mutt -s {{subject}} -c {{cc@example.com}} {{recipient@example.com}}
+mv -f {{source}} {{target}}
+mv -fi {{source}} {{target}}
+mv {{source}} {{target}}
+mvn compile
+mvn package
+mvn package -Dmaven.test.skip=true
+mycli -u {{user}} -h {{host}} {{database_name}}
+mycli -u {{user}} {{database_name}}
+mycli {{database_name}}
+mysql -h {{database_host}} {{database_name}}
+mysql -u {{user}} --password {{database_name}}
+mysql -u {{user}} --password {{database_name}} < {{filename.sql}}
+mysql {{database_name}}
+mysqldump -u {{user}} --password {{database_name}} > {{filename.sql}}
+n rm {{version}}
+n rm {{version}}
+n use {{version}} {{file.js}}
+n use {{version}} {{file.js}}
+n {{version}}
+n {{version}}
+nano -S {{filename}}
+nano -i {{filename}}
+nano {{filename}}
+nasm -f {{format}} {{source.asm}} -o {{output_file}}
+nasm -hf
+nasm {{source.asm}}
+nc  -l {{port}}
+nc -w {{timeout_in_seconds}} {{ipaddress}} {{port}}
+nc {{ip_address}} {{port}}
+ncat -l {{port}} > {{/path/to/file}}
+ncat {{address}} {{port}} < {{/path/to/file}}
+ncmpcpp --config {{file}}
+ncmpcpp --current-song
+ncmpcpp --host {{ip}} --port {{port}}
+netstat -a
+netstat -a
+netstat -l
+netstat -l
+netstat -t
+netstat -t
+networksetup -getairportnetwork {{en0}}
+networksetup -getinfo {{"Wi-Fi"}}
+networksetup -listallnetworkservices
+nginx
+nginx -c {{config_file}}
+nginx -c {{config_file}} -p {{prefix/for/relative/paths}}
+ngrep -d any
+ngrep -d {{eth0}}
+ngrep -d {{eth0}} port {{22}}
+nice -n {{niceness_value}} {{command}}
+nix-env -i {{pkg_name}}
+nix-env -qa {{pkg_name}}
+nix-env -qas
+nl -t {{file}}
+nl {{file}}
+nm --demangle {{file.o}}
+nm -a {{file.o}}
+nm -g {{file.o}}
+nm -g {{file.o}}
+nm -u {{file.o}}
+nm -u {{file.o}}
+nmap -A {{address_or_addresses}}
+nmap -sn {{ip_or_hostname}} {{optional_another_address}}
+nmap {{ip_or_hostname}} {{optional_another_address}}
+nmcli connection
+nmcli connection down uuid {{uuid}}
+nmcli connection up uuid {{uuid}}
+nmon
+nmon -f
+nmon -f -s {{30}} -c {{240}}
+nmtui
+nmtui connect
+nmtui connect {{name|uuid|device|SSID}}
+node
+node -e "{{code}}"
+node {{file}}.js
+nohup {{command options}}
+notify-send -i {{icon.png}} {{"Test"}} {{"This is a test"}}
+notify-send -t 5000 {{"Test"}} {{"This is a test"}}
+notify-send {{"Test"}} {{"This is a test"}}
+npm install
+npm install -g {{module_name}}
+npm install {{module_name}}@{{version}} --save
+npx --help
+npx -p {{package_name}} {{module_name}}
+npx {{module_name}}
+nslookup -type=NS {{example.com}} {{8.8.8.8}}
+nslookup -type=PTR {{54.240.162.118}}
+nslookup {{example.com}}
+nvm alias default {{node_version}}
+nvm install {{node_version}}
+nvm use {{node_version}}
+objdump -d {{binary}}
+objdump -f {{binary}}
+objdump -s {{binary}}
+od --format={{x}} --address-radix={{d}} -v {{path/to/file}}
+od -v {{path/to/file}}
+od {{path/to/file}}
+odpscmd --config={{odps_config.ini}}
+open -a {{Application}}
+open -b {{com.domain.application}}
+open {{file.ext}}
+openssl genrsa -out {{filename.key}} 2048
+openssl req -new -sha256 -key {{filename.key}} -out {{filename.csr}}
+openssl x509 -req -days {{days}} -in {{filename.csr}} -signkey {{filename.key}} -out {{filename.crt}}
+optipng -o{{0}} {{file.png}}
+optipng -o{{7}} {{file.png}}
+optipng {{file.png}}
+osascript -e '{{say "Hello world"}}'
+osascript -e '{{say "Hello"}}' -e '{{say "world"}}'
+osascript {{path/to/apple.scpt}}
+p {{bookmark_name}}
+p5 generate {{project_name}}
+p5 new {{collection_name}}
+p5 server
+pacaur -S {{package_name}}
+pacaur -Syu
+pacaur -Syua
+paci configure
+paci refresh
+paci search {{package}}
+pacman -Rs {{package_name}}
+pacman -S {{package_name}}
+pacman -Syu
+pandoc --list-input-formats
+pandoc {{input.docx}} --to {{markdown_github}} -o {{output.md}}
+pandoc {{input.md}} -o {{output.pdf}}
+parallel convert {} {.}.png ::: *.jpg
+parallel gzip ::: {{file1}} {{file2}} {{file3}}
+pass -c {{path/to/data}}
+pass init {{gpg_id}}
+pass insert {{path/to/data}}
+passwd -S
+passwd {{new password}}
+passwd {{username}} {{new password}}
+paste -s -d {{delimiter}} {{file}}
+paste -s {{file}}
+paste {{file1}} {{file2}}
+pasuspender -- {{jackd -d alsa --device hw:0}}
+patch -R < {{patch_file}}.diff
+patch -p1 < {{patch_file}}.diff
+patch < {{patch_file}}.diff
+pbcopy < {{file}}
+pbpaste > {{file}}
+pbpaste | grep foo
+pdfgrep --max-count {{3}} --ignore-case {{'^foo'}} {{file.pdf}}
+pdfgrep --max-count {{3}} --ignore-case {{'^foo'}} {{file.pdf}}
+pdfgrep --with-filename --page-number {{pattern}} {{file.pdf}}
+pdfgrep --with-filename --page-number {{pattern}} {{file.pdf}}
+pdfgrep {{pattern}} {{file.pdf}}
+pdfgrep {{pattern}} {{file.pdf}}
+pdflatex -halt-on-error {{source.tex}}
+pdflatex {{source.tex}}
+pdfposter --poster-size a2 {{input_file.pdf}} {{output_file.pdf}}
+pdfposter --scale 2 {{input_file.pdf}} {{output_file.pdf}}
+pdftk {{file1.pdf}} {{file2.pdf}} ... cat output {{output.pdf}}
+pdftk {{input.pdf}} burst output {{out_%d.pdf}}
+pdftk {{input.pdf}} cat {{1-3 5 6-10}} output {{output.pdf}}
+pdftotext {{filename.pdf}}
+pdftotext {{filename.pdf}} -
+pdftotext {{input.pdf}} {{output.txt}}
+pdfunite {{path/to/directory/*.pdf}} {{path/to/merged_output.pdf}}
+pdfunite {{path/to/fileA.pdf}} {{path/to/fileB.pdf}} {{path/to/merged_output.pdf}}
+peerflix "{{http://example.net/music.torrent}}" --vlc
+peerflix "{{magnet:?xt=urn:btih:0123456789abcdef0123456789abcdef01234567}}" --list
+peerflix "{{torrent_url|magnet_link}}"
+perf stat {{gcc hello.c}}
+perl -c {{script.pl}}
+perl -e {{perl_statement}}
+perl nikto.pl -h {{192.168.0.1}}
+perl nikto.pl -h {{192.168.0.1}} -p {{443}}
+perl nikto.pl -h {{https://192.168.0.1:443/}}
+perl {{script.pl}}
+pg_ctl -D {{data_directory}} -l {{log_file_name}}
+pg_ctl -D {{data_directory}} init
+pg_ctl -D {{data_directory}} stop
+pg_dump -U {{username}} {{db_name}} > {{output_file.sql}}
+pg_dump -h {{host}} -p {{port}} {{db_name}} > {{output_file.sql}}
+pg_dump {{db_name}} > {{output_file.sql}}
+pg_restore -U {{username}} -d {{db_name}} {{archive_file.dump}}
+pg_restore -d {{db_name}} {{archive_file.dump}}
+pg_restore -h {{host}} -p {{port}} -d {{db_name}} {{archive_file.dump}}
+pgrep -f "{{process_name}} {{parameter}}"
+pgrep -u root {{process_name}}
+pgrep {{process_name}}
+php -a
+php -l {{file}}
+php {{file}}
+phpize
+phpize --clean
+phpunit
+phpunit --group {{name}}
+phpunit {{path/to/TestFile.php}}
+pigz -0 -p{{4}} {{filename}}
+pigz -9 {{filename}}
+pigz {{filename}}
+ping -c {{count}} {{host}}
+ping -i {{seconds}} {{host}}
+ping {{host}}
+pip install -U {{package_name}}
+pip install {{package_name}}
+pip install {{package_name}}=={{package_version}}
+pipenv
+pipenv --three
+pipenv install {{package_name}}
+pkgadd -u {{package_name}}
+pkgadd {{package_name}}
+pkginfo -i
+pkginfo -l {{package_name}}
+pkginfo -o {{pattern}}
+pkgmk -d
+pkgmk -d -i
+pkgmk -d -u
+pkgrm {{package_name}}
+pkill -9 -f "{{command_name}}"
+pkill -9 {{process_name}}
+pkill -USR1 {{process_name}}
+play {{audiofile1}} {{audiofile2}}
+play {{audiofile}}
+play {{audiofile}} speed 2.0
+pm2 list
+pm2 monit
+pm2 start {{app.js}} --name {{myapp}}
+pmset -g
+pmset -g batt
+pngcrush -d {{path/to/output}} *.png
+pngcrush -rem allb -brute -reduce {{in.png}} {{out.png}}
+pngcrush {{in.png}} {{out.png}}
+pod init
+pod install
+pod list
+popd
+popd
+popd +N
+popd +N
+popd -N
+popd -N
+port installed
+port search {{search_term}}
+ports -d
+ports -l
+ports -u
+print {{filename}}
+printf "header1 header2\nbar foo\n" | column -c {{30}}
+printf "header1 header2\nbar foo\n" | column -t
+printf "header1,header2\nbar,foo\n" | column -s{{,}}
+printf {{"%s\n"}} {{"Hello world"}}
+printf {{"\e[1;34m%.3d\e[0m\n"}} {{42}}
+printf {{"\u20AC %.2f\n"}} {{123.4}}
+prompt off
+protoc --csharp_out={{path/to/c#_output_directory}} --js_out={{path/to/js_output_directory}} {{input_file.proto}}
+protoc --java_out={{path/to/output_directory}} --proto_path={{path/to/import_search_path}} {{input_file.proto}}
+protoc --python_out={{path/to/output_directory}} {{input_file.proto}}
+prt-get depinst {{package_name}}
+prt-get install {{package_name}}
+prt-get upgrade {{package_name}}
+ps aux
+ps aux | fzf
+ps aux | grep {{string}}
+ps auxww
+psql -h {{host}} -p {{port}} -U {{username}} -W {{database}}
+psql -h {{host}} -p {{port}} -U {{username}} {{database}}
+psql {{database}}
+pssh -H {{host1}} -H {{host2}} -o {{path/to/output_dir}} {{hostname -i}}
+pssh -i -H "{{host1}} {{host2}}" {{hostname -i}}
+pssh -i -h {{path/to/hosts_file}} {{hostname -i}}
+pstree
+pstree -p
+pstree {{user}}
+pulseaudio --check
+pulseaudio --kill
+pulseaudio --start
+pushd
+pushd
+pushd +4
+pushd +4
+pushd < {{directory}}
+pushd {{directory}}
+pv -cN in {{big_text_file}} | grep {{pattern}} | pv -cN out > {{filtered_file}}
+pv {{file}}
+pvcreate --force {{/dev/sda1}}
+pvcreate {{/dev/sda1}}
+pwd
+pwd -P
+pwgen -c {{length}}
+pwgen -c {{length}}
+pwgen -s {{length}}
+pwgen -s {{length}}
+pwgen -y {{length}}
+pwgen -y {{length}}
+pycodestyle --first {{file.py}}
+pycodestyle {{file.py}}
+pycodestyle {{file1.py}} {{file2.py}} {{file3.py}}
+pyenv commands
+pyenv install {{2.7.10}}
+pyenv versions
+pygmentize -L lexers
+pygmentize -l {{javascript}} {{input_file}}
+pygmentize {{file.py}}
+python
+python -c {{command}}
+python {{script.py}}
+q -d',' "SELECT * from {{path/to/file}}"
+q -d{{delimiter}} -H "SELECT * from {{path/to/file}}"
+q -t "SELECT * from {{path/to/file}}"
+qemu-img create {{image_name.img}} {{gigabites}}G
+qemu-img info {{image_name.img}}
+qemu-img resize {{image_name.img}} {{gigabites}}G
+qemu-system-i386 -hda {{image_name.img}}
+qemu-system-i386 -hda {{image_name.img}} -cdrom {{os_image.iso}} -boot d
+qemu-system-x86_64 -hda {{image_name.img}}
+qlmanage -p {{filename}} {{filename2}}
+qlmanage -r
+qlmanage {{*.jpg}} -t -s {{300}} {{path/to/directory}}
+qpdf --empty --pages {{file1.pdf}} {{1,6-8}} --pages {{file2.pdf}} {{3,4,5}} -- {{output.pdf}}
+qpdf --empty --pages {{input.pdf}} {{1-3,5,6-10}} -- {{output.pdf}}
+qpdf --split-pages=n {{input.pdf}} {{out_%d.pdf}}
+qsub -l nodes={{2}}:ppn={{4}} {{script.sh}}
+qsub -l walltime={{1}}:{{2}}:{{3}} {{script.sh}}
+qsub {{script.sh}}
+quit
+quota -q
+quota -s
+quota -v
+rails new "{{project_name}}"
+rails server
+rails server -p "{{port}}"
+rainbowstream
+rbash
+rbash -c "{{command}}"
+rbash {{file.sh}}
+rdesktop -u Administrator -p passwd123 192.168.1.111:3389
+rdesktop -u {{username}} -p {{password}} -f {{host:port}}
+rdesktop -u {{username}} -p {{password}} {{host:port}}
+read -a {{array}}
+read -e {{variable}}
+read {{variable}}
+readlink -f {{filename}}
+readlink {{filename}}
+reboot
+reboot -f
+redis-cli
+redis-cli -h {{host}}
+redis-cli -h {{host}} -p {{port}}
+redshift -b {{0.7}}:{{0.4}}
+redshift -l {{latitude}}:{{longitude}}
+redshift -t {{5700}}:{{3600}}
+rename -f {{'s/foo/bar/'}} {{\*}}
+rename -n {{'s/foo/bar/'}} {{\*}}
+rename {{'s/foo/bar/'}} {{\*}}
+renice -n {{niceness_value}} -g {{group}}
+renice -n {{niceness_value}} -p {{pid}}
+renice -n {{niceness_value}} -u {{user}}
+repquota --user {{filesystem}}
+rev {{file}}
+rg -t {{filetype}} {{pattern}}
+rg -uu {{pattern}}
+rg {{pattern}}
+rm -r {{path/to/folder}}
+rm -rf {{path/to/folder}}
+rm {{path/to/file}} {{path/to/another/file}}
+rmdir -p {{path/to/directory}}
+rmdir {{path/to/directory}}
+rofi -show drun
+rofi -show run
+rofi -show window
+roll {{3d}}
+roll {{4d6h3}}
+roll {{d8 + 3}}
+route -n
+rpm -q {{httpd}}
+rpm -qa '{{mariadb*}}'
+rpm -qf {{/etc/postfix/main.cf}}
+rspamc learn_ham {{path/to/email_file}}
+rspamc learn_spam {{path/to/email_file}}
+rspamc symbols {{path/to/email_file}}
+rsync -az {{path/to/file}} {{remote_host_name}}:{{remote_host_location}}
+rsync {{path/to/file}} {{remote_host_name}}:{{remote_host_location}}
+rsync {{remote_host_name}}:{{remote_file_location}} {{local_file_location}}
+rtorrent {{torrent_or_magnet}}
+ruby -e {{command}}
+ruby {{script.rb}}
+run-mailcap  --action=ACTION --debug {{filename}}
+run-mailcap --action=ACTION [--option[=value]]
+run-mailcap --action=ACTION {{filename}}
+run-mailcap --action=compose {{filename}}
+run-mailcap --action=edit {{filename}}
+run-mailcap --action=print {{filename}}
+run-mailcap --action=view {{filename}}
+runit
+runit
+runsv {{path/to/service}}
+runsv {{path/to/service}}
+runsvdir -P {{path/to/services}}
+runsvdir -P {{path/to/services}}
+runsvdir {{path/to/services}}
+runsvdir {{path/to/services}}
+rustc -O {{file.rs}}
+rustc -g {{file.rs}}
+rustc {{file.rs}}
+rustup default nightly
+rustup install nightly
+rustup update
+s --list-providers
+s --provider {{provider}} {{query}}
+s {{bookmark_name}}
+s {{query}}
+sails generate {{name}}
+sails lift
+sails new {{projectName}}
+salt '*' state.highstate
+salt '*' test.ping
+salt '*.domain.com' pkg.upgrade
+salt-call -l debug state.highstate
+salt-call state.highstate
+salt-call state.highstate test=true
+salt-key -L
+salt-key -a {{MINION_ID}}
+salt-key -r {{MINION_ID}}
+salt-run manage.status
+salt-run manage.up
+samtools index {{sorted_input.bam}}
+samtools sort {{input}} -o {{output.bam}}
+samtools view -S -b {{input.sam}} > {{output.bam}}
+sar -b {{1}}
+sar -n DEV {{2}} {{10}}
+sar -u ALL {{2}}
+sass --watch {{inputfile.scss|inputfile.sass}}
+sass {{inputfile.scss|inputfile.sass}}
+sass {{inputfile.scss|inputfile.sass}} {{outputfile.css}}
+say -f {{filename.txt}}
+say -v {{voice}} -r {{words_per_minute}} {{"I'm sorry Dave, I can't let you do that."}}
+say {{"I like to ride my bike."}}
+scala
+scala {{filename.jar}}
+scala {{script.scala}}
+scp -r {{remote_host}}:{{path/to/remote_dir}} {{path/to/local_dir}}
+scp {{path/to/local_file}} {{remote_host}}:{{path/to/remote_file}}
+scp {{remote_host}}:{{path/to/remote_file}} {{path/to/local_dir}}
+scrapy edit {{spider_name}}
+scrapy genspider {{spider_name}} {{website_domain}}
+scrapy startproject {{project_name}}
+screen
+screen -S {{session_name}}
+screen -dmLS {{session_name}} {{command}}
+screenfetch
+screenfetch -A '{{distribution_name}}'
+screenfetch -s
+scutil --dns
+scutil --get ComputerName
+scutil --proxy
+sed 's/{{find}}/{{replace}}/' {{filename}}
+sed 's/{{find}}/{{replace}}/' {{filename}}
+sed -E 's/{{regex}}/{{replace}}/g' {{filename}}
+sed -i '' 's/{{find}}/{{replace}}/g' {{filename}}
+sed -i 's/{{find}}/{{replace}}/g' {{filename}}
+sed -r 's/{{regex}}/{{replace}}/g' {{filename}}
+see {{filename}}
+sendmail -f {{you@yourdomain.com}} {{test@gmail.com}} < {{file.zip}}
+sendmail -f {{you@yourdomain.com}} {{test@gmail.com}} < {{message.txt}}
+sendmail {{user_name}} < {{message.txt}}
+sensible-browser
+sensible-browser {{url}}
+seq -s " " 5 3 20
+seq 10
+seq 5 3 20
+serverless create
+serverless create --template {{template_name}}
+serverless deploy
+service {{init_script}} --full-restart
+service {{init_script}} status
+service {{init_script}} {{start|stop|restart|reload}}
+setfacl -d -m u::rw {{file}}
+setfacl -m u:{{username}}:rw {{file}}
+setfacl -x u:{{username}} {{file}}
+sftp -P {{remote_port}} {{remote_user}}@{{remote_host}}
+sftp {{remote_user}}@{{remote_host}}
+sh
+sh -c {{command}}
+sh {{file.sh}}
+sha1sum -c {{filename.sha1}}
+sha1sum {{filename1}}
+sha1sum {{filename1}} {{filename2}}
+sha224sum -c {{filename.sha224}}
+sha224sum {{filename1}}
+sha224sum {{filename1}} {{filename2}}
+sha256sum -c {{filename.sha256}}
+sha256sum {{filename1}}
+sha256sum {{filename1}} {{filename2}}
+sha384sum -c {{filename.sha384}}
+sha384sum {{filename1}}
+sha384sum {{filename1}} {{filename2}}
+sha512sum -c {{filename.sha512}}
+sha512sum {{filename1}}
+sha512sum {{filename1}} {{filename2}}
+shasum --algorithm 256 {{filename}}
+shasum --algorithm 256 {{filename}}
+shasum --algorithm 512 {{filename1}} {{filename2}}
+shasum --algorithm 512 {{filename1}} {{filename2}}
+shasum {{filename}}
+shasum {{filename}}
+shopt
+shopt -s {{option_name}}
+shopt -u {{option_name}}
+show grants for {{user_name}};
+show instances;
+show tables;
+showfigfonts {{optional_string_to_display}}
+shred --zero {{file}}
+shred -n25 {{file}}
+shred {{file}}
+shuf -n {{n}} {{filename}}
+shuf -o {{another_filename}} {{filename}}
+shuf {{filename}}
+shutdown -h now
+shutdown -h now
+shutdown -r +{{5}} &
+shutdown -r now
+shutdown -r now
+shutdown -s now
+singularity build {{container.simg}} {{docker://godlovedc/lolcow}}
+singularity pull --name {{container.simg}} {{shub://vsoch/hello-world}}
+singularity shell {{container.simg}}
+skicka download {{path/to/remote}} {{path/to/local}}
+skicka ls {{path/to/folder}}
+skicka upload {{path/to/local}} {{path/to/remote}}
+sl
+sl -F
+sl -a
+slackcat --channel {{channel_name}} --filename={{filename}} {{path/to/file}}
+slackcat --channel {{channel_name}} {{path/to/file}}
+sleep {{hours}}h
+sleep {{minutes}}m
+sleep {{seconds}}
+smbclient {{//server/share}}
+smbclient {{//server/share}} --user {{username%password}}
+smbclient {{//server/share}} --user {{username}}
+snap find {{package_name}}
+snap install {{package_name}}
+snap list
+socat - TCP-LISTEN:8080,fork
+socat - TCP4:www.domain.com:80
+socat TCP-LISTEN:80,fork TCP4:www.domain.com:80
+softwareupdate -ia
+softwareupdate -ir
+softwareupdate -l
+sort -n {{filename}}
+sort -n {{filename}}
+sort -r {{filename}}
+sort -r {{filename}}
+sort {{filename}}
+sort {{filename}}
+sort {{file}} | uniq
+sort {{file}} | uniq -d
+sort {{file}} | uniq -u
+source {{activate|deactivate}} {{environment_name}}
+source {{path/to/venv}}/bin/activate
+sox --norm {{input_audiofile}} {{output_audiofile}}
+sox -m {{input_audiofile1}} {{input_audiofile2}} {{output_audiofile}}
+sox {{input_audiofile}} {{output_audiofile}} trim {{start}} {{end}}
+spatial worker build
+spatial worker build --target=development --target=Osx
+spatial worker build --target=local --target=Windows
+speedtest-cli
+speedtest-cli --list > speedtest_servers.txt
+speedtest-cli --share
+spike compile
+spike new {{project_name}}
+spike watch
+split -C 512 {{filename}}
+split -l 10 {{filename}}
+split -n 5 {{filename}}
+sqlite3
+sqlite3 {{path/to/database.sqlite3}}
+sqlite3 {{path/to/database.sqlite3}} '{{SELECT * FROM some_table;}}'
+srm -m {{/path/to/file}}
+srm -r -s {{/path/to/folder}}
+srm -s {{/path/to/file}}
+ss -a {{-t|-u|-w|-x}}
+ss -t src :{{443}}
+ss {{state/exclude}} {{bucket/big/connected/synchronized/...}}
+ssh -i {{path/to/key_file}} {{username}}@{{remote_host}}
+ssh {{username}}@{{remote_host}}
+ssh {{username}}@{{remote_host}} -p {{2222}}
+ssh-add
+ssh-add
+ssh-add -l
+ssh-add -l
+ssh-add {{path/to/private_key}}
+ssh-add {{path/to/private_key}}
+ssh-copy-id -i {{path/to/certificate}} -p {{port}} {{username}}@{{remote_host}}
+ssh-copy-id -i {{path/to/certificate}} {{username}}@{{remote_host}}
+ssh-copy-id {{username@remote_host}}
+ssh-keygen
+ssh-keygen -f ~/.ssh/{{filename}}
+ssh-keygen -t dsa
+sshfs {{username}}@{{remote_host}}:{{remote_directory}} -p {{2222}}
+sshfs {{username}}@{{remote_host}}:{{remote_directory}} {{mountpoint}}
+sshpass -d {{0}} ssh {{user}}@{{hostname}}
+sshpass -f {{file}} ssh -o StrictHostKeyChecking=no {{user}}@{{hostname}} "{{command}}"
+sshpass -p {{password}} ssh -o StrictHostKeyChecking=no {{user}}@{{hostname}}
+sshuttle --dns --remote={{username}}@{{sshserver}} {{0.0.0.0/0}}
+sshuttle --dns --remote={{username}}@{{sshserver}} {{0.0.0.0/0}}
+sshuttle --remote={{username}}@{{sshserver}} {{0.0.0.0/0}}
+sshuttle --remote={{username}}@{{sshserver}} {{0.0.0.0/0}}
+st-flash erase
+st-flash read {{firmware}}.bin {{0x8000000}} {{4096}}
+st-flash write {{firmware}}.bin {{0x8000000}}
+st-info --flash
+st-info --probe
+st-info --sram
+st-util -p {{4500}}
+stack build
+stack build yesod-bin cabal-install --install-ghc
+stack exec -- yesod devel
+stack install
+stack new {{my-project}} {{yesod-sqlite}}
+stack new {{project_name}}
+standard
+standard --fix
+standard {{path/to/file(s)}}
+stat -f %Mp%Lp {{file}}
+stat -f {{file}}
+stat -t {{file}}
+stat -x {{file}}
+stat {{file}}
+stat {{file}}
+status {{instance_id}};
+strace -p {{pid}}
+strace -p {{pid}} -c
+strace -p {{pid}} -e {{system call name}}
+strings -n {{length}} {{file}}
+strings -t d {{file}}
+strings {{file}}
+su
+su - {{username}}
+su {{username}}
+subliminal download -l {{en}} {{video.ext}}
+sudo -u {{www}} {{vi}} {{/var/www/index.html}}
+sudo /usr/libexec/locate.updatedb
+sudo apt update
+sudo arp -a -d
+sudo atq
+sudo badblocks -n {{/dev/sda}}
+sudo badblocks -w {{/dev/sda}}
+sudo badblocks {{/dev/sda}}
+sudo chage -M -1 {{user_name}}
+sudo chage -M {{10}} {{user_name}}
+sudo cpufreq-aperf
+sudo cpufreq-aperf -c {{1}}
+sudo cpufreq-aperf -i {{3}}
+sudo cpufreq-set -c {{1}} --max {{max_frequency}}
+sudo cpufreq-set -c {{1}} --min {{min_frequency}}
+sudo cpufreq-set -c {{1}} -g {{userspace}}
+sudo dmidecode
+sudo dmidecode -s bios-version
+sudo dmidecode -s system-serial-number
+sudo edquota --group {{group}}
+sudo edquota --user {{username}}
+sudo genkernel --menuconfig all
+sudo genkernel all
+sudo genkernel {{bzImage|initramfs|kernel|ramdisk}}
+sudo hostnamectl set-hostname "{{some_hostname}}"
+sudo i7z
+sudo iptables -A {{chain}} -s {{ip}} -j {{rule}}
+sudo iptables -P {{chain}} {{rule}}
+sudo iptables -t {{table_name}} -vnL
+sudo launchctl load /Library/LaunchAgents/{{root_script}}.plist
+sudo launchctl load /Library/LaunchDaemons/{{system_daemon}}.plist
+sudo ldconfig
+sudo ldconfig -n {{path/to/directory}}
+sudo logstash --config {{logstash_config.conf}}
+sudo logstash -e 'input {} filter {} output {}'
+sudo losetup -D
+sudo losetup /dev/{{loop}} /{{path/to/file}}
+sudo lshw -X
+sudo lshw -class disk -class storage -short
+sudo lshw -short
+sudo modprobe zram num_devices={{2}}
+sudo nethogs
+sudo nethogs {{device1}} {{device2}}
+sudo nethogs {{device}}
+sudo ntfsfix {{/dev/sdb2}}
+sudo opensnoop
+sudo opensnoop -n {{process_name}}
+sudo opensnoop -p {{PID}}
+sudo perf record {{command}}
+sudo perf top
+sudo pmset -c displaysleep 0
+sudo port install {{package_name}}
+sudo prosodyctl adduser {{user@example.com}}
+sudo prosodyctl reload
+sudo prosodyctl status
+sudo quotacheck --all
+sudo quotacheck --debug {{mountpoint}}
+sudo quotacheck --force {{mountpoint}}
+sudo repquota -all
+sudo repquota -v {{filesystem}}
+sudo route -t add {{dest_ip_address}}/24 {{gateway_address}}
+sudo route add -net {{ip_address}} netmask {{netmask_address}} gw {{gw_address}}
+sudo route add {{dest_ip_address}} {{gateway_address}}
+sudo route add {{subnet_ip_address}}/24 {{gateway_address}}
+sudo route del -net {{ip_address}} netmask {{netmask_address}} dev {{gw_address}}
+sudo runsv {{path/to/service}}
+sudo runsv {{path/to/service}}
+sudo runsvchdir {{/path/to/directory}}
+sudo runsvchdir {{/path/to/directory}}
+sudo runsvdir {{path/to/services}}
+sudo runsvdir {{path/to/services}}
+sudo smartctl --health {{/dev/sda}}
+sudo smartctl --info {{/dev/sda}}
+sudo smartctl --test short {{/dev/sda}}
+sudo sshuttle --method=tproxy --remote={{username}}@{{sshserver}} {{0.0.0.0/0}} {{::/0}} --exclude={{your_local_ip_address}} --exclude={{ssh_server_ip_address}}
+sudo sshuttle --method=tproxy --remote={{username}}@{{sshserver}} {{0.0.0.0/0}} {{::/0}} --exclude={{your_local_ip_address}} --exclude={{ssh_server_ip_address}}
+sudo sv down {{path/to/service}}
+sudo sv down {{path/to/service}}
+sudo sv status {{path/to/service}}
+sudo sv status {{path/to/service}}
+sudo sv up {{path/to/service}}
+sudo sv up {{path/to/service}}
+sudo update-alternatives --config {{java}}
+sudo update-alternatives --install {{path/to/symlink}} {{command_name}} {{path/to/command_binary}} {{priority}}
+sudo update-alternatives --remove {{java}} {{/opt/java/jdk1.8.0_102/bin/java}}
+sudo updatedb
+sudo visudo
+sudo visudo -c
+sudo zramctl --find --size {{2GB}} --algorithm {{lz4}}
+sudo {{ls}} {{/usr/local/scrt}}
+sudo {{shutdown}} -h +10 {{"Cya soon!"}}
+sum --sysv {{file}}
+sum {{file}}
+supervisorctl tail -100 {{process_name}} stderr
+supervisorctl {{start|stop|restart}} {{group_name}}:*
+supervisorctl {{start|stop|restart}} {{process_name}}
+supervisord -c {{path/to/file}}
+supervisord -n
+surge list
+surge {{path/to/my_project}}
+surge {{path/to/my_project}} {{my_custom_domain.com}}
+svgo -f {{path/to/folder/with/svg/files}}
+svgo {{test.svg}}
+svgo {{test.svg}} {{test.min.svg}}
+svn add PATH...
+svn co {{url/to/repository}}
+svn up
+sw_vers -buildVersion
+sw_vers -productVersion
+swagger-codegen generate -i {{http://petstore.swagger.io/v2/swagger.json}} -l {{java}} --library {{retrofit2}} -D{{useRxJava2}}={{true}}
+swagger-codegen generate -i {{swagger_file}} -l {{language}}
+swagger-codegen langs
+sync
+sync {{path/to/file}}
+sysctl -a
+sysctl -a
+sysctl -n hw.model
+sysctl -n machdep.cpu.brand_string
+sysctl -w {{section.tunable}}={{value}}
+sysctl fs.file-nr
+system_profiler -xml > MyReport.spx
+system_profiler SPHardwareDataType
+system_profiler SPHardwareDataType|grep "Serial Number (system)" |awk '{print $4}'
+systemctl --failed
+systemctl start/stop/restart/reload {{unit}}
+systemctl status {{unit}}
+systemd-analyze blame
+systemd-analyze critical-chain
+systemsetup -setremotelogin on
+systemsetup -setsleep off -setrestartpowerfailure on -setrestartfreeze on
+systemsetup -settimezone {{US/Pacific}} -setnetworktimeserver {{us.pool.ntp.org}} -setusingnetworktime on
+tabula --format JSON -o {{file.json}} {{file.pdf}}
+tabula --pages {{1-3,6}} {{file.pdf}}
+tabula -o {{file.csv}} {{file.pdf}}
+tac {{file1}}
+tac {{file1}} {{file2}} > {{target_file}}
+tail -c {{num}} {{file}}
+tail -n +{{num}} {{file}}
+tail -n {{num}} {{file}}
+tar cf {{target.tar}} {{file1 file2 file3}}
+tar czf {{target.tar.gz}} {{file1 file2 file3}}
+tar xf {{source.tar}} -C {{folder}}
+task add {{thing_to_do}}
+task list
+task {{task_id}} done
+tcpdump -A tcp
+tcpdump -D
+tcpdump -i {{eth0}}
+tcpflow -c -i {{eth0}} port {{80}}
+telnet {{host}}
+telnet {{ip_address}} {{port}}
+tesseract --list-langs
+tesseract -l deu {{image.png}} {{output}}
+tesseract {{image.png}} {{output}}
+test $MY_VAR == '/bin/zsh'
+test -e {{filename}}
+test -z $GIT_BRANCH
+time ls
+timedatectl
+timedatectl list-timezones
+timedatectl set-time {{"yyyy-MM-dd hh:mm:ss"}}
+timeout --signal {{INT}} {{5s}} {{sleep 10}}
+timeout {{3s}} {{sleep 10}}
+timew
+timew start {{activity_tag}}
+timew stop {{activity_tag}}
+tldr --update
+tldr {{command}}
+tldrl -f {{page.md}}
+tldrl -fi {{pages_directory}}
+tldrl {{pages_directory}}
+tmux
+tmux ls
+tmux new -s {{name}}
+tomb dig -s {{100}} {{encrypted_folder.tomb}}
+tomb forge {{encrypted_folder.tomb.key}}
+tomb lock {{encrypted_folder.tomb}} -k {{encrypted_folder.tomb.key}}
+top
+top
+top -i
+top -o cpu -O time
+top -o mem
+top -u {{user_name}}
+touch -r {{filename}} {{filename2}}
+touch -t {{YYYYMMDDHHMM.SS}} {{filename}}
+touch {{filename}}
+tpp -t {{type}} -o {{outputname}} {{filename}}
+tpp {{filename}}
+tput cup {{y_coordinate}} {{x_coordinate}}
+tput {{cols|lines|colors}}
+tput {{setaf|setab}} {{ansi_color_code}}
+tr 'abcd' 'jkmn' < {{filename}}
+tr -d '{{input_characters}}'
+tr {{find_characters}} {{replace_characters}} < {{filename}}
+traceroute -n {{host}}
+traceroute -w {{0.5}} {{host}}
+traceroute {{host}}
+traefik
+traefik --c {{config_file}}.toml
+traefik --cluster
+trans "{{word_or_sentence_to_translate}}"
+trans --brief "{{word_or_sentence_to_translate}}"
+trans :{{fr}} {{word}}
+transcode -J stabilize -i {{input_file}}
+transcode -J transform -i {{input_file}} -y xvid -o {{output_file}}
+transcode -Z 640x480 -i {{input_file}} -y xvid -o {{output_file}}
+tree -L {{num}}
+tree -L {{num}}
+tree -a
+tree -a
+tree -d
+tree -d
+tty
+tunnel download {{table_name}} {{file}};
+tunnel upload {{file}} {{table_name}} -fd {{field_delim}} -rd {{record_delim}};
+tunnel upload {{file}} {{table_name}}/{{partition_spec}};
+ufraw-batch --embedded-image {{input_file(s)}}
+ufraw-batch --out-type=jpg {{input_file(s)}}
+ufraw-batch --out-type=png {{input_file(s)}}
+ufw disable
+ufw enable
+ufw status numbered
+ulimit -H -n
+ulimit -S -n
+ulimit -a
+umask
+umask -S
+umask {{a+r}}
+umount -a
+umount {{path/to/device_file}}
+umount {{path/to/mounted_directory}}
+unalias {{word}}
+uname -mp
+uname -mp
+uname -n
+uname -n
+uname -srv
+uname -srv
+unar -f {{archive}}
+unar -o {{path/to/directory}} {{archive}}
+unar {{archive}}
+unexpand
+unexpand -a {{file}}
+unexpand {{file}}
+unrar e {{compressed.rar}}
+unrar t {{compressed.rar}}
+unrar x {{compressed.rar}}
+unzip -l {{file.zip}}
+unzip {{compressed_file(s)}} -d {{/path/to/put/extracted_file(s)}}
+unzip {{file(s)}}
+update-rc.d {{mysql}} defaults
+update-rc.d {{mysql}} disable
+update-rc.d {{mysql}} enable
+uptime
+use {{project_name}};
+useradd --create-home {{name}}
+useradd --shell {{/path/to/shell}} {{name}}
+useradd {{name}}
+userdel -r {{name}}
+usermod -a -G {{group1,group2}} {{user}}
+usermod -l {{newname}} {{user}}
+usermod -m -d {{/path/to/home}} {{user}}
+vagrant init
+vagrant init ubuntu/trusty32
+vagrant up
+valgrind --leak-check=full --show-leak-kinds=all {{program}}
+valgrind --tool=cachegrind {{program}}
+valgrind {{program}}
+vault auth {{authentication-token}}
+vault init
+vault unseal {{key-share-x}}
+vgcreate {{vg1}} {{/dev/sda1}}
+vgcreate {{vg1}} {{/dev/sda1}} {{/dev/sdb1}} {{/dev/sdc1}}
+view {{file}}
+vim {{file}}
+vimdiff -o {{file1}} {{file2}}
+vimdiff {{file1}} {{file2}}
+vimtutor {{language}}
+virtualenv {{path/to/venv}}
+vncserver
+vncserver --geometry {{width}}x{{height}}
+vncserver --kill :{{display_number}}
+vue init {{path/to/template_folder}} {{project_name}}
+vue init {{template}} {{project_name}}
+vue init {{username}}/{{repo}} {{project_name}}
+w -h
+w -h
+w -i
+w3m {{http://example.com}}
+wacaw --video {{filename}} -D {{duration_in_seconds}}
+wacaw -x {{width}} -y {{height}} {{filename}}
+wacaw {{filename}}
+wait
+wait {{pid}}
+wall -t {{seconds}} {{file}}
+wall {{file}}
+watch -d {{df}}
+watch -d {{ls -l}}
+watch -n {{3}} "{{ps aux | grep node}}"
+watch -n {{60}} {{command}}
+watch {{command}}
+watch {{ls}}
+wc -c {{file}}
+wc -l {{file}}
+wc -w {{file}}
+webpack --config {{webpack.config.js}} --progress
+webpack {{app.js}} {{bundle.js}}
+webpack {{app.js}} {{bundle.js}} --module-bind 'css=css'
+wget --page-requisites --convert-links {{https://example.com/somepage.html}}
+wget -O {{bar}} {{https://example.com/foo}}
+wget {{https://example.com/foo}}
+whatis --long {{command}}
+whatis --wildcard {{net*}}
+whatis {{command}}
+where {{command}}
+whereis -bm {{ls}}
+whereis -s {{gcc}} -m {{git}}
+whereis {{ssh}}
+which -a {{executable}}
+which {{executable}}
+while :; do {{command}}; sleep 1; done
+while read line; do echo "$line"; done
+who
+who -a
+who am i
+whoami
+whois @{{user}}
+wodim --devices
+wodim -eject dev=/dev/{{optical_drive}} -data {{file.iso}}
+wodim dev=/dev/{{optical_drive}} -audio {{track*.cdaudio}}
+wordgrinder
+wordgrinder {{filename}}
+wpa_cli add_network {{number}}
+wpa_cli scan
+wpa_cli scan_results
+write {{jhondoe}} {{pts/5}}
+write {{testuser}} {{tty/5}}
+write {{username}} {{terminal_id}}
+wuzz
+x11vnc -display :{{display}}.{{screen}}
+x11vnc -forever -viewonly
+x11vnc -shared
+x_x --delimiter={{';'}} --quotechar={{'|'}} {{file.csv}}
+x_x -h {{0}} {{file.xlsx|file.csv}}
+x_x {{file.xlsx|file.csv}}
+xattr -d {{com.apple.quarantine}} {{file}}
+xattr -l {{file}}
+xattr -w {{attribute_key}} {{attribute_value}} {{file}}
+xcodebuild -showsdks
+xcodebuild -target {{target_name}} -configuration {{configuration_name}} clean build SYMROOT={{SYMROOT_path}}
+xcodebuild -workspace {{workspace_name.workspace}} -scheme {{scheme_name}} -configuration {{configuration_name}} clean build SYMROOT={{SYMROOT_path}}
+xctool -project {{YourProject.xcodeproj}} -scheme {{YourScheme}} build
+xctool -workspace {{YourWorkspace.xcworkspace}} -scheme {{YourScheme}} build
+xctool -workspace {{YourWorkspace.xcworkspace}} -scheme {{YourScheme}} clean build test
+xcv c {{input_file}}
+xcv v {{output_file}}
+xcv x {{input_file}}
+xdotool click {{3}}
+xdotool getactivewindow
+xdotool search --onlyvisible --name {{firefox}}
+xed -c {{filename1}}
+xed -l 75 {{filename}}
+xed {{file1}}
+xeyes
+xeyes -display {{remote_host}}:{{0}}.{{0}}
+xinput float {{id}}
+xinput list
+xinput reattach {{id}} {{master_id}}
+xman
+xman -bothshown
+xman -helpfile {{filename}}
+xmllint --html --xpath "string(//a[2]/@href)" webpage.xhtml
+xmllint --xpath "//{{foo}}" {{source_file.xml}}
+xmllint --xpath "string(//{{foo}})" {{source_file.xml}}
+xrandr --auto
+xrandr --output {{DP1}} --mode {{1920x1080}} --rate {{60}}
+xrandr --query
+xsel -ob
+xsetwacom list
+xsetwacom set "{{device name}}" MapToOutput {{screen}}
+xsetwacom set "{{device name}}" Mode "{{Relative|Absolute}}"
+xsltproc --output {{output.html}} --stringparam {{name}} {{value}} {{stylesheet.xslt}} {{xmlfile.xml}}
+xsltproc --output {{output.html}} {{stylesheet.xslt}} {{xmlfile.xml}}
+xxd -c {{10}} {{input_file}}
+xxd {{input_file}}
+xxd {{input_file}} {{output_file}}
+xz -d {{file.xz}}
+xz -dc {{file.xz}}
+xz {{file}}
+yaourt -Rs package-name
+yaourt -S package-name
+yaourt -Syua
+yarn
+yarn add {{module_name}}@{{version}}
+yarn global add {{module_name}}
+yes
+yes {{message}}
+youtube-dl --format {{mp4}} --output {{"%(title) by %(uploader) on %(upload_date) in %(playlist).%(ext)"}} {{url}}
+youtube-dl -x --audio-format {{mp3}} {{url}}
+youtube-dl {{https://www.youtube.com/watch?v=oHg5SJYRHA0}}
+yum -y install {{package}}
+yum install {{package}}
+yum update
+z -r {{foo}}
+z {{foo}}
+z {{foo}} {{bar}}
+zbarimg {{image_file}}
+zcat {{file.txt.gz}}
+zdb
+zdb -C {{poolname}}
+zdb -b {{poolname}}
+zenity --forms --add-entry="{{Name}}" --add-password="{{Password}}" --separator="{{;}}"
+zenity --info --text="{{Hello!}}"
+zenity --question
+zfs create {{pool_name/filesystem_name}}
+zfs destroy {{pool_name/filesystem_name}}
+zfs list
+zip -r -{{9}} {{compressed.zip}} {{/path/to/dir}}
+zip -r {{compressed.zip}} {{/path/to/dir}}
+zip -r {{compressed.zip}} {{path/to/dir}} -x {{path/to/exclude}}
+zless {{file.txt.gz}}
+zpool import
+zpool scrub {{pool_name}}
+zpool status
+zsh
+zsh -c {{command}}
+zsh {{file}}
+zypper install {{package}}
+zypper refresh
+zypper remove {{package}}
