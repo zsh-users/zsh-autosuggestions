@@ -77,6 +77,10 @@ class TerminalSession
       map(&:to_i)
   end
 
+  def attach!
+    tmux_command('attach-session')
+  end
+
   private
 
   attr_reader :opts

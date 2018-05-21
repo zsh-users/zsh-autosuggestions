@@ -21,6 +21,8 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
 	history-beginning-search-backward
 	history-substring-search-up
 	history-substring-search-down
+	up-line-or-beginning-search
+	down-line-or-beginning-search
 	up-line-or-history
 	down-line-or-history
 	accept-line
@@ -47,6 +49,8 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
 	vi-forward-word-end
 	vi-forward-blank-word
 	vi-forward-blank-word-end
+	vi-find-next-char
+	vi-find-next-char-skip
 )
 
 # Widgets that should be ignored (globbing supported but must be escaped)
@@ -57,6 +61,7 @@ ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 	set-local-history
 	which-command
 	yank
+	yank-pop
 )
 
 # Max size of buffer to trigger autosuggestion. Leave undefined for no upper bound.

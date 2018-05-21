@@ -1,6 +1,6 @@
 machine:
   environment:
-    ZSH_VERSIONS: zsh-dev/4.3.11 zsh/5.0.2 zsh/5.0.8 zsh/5.1.1 zsh/5.2 zsh/5.3.1 zsh/5.4.2
+    ZSH_VERSIONS: zsh-dev/4.3.11 zsh/5.0.2 zsh/5.0.8 zsh/5.1.1 zsh/5.2 zsh/5.3.1 zsh/5.4.2 zsh/5.5.1
 
 dependencies:
   pre:

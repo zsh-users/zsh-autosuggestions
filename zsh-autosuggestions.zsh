@@ -1,8 +1,8 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
 # https://github.com/zsh-users/zsh-autosuggestions
-# v0.4.2
+# v0.4.3
 # Copyright (c) 2013 Thiago de Arruda
-# Copyright (c) 2016-2017 Eric Freese
+# Copyright (c) 2016-2018 Eric Freese
 # 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -57,6 +57,8 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
 	history-beginning-search-backward
 	history-substring-search-up
 	history-substring-search-down
+	up-line-or-beginning-search
+	down-line-or-beginning-search
 	up-line-or-history
 	down-line-or-history
 	accept-line
@@ -83,6 +85,8 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
 	vi-forward-word-end
 	vi-forward-blank-word
 	vi-forward-blank-word-end
+	vi-find-next-char
+	vi-find-next-char-skip
 )
 
 # Widgets that should be ignored (globbing supported but must be escaped)
@@ -93,6 +97,7 @@ ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 	set-local-history
 	which-command
 	yank
+	yank-pop
 )
 
 # Max size of buffer to trigger autosuggestion. Leave undefined for no upper bound.
@@ -238,7 +243,7 @@ _zsh_autosuggest_bind_widgets() {
 # Given the name of an original widget and args, invoke it, if it exists
 _zsh_autosuggest_invoke_original_widget() {
 	# Do nothing unless called with at least one arg
-	(( $# )) || return
+	(( $# )) || return 0
 
 	local original_widget_name="$1"
 
@@ -331,6 +336,7 @@ _zsh_autosuggest_modify() {
 
 	# Don't fetch a new suggestion if there's more input to be read immediately
 	if (( $PENDING > 0 )) || (( $KEYS_QUEUED_COUNT > 0 )); then
+		POSTDISPLAY="$orig_postdisplay"
 		return $retval
 	fi
 
@@ -428,7 +434,7 @@ _zsh_autosuggest_execute() {
 
 # Partially accept the suggestion
 _zsh_autosuggest_partial_accept() {
-	local -i retval
+	local -i retval cursor_loc
 
 	# Save the contents of the buffer so we can restore later if needed
 	local original_buffer="$BUFFER"
@@ -440,13 +446,19 @@ _zsh_autosuggest_partial_accept() {
 	_zsh_autosuggest_invoke_original_widget $@
 	retval=$?
 
+	# Normalize cursor location across vi/emacs modes
+	cursor_loc=$CURSOR
+	if [[ "$KEYMAP" = "vicmd" ]]; then
+		cursor_loc=$((cursor_loc + 1))
+	fi
+
 	# If we've moved past the end of the original buffer
-	if (( $CURSOR > $#original_buffer )); then
+	if (( $cursor_loc > $#original_buffer )); then
 		# Set POSTDISPLAY to text right of the cursor
-		POSTDISPLAY="$RBUFFER"
+		POSTDISPLAY="${BUFFER[$(($cursor_loc + 1)),$#BUFFER]}"
 
 		# Clip the buffer at the cursor
-		BUFFER="$LBUFFER"
+		BUFFER="${BUFFER[1,$cursor_loc]}"
 	else
 		# Restore the original buffer
 		BUFFER="$original_buffer"
@@ -589,7 +601,6 @@ _zsh_autosuggest_async_server() {
 	# Silence any error messages
 	exec 2>/dev/null
 
-	local strategy=$1
 	local last_pid
 
 	while IFS='' read -r -d $'\0' query; do
@@ -636,7 +647,7 @@ _zsh_autosuggest_async_pty_create() {
 	fi
 
 	# Fork a zpty process running the server function
-	zpty -b $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "_zsh_autosuggest_async_server _zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY"
+	zpty -b $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME _zsh_autosuggest_async_server
 
 	# Store the fd so we can remove the handler later
 	if (( REPLY )); then
@@ -650,13 +661,11 @@ _zsh_autosuggest_async_pty_create() {
 }
 
 _zsh_autosuggest_async_pty_destroy() {
-	if zpty -t $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null; then
-		# Remove the input handler
-		zle -F $_ZSH_AUTOSUGGEST_PTY_FD &>/dev/null
+	# Remove the input handler
+	zle -F $_ZSH_AUTOSUGGEST_PTY_FD &>/dev/null
 
-		# Destroy the zpty
-		zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null
-	fi
+	# Destroy the zpty
+	zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null
 }
 
 _zsh_autosuggest_async_pty_recreate() {
