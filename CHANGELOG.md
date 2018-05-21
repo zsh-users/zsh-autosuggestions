@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.4.3
+- Avoid bell when accepting suggestions with `autosuggest-accept` (#228)
+- Don't fetch suggestions after [up,down]-line-or-beginning-search (#227, #241)
+- We are now running CI against new 5.5.1 version
+- Fix partial-accept in vi mode (#188)
+- Fix suggestion disappearing on fast movement after switching to `vicmd` mode (#290)
+- Fix issue rotating through kill ring with `yank-pop` (#301)
+- Fix issue creating new pty for async mode when previous pty is not properly cleaned up (#249)
+
 ## v0.4.2
 - Fix bug in zsh versions older than 5.0.8 (#296)
 - Officially support back to zsh v4.3.11
