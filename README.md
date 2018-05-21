@@ -35,7 +35,7 @@ Requirements: Zsh v4.3.11 or later
 1. Clone this repository into `$ZSH_CUSTOM/plugins` (by default `~/.oh-my-zsh/custom/plugins`)
 
     ```sh
-    git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     ```
 
 2. Add the plugin to the list of plugins for Oh My Zsh to load:
@@ -46,16 +46,15 @@ Requirements: Zsh v4.3.11 or later
 
 3. Start a new terminal session.
 
-### Arch Linux via the AUR
-1. Install the [`zsh-autosuggestions`](https://aur.archlinux.org/packages/zsh-autosuggestions/) or the [`zsh-autosuggestions-git`](https://aur.archlinux.org/packages/zsh-autosuggestions-git/) packages from the [AUR](https://wiki.archlinux.org/index.php/Arch_User_Repository).
+### Arch Linux
+
+1. Install [`zsh-autosuggestions`](https://www.archlinux.org/packages/community/any/zsh-autosuggestions/) from the `community` repository.
 
     ```sh
-    pacaur -S zsh-autosuggestions
+    pacman -S zsh-autosuggestions
     ```
-    or
-    ```
-    pacaur -S zsh-autosuggestions-git
-    ```
+
+    or, to use a package based on the `master` branch, install [`zsh-autosuggestions-git`](https://aur.archlinux.org/packages/zsh-autosuggestions-git/) from the [AUR](https://wiki.archlinux.org/index.php/Arch_User_Repository).
 
 2. Add the following to your `.zshrc`:
 
