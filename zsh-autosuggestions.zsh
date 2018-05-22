@@ -506,6 +506,16 @@ zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
 _zsh_autosuggest_capture_setup() {
 	zmodload zsh/zutil # For `zparseopts`
 
+	# There is a bug in zpty module (fixed in zsh/master) by which a
+	# zpty that exits will kill all zpty processes that were forked
+	# before it. Here we set up a zsh exit hook to SIGKILL the zpty
+	# process immediately, before it has a chance to kill any other
+	# zpty processes.
+	zshexit() {
+		kill -KILL $$
+		sleep 1 # Block for long enough for the signal to come through
+	}
+
 	# Never group stuff!
 	zstyle ':completion:*' list-grouped false
 
