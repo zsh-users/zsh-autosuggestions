@@ -506,7 +506,10 @@ zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
 _zsh_autosuggest_capture_setup() {
 	zmodload zsh/zutil # For `zparseopts`
 
-	autoload compinit && compinit
+	# Ensure completions have been initialized
+	if ! whence compdef >/dev/null; then
+		autoload -Uz compinit && compinit
+	fi
 
 	# There is a bug in zpty module (fixed in zsh/master) by which a
 	# zpty that exits will kill all zpty processes that were forked
