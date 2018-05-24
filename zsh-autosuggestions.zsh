@@ -597,9 +597,11 @@ _zsh_autosuggest_capture_completion() {
 
 	# The completion result is surrounded by null bytes, so read the
 	# content between the first two null bytes.
-	zpty -r $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME line '*'$'\0'
-	zpty -r $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME line '*'$'\0'
-	completion="${line%$'\0'}"
+	zpty -r $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME line '*'$'\0''*'$'\0'
+
+	# On older versions of zsh, we sometimes get extra bytes after the
+	# second null byte, so trim those off the end
+	completion="${${${(M)line:#*$'\0'*$'\0'*}#*$'\0'}%%$'\0'*}"
 
 	# Destroy the pty
 	zpty -d $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME
