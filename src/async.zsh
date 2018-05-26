@@ -17,8 +17,11 @@ _zsh_autosuggest_async_server() {
 		sleep 1 # Block for long enough for the signal to come through
 	}
 
-	# Output only newlines (not carriage return + newline)
+	# Don't add any extra carriage returns
 	stty -onlcr
+
+	# Don't translate carriage returns to newlines
+	stty -icrnl
 
 	# Silence any error messages
 	exec 2>/dev/null

@@ -27,6 +27,45 @@ context 'with asynchronous suggestions enabled' do
     end
   end
 
+  it 'should not add extra carriage returns before newlines' do
+    session.
+      send_string('echo "').
+      send_keys('escape').
+      send_keys('enter').
+      send_string('"').
+      send_keys('enter')
+
+    session.clear_screen
+
+    session.send_string('echo')
+    wait_for { session.content }.to eq("echo \"\n\"")
+  end
+
+  it 'should treat carriage returns and newlines as separate characters' do
+    session.
+      send_string('echo "').
+      send_keys('C-v').
+      send_keys('enter').
+      send_string('foo"').
+      send_keys('enter')
+
+    session.
+      send_string('echo "').
+      send_keys('control').
+      send_keys('enter').
+      send_string('bar"').
+      send_keys('enter')
+
+    session.clear_screen
+
+    session.
+      send_string('echo "').
+      send_keys('C-v').
+      send_keys('enter')
+
+    wait_for { session.content }.to eq('echo "^Mfoo"')
+  end
+
   describe 'exiting a subshell' do
     it 'should not cause error messages to be printed' do
       session.run_command('$(exit)')
