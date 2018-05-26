@@ -1,4 +1,8 @@
 context 'with asynchronous suggestions enabled' do
+  before do
+    skip 'Async mode not supported below v5.0.8' if session.zsh_version < Gem::Version.new('5.0.8')
+  end
+
   let(:options) { ["ZSH_AUTOSUGGEST_USE_ASYNC="] }
 
   describe '`up-line-or-beginning-search`' do
