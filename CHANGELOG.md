@@ -1,14 +1,34 @@
 # Changelog
 
+## v0.4.3
+- Avoid bell when accepting suggestions with `autosuggest-accept` (#228)
+- Don't fetch suggestions after [up,down]-line-or-beginning-search (#227, #241)
+- We are now running CI against new 5.5.1 version
+- Fix partial-accept in vi mode (#188)
+- Fix suggestion disappearing on fast movement after switching to `vicmd` mode (#290)
+- Fix issue rotating through kill ring with `yank-pop` (#301)
+- Fix issue creating new pty for async mode when previous pty is not properly cleaned up (#249)
+
+## v0.4.2
+- Fix bug in zsh versions older than 5.0.8 (#296)
+- Officially support back to zsh v4.3.11
+
+## v0.4.1
+- Switch to [[ and (( conditionals instead of [ (#257)
+- Avoid warnnestedvar warnings with `typeset -g` (#275)
+- Replace tabs with spaces in yaml (#268)
+- Clean up and fix escaping of special characters (#267)
+- Add `emacs-forward-word` to default list of partial accept widgets (#246)
+
 ## v0.4.0
 - High-level integration tests using RSpec and tmux
 - Add continuous integration with Circle CI
-- Experimental support for asynchronous suggestions (#)
-- Fix problems with multi-line suggestions (#)
+- Experimental support for asynchronous suggestions (#170)
+- Fix problems with multi-line suggestions (#225)
 - Optimize case where manually typing in suggestion
-- Avoid wrapping any zle-* widgets (#)
+- Avoid wrapping any zle-* widgets (#206)
 - Remove support for deprecated options from v0.0.x
-- Handle history entries that begin with dashes (#)
+- Handle history entries that begin with dashes
 - Gracefully handle being sourced multiple times (#126)
 - Add enable/disable/toggle widgets to disable/enable suggestions (#219)
 

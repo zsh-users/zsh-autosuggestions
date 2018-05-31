@@ -4,6 +4,8 @@ _[Fish](http://fishshell.com/)-like fast/unobtrusive autosuggestions for zsh._
 
 It suggests commands as you type, based on command history.
 
+Requirements: Zsh v4.3.11 or later
+
 [![CircleCI](https://circleci.com/gh/zsh-users/zsh-autosuggestions.svg?style=svg)](https://circleci.com/gh/zsh-users/zsh-autosuggestions)
 
 <a href="https://asciinema.org/a/37390" target="_blank"><img src="https://asciinema.org/a/37390.png" width="400" /></a>
@@ -11,72 +13,8 @@ It suggests commands as you type, based on command history.
 
 ## Installation
 
-### Manual
+See [INSTALL.md](INSTALL.md).
 
-1. Clone this repository somewhere on your machine. This guide will assume `~/.zsh/zsh-autosuggestions`.
-
-    ```sh
-    git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
-    ```
-
-2. Add the following to your `.zshrc`:
-
-    ```sh
-    source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-    ```
-
-3. Start a new terminal session.
-
-
-### Oh My Zsh
-
-1. Clone this repository into `$ZSH_CUSTOM/plugins` (by default `~/.oh-my-zsh/custom/plugins`)
-
-    ```sh
-    git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
-    ```
-
-2. Add the plugin to the list of plugins for Oh My Zsh to load:
-
-    ```sh
-    plugins=(zsh-autosuggestions)
-    ```
-
-3. Start a new terminal session.
-
-### Arch Linux via the AUR
-1. Install the [`zsh-autosuggestions`](https://aur.archlinux.org/packages/zsh-autosuggestions/) or the [`zsh-autosuggestions-git`](https://aur.archlinux.org/packages/zsh-autosuggestions-git/) packages from the [AUR](https://wiki.archlinux.org/index.php/Arch_User_Repository).
-
-    ```sh
-    pacaur -S zsh-autosuggestions
-    ```
-    or
-    ```
-    pacaur -S zsh-autosuggestions-git
-    ```
-
-2. Add the following to your `.zshrc`:
-
-    ```sh
-    source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-    ```
-
-3. Start a new terminal session.
-
-### macOS via Homebrew
-1. Install the `zsh-autosuggestions` package using [Homebrew](https://brew.sh/).
-
-    ```sh
-    brew install zsh-autosuggestions
-    ```
-
-2. Add the following to your `.zshrc`:
-
-    ```sh
-    source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-    ```
-
-3. Start a new terminal session.
 
 ## Usage
 

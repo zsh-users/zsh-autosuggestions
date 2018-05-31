@@ -18,6 +18,10 @@ class TerminalSession
     tmux_command("new-session -d -x #{opts[:width]} -y #{opts[:height]} '#{cmd}'")
   end
 
+  def zsh_version
+    @zsh_version ||= Gem::Version.new(`#{ZSH_BIN} -c 'echo -n $ZSH_VERSION'`)
+  end
+
   def tmux_socket_name
     @tmux_socket_name ||= SecureRandom.hex(6)
   end
@@ -75,6 +79,10 @@ class TerminalSession
       strip.
       split(',').
       map(&:to_i)
+  end
+
+  def attach!
+    tmux_command('attach-session')
   end
 
   private
