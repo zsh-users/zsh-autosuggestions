@@ -47,7 +47,9 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 # Prefix to use when saving original versions of bound widgets
 ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 
-ZSH_AUTOSUGGEST_STRATEGY=default
+# Strategies to use to fetch a suggestion
+# Will try each strategy in order until a suggestion is returned
+ZSH_AUTOSUGGEST_STRATEGY=(history)
 
 # Widgets that clear the suggestion
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
@@ -381,7 +383,7 @@ _zsh_autosuggest_fetch() {
 		_zsh_autosuggest_async_request "$BUFFER"
 	else
 		local suggestion
-		_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$BUFFER"
+		_zsh_autosuggest_fetch_suggestion "$BUFFER"
 		_zsh_autosuggest_suggest "$suggestion"
 	fi
 }
@@ -620,23 +622,6 @@ _zsh_autosuggest_strategy_completion() {
 }
 
 #--------------------------------------------------------------------#
-# Default Suggestion Strategy                                        #
-#--------------------------------------------------------------------#
-# Will provide suggestions from your history. If no matches are found
-# in history, will provide a suggestion from the completion engine.
-#
-
-_zsh_autosuggest_strategy_default() {
-	typeset -g suggestion
-
-	_zsh_autosuggest_strategy_history "$1"
-
-	if [[ -z "$suggestion" ]]; then
-		_zsh_autosuggest_strategy_completion "$1"
-	fi
-}
-
-#--------------------------------------------------------------------#
 # History Suggestion Strategy                                        #
 #--------------------------------------------------------------------#
 # Suggests the most recent history item that matches the given
@@ -721,6 +706,29 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 }
 
 #--------------------------------------------------------------------#
+# Fetch Suggestion                                                   #
+#--------------------------------------------------------------------#
+# Loops through all specified strategies and returns a suggestion
+# from the first strategy to provide one.
+#
+
+_zsh_autosuggest_fetch_suggestion() {
+	typeset -g suggestion
+	local -a strategies
+
+	# Ensure we are working with an array
+	strategies=(${=ZSH_AUTOSUGGEST_STRATEGY})
+
+	for strategy in $strategies; do
+		# Try to get a suggestion from this strategy
+		_zsh_autosuggest_strategy_$strategy "$1"
+
+		# Break once we've found a suggestion
+		[[ -n "$suggestion" ]] && break
+	done
+}
+
+#--------------------------------------------------------------------#
 # Async                                                              #
 #--------------------------------------------------------------------#
 
@@ -756,7 +764,7 @@ _zsh_autosuggest_async_server() {
 		# Run suggestion search in the background
 		(
 			local suggestion
-			_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$query"
+			_zsh_autosuggest_fetch_suggestion "$query"
 			echo -n -E "$suggestion"$'\0'
 		) &
 

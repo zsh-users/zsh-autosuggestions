@@ -2,7 +2,7 @@ describe 'using `zle -U`' do
   let(:before_sourcing) do
     -> do
       session.
-        run_command('_zsh_autosuggest_strategy_test() { sleep 1; _zsh_autosuggest_strategy_default "$1" }').
+        run_command('_zsh_autosuggest_strategy_test() { sleep 1; _zsh_autosuggest_strategy_history "$1" }').
         run_command('foo() { zle -U - "echo hello" }; zle -N foo; bindkey ^B foo')
     end
   end

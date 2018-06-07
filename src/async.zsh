@@ -35,7 +35,7 @@ _zsh_autosuggest_async_server() {
 		# Run suggestion search in the background
 		(
 			local suggestion
-			_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$query"
+			_zsh_autosuggest_fetch_suggestion "$query"
 			echo -n -E "$suggestion"$'\0'
 		) &
 
