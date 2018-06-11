@@ -67,7 +67,7 @@ This can be useful when pasting large amount of text in the terminal, to avoid t
 
 ### Enable Asynchronous Mode
 
-As of `v0.4.0`, suggestions can be fetched asynchronously using the `zsh/zpty` module. To enable this behavior, set the `ZSH_AUTOSUGGEST_USE_ASYNC` variable (it can be set to anything).
+As of `v0.4.0`, suggestions can be fetched asynchronously. To enable this behavior, set the `ZSH_AUTOSUGGEST_USE_ASYNC` variable (it can be set to anything).
 
 
 ### Key Bindings
