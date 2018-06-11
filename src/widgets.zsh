@@ -95,7 +95,7 @@ _zsh_autosuggest_modify() {
 
 # Fetch a new suggestion based on what's currently in the buffer
 _zsh_autosuggest_fetch() {
-	if zpty -t "$ZSH_AUTOSUGGEST_ASYNC_PTY_NAME" &>/dev/null; then
+	if [[ -n "${ZSH_AUTOSUGGEST_USE_ASYNC+x}" ]]; then
 		_zsh_autosuggest_async_request "$BUFFER"
 	else
 		local suggestion
