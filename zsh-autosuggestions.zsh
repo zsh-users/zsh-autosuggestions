@@ -610,7 +610,8 @@ _zsh_autosuggest_capture_completion() {
 }
 
 _zsh_autosuggest_strategy_completion() {
-	typeset -g suggestion completion
+	typeset -g suggestion
+	local completion
 
 	# Fetch the first completion result
 	_zsh_autosuggest_capture_completion "$1"
