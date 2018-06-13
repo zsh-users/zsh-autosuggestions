@@ -581,20 +581,34 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 # Async                                                              #
 #--------------------------------------------------------------------#
 
-_zsh_autosuggest_async_request() {
-	typeset -g _ZSH_AUTOSUGGEST_ASYNC_FD
+zmodload zsh/system
 
-	# Close the last fd to invalidate old suggestions
+_zsh_autosuggest_async_request() {
+	typeset -g _ZSH_AUTOSUGGEST_ASYNC_FD _ZSH_AUTOSUGGEST_CHILD_PID
+
+	# If we've got a pending request, cancel it
 	if [[ -n "$_ZSH_AUTOSUGGEST_ASYNC_FD" ]] && { true <&$_ZSH_AUTOSUGGEST_ASYNC_FD } 2>/dev/null; then
+		# Close the file descriptor
 		exec {_ZSH_AUTOSUGGEST_ASYNC_FD}<&-
+
+		# Assume the child process created a new process group and send
+		# TERM to the group to attempt to kill all descendent processes
+		kill -TERM -$_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
 	fi
 
 	# Fork a process to fetch a suggestion and open a pipe to read from it
 	exec {_ZSH_AUTOSUGGEST_ASYNC_FD}< <(
+		# Tell parent process our pid
+		echo $sysparams[pid]
+
+		# Fetch and print the suggestion
 		local suggestion
 		_zsh_autosuggest_fetch_suggestion "$1"
 		echo -nE "$suggestion"
 	)
+
+	# Read the pid from the child process
+	read _ZSH_AUTOSUGGEST_CHILD_PID <&$_ZSH_AUTOSUGGEST_ASYNC_FD
 
 	# When the fd is readable, call the response handler
 	zle -F "$_ZSH_AUTOSUGGEST_ASYNC_FD" _zsh_autosuggest_async_response
