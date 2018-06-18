@@ -587,7 +587,7 @@ _zsh_autosuggest_capture_buffer() {
 
 _zsh_autosuggest_capture_completion() {
 	typeset -g completion
-	local line
+	local line REPLY
 
 	# Zle will be inactive if we are in async mode
 	if zle; then
@@ -716,6 +716,7 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 _zsh_autosuggest_fetch_suggestion() {
 	typeset -g suggestion
 	local -a strategies
+	local strategy
 
 	# Ensure we are working with an array
 	strategies=(${=ZSH_AUTOSUGGEST_STRATEGY})
