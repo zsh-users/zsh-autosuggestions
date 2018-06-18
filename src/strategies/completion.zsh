@@ -88,7 +88,7 @@ _zsh_autosuggest_capture_buffer() {
 
 _zsh_autosuggest_capture_completion() {
 	typeset -g completion
-	local line
+	local line REPLY
 
 	# Zle will be inactive if we are in async mode
 	if zle; then
