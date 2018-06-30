@@ -33,7 +33,7 @@
 autoload -Uz add-zsh-hook
 
 # Asynchronous suggestions are generated in a pty
-zmodload zsh/zpty
+zmodload zsh/zpty 2> /dev/null || zpty() { return 1 }
 
 #--------------------------------------------------------------------#
 # Global Configuration Variables                                     #
