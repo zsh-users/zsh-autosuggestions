@@ -26,16 +26,6 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 #--------------------------------------------------------------------#
-# Setup                                                              #
-#--------------------------------------------------------------------#
-
-# Precmd hooks for initializing the library and starting pty's
-autoload -Uz add-zsh-hook
-
-# Asynchronous suggestions are generated in a pty
-zmodload zsh/zpty
-
-#--------------------------------------------------------------------#
 # Global Configuration Variables                                     #
 #--------------------------------------------------------------------#
 
@@ -567,6 +557,8 @@ _zsh_autosuggest_capture_buffer() {
 }
 
 _zsh_autosuggest_capture_completion() {
+	zmodload -s zsh/zpty || return
+
 	typeset -g completion
 	local line REPLY
 
@@ -780,4 +772,5 @@ _zsh_autosuggest_start() {
 }
 
 # Start the autosuggestion widgets on the next precmd
+autoload -Uz add-zsh-hook
 add-zsh-hook precmd _zsh_autosuggest_start
