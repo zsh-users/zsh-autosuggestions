@@ -9,6 +9,7 @@ SRC_FILES := \
 	$(SRC_DIR)/highlight.zsh \
 	$(SRC_DIR)/widgets.zsh \
 	$(SRC_DIR)/strategies/*.zsh \
+	$(SRC_DIR)/fetch.zsh \
 	$(SRC_DIR)/async.zsh \
 	$(SRC_DIR)/start.zsh
 

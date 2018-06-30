@@ -1,12 +1,12 @@
 
 #--------------------------------------------------------------------#
-# Default Suggestion Strategy                                        #
+# History Suggestion Strategy                                        #
 #--------------------------------------------------------------------#
 # Suggests the most recent history item that matches the given
 # prefix.
 #
 
-_zsh_autosuggest_strategy_default() {
+_zsh_autosuggest_strategy_history() {
 	# Reset options to defaults and enable LOCAL_OPTIONS
 	emulate -L zsh
 

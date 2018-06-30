@@ -11,7 +11,9 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 # Prefix to use when saving original versions of bound widgets
 ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 
-ZSH_AUTOSUGGEST_STRATEGY=default
+# Strategies to use to fetch a suggestion
+# Will try each strategy in order until a suggestion is returned
+ZSH_AUTOSUGGEST_STRATEGY=(history)
 
 # Widgets that clear the suggestion
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
@@ -68,4 +70,7 @@ ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
 
 # Pty name for calculating autosuggestions asynchronously
-ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_pty
+ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_async_pty
+
+# Pty name for capturing completions for completion suggestion strategy
+ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME=zsh_autosuggest_completion_pty
