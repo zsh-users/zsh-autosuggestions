@@ -616,6 +616,8 @@ _zsh_autosuggest_strategy_completion() {
 	# Fetch the first completion result
 	_zsh_autosuggest_capture_completion "$1"
 
+	[[ -z "$completion" ]] && return
+
 	# Add the completion string to the buffer to build the full suggestion
 	local -i i=1
 	while [[ "$completion" != "${1[$i,-1]}"* ]]; do ((i++)); done
