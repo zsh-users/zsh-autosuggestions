@@ -94,7 +94,7 @@ _zsh_autosuggest_capture_completion() {
 	if zle; then
 		zpty $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME zle autosuggest-capture-completion
 	else
-		zpty $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME "_zsh_autosuggest_capture_buffer '$1'"
+		zpty $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME _zsh_autosuggest_capture_buffer "\$1"
 		zpty -w $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME $'\t'
 	fi
 
