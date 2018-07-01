@@ -87,6 +87,8 @@ _zsh_autosuggest_capture_buffer() {
 }
 
 _zsh_autosuggest_capture_completion() {
+	zmodload zsh/zpty 2>/dev/null || return
+
 	typeset -g completion
 	local line REPLY
 

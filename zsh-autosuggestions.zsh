@@ -26,16 +26,6 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 #--------------------------------------------------------------------#
-# Setup                                                              #
-#--------------------------------------------------------------------#
-
-# Precmd hooks for initializing the library and starting pty's
-autoload -Uz add-zsh-hook
-
-# Asynchronous suggestions are generated in a pty
-zmodload zsh/zpty
-
-#--------------------------------------------------------------------#
 # Global Configuration Variables                                     #
 #--------------------------------------------------------------------#
 
@@ -120,25 +110,6 @@ _zsh_autosuggest_escape_command() {
 
 	# Escape special chars in the string (requires EXTENDED_GLOB)
 	echo -E "${1//(#m)[\"\'\\()\[\]|*?~]/\\$MATCH}"
-}
-
-#--------------------------------------------------------------------#
-# Feature Detection                                                  #
-#--------------------------------------------------------------------#
-
-_zsh_autosuggest_feature_detect_zpty_returns_fd() {
-	typeset -g _ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD
-	typeset -h REPLY
-
-	zpty zsh_autosuggest_feature_detect '{ zshexit() { kill -KILL $$; sleep 1 } }'
-
-	if (( REPLY )); then
-		_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD=1
-	else
-		_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD=0
-	fi
-
-	zpty -d zsh_autosuggest_feature_detect
 }
 
 #--------------------------------------------------------------------#
@@ -586,6 +557,8 @@ _zsh_autosuggest_capture_buffer() {
 }
 
 _zsh_autosuggest_capture_completion() {
+	zmodload zsh/zpty 2>/dev/null || return
+
 	typeset -g completion
 	local line REPLY
 
@@ -799,4 +772,5 @@ _zsh_autosuggest_start() {
 }
 
 # Start the autosuggestion widgets on the next precmd
+autoload -Uz add-zsh-hook
 add-zsh-hook precmd _zsh_autosuggest_start
