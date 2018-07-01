@@ -16,6 +16,16 @@
 
 3. Start a new terminal session.
 
+### Antigen
+
+1. Add the following to your `.zshrc`:
+
+    ```sh
+    antigen bundle zsh-users/zsh-autosuggestions
+    ```
+
+2. Start a new terminal session.
+
 ### Oh My Zsh
 
 1. Clone this repository into `$ZSH_CUSTOM/plugins` (by default `~/.oh-my-zsh/custom/plugins`)
