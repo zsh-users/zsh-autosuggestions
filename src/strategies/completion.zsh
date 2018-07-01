@@ -14,16 +14,6 @@ _zsh_autosuggest_capture_postcompletion() {
 }
 
 _zsh_autosuggest_capture_completion_widget() {
-	# There is a bug in zpty module (fixed in zsh/master) by which a
-	# zpty that exits will kill all zpty processes that were forked
-	# before it. Here we set up a zsh exit hook to SIGKILL the zpty
-	# process immediately, before it has a chance to kill any other
-	# zpty processes.
-	zshexit() {
-		kill -KILL $$
-		sleep 1 # Block for long enough for the signal to come through
-	}
-
 	local -a +h comppostfuncs
 	comppostfuncs=(_zsh_autosuggest_capture_postcompletion)
 
@@ -38,12 +28,32 @@ _zsh_autosuggest_capture_completion_widget() {
 
 zle -N autosuggest-capture-completion _zsh_autosuggest_capture_completion_widget
 
-_zsh_autosuggest_capture_buffer() {
-	local BUFFERCONTENT="$1"
-
-	zmodload zsh/parameter 2>/dev/null || return # For `$functions`
+_zsh_autosuggest_capture_setup() {
+	# There is a bug in zpty module in older zsh versions by which a
+	# zpty that exits will kill all zpty processes that were forked
+	# before it. Here we set up a zsh exit hook to SIGKILL the zpty
+	# process immediately, before it has a chance to kill any other
+	# zpty processes.
+	if ! is-at-least 5.4; then
+		zshexit() {
+			kill -KILL $$
+			sleep 1 # Block for long enough for the signal to come through
+		}
+	fi
 
 	bindkey '^I' autosuggest-capture-completion
+}
+
+_zsh_autosuggest_capture_completion_sync() {
+	_zsh_autosuggest_capture_setup
+
+	zle autosuggest-capture-completion
+}
+
+_zsh_autosuggest_capture_completion_async() {
+	_zsh_autosuggest_capture_setup
+
+	zmodload zsh/parameter 2>/dev/null || return # For `$functions`
 
 	# Make vared completion work as if for a normal command line
 	# https://stackoverflow.com/a/7057118/154703
@@ -55,7 +65,7 @@ _zsh_autosuggest_capture_buffer() {
 	}
 
 	# Open zle with buffer set so we can capture completions for it
-	vared BUFFERCONTENT
+	vared 1
 }
 
 _zsh_autosuggest_strategy_completion() {
@@ -70,9 +80,9 @@ _zsh_autosuggest_strategy_completion() {
 
 	# Zle will be inactive if we are in async mode
 	if zle; then
-		zpty $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME zle autosuggest-capture-completion
+		zpty $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME _zsh_autosuggest_capture_completion_sync
 	else
-		zpty $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME _zsh_autosuggest_capture_buffer "\$1"
+		zpty $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME _zsh_autosuggest_capture_completion_async "\$1"
 		zpty -w $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME $'\t'
 	fi
 
