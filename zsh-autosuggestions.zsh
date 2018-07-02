@@ -556,16 +556,18 @@ _zsh_autosuggest_strategy_completion() {
 		zpty -w $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME $'\t'
 	fi
 
-	# The completion result is surrounded by null bytes, so read the
-	# content between the first two null bytes.
-	zpty -r $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME line '*'$'\0''*'$'\0'
+	{
+		# The completion result is surrounded by null bytes, so read the
+		# content between the first two null bytes.
+		zpty -r $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME line '*'$'\0''*'$'\0'
 
-	# On older versions of zsh, we sometimes get extra bytes after the
-	# second null byte, so trim those off the end
-	suggestion="${${${(M)line:#*$'\0'*$'\0'*}#*$'\0'}%%$'\0'*}"
-
-	# Destroy the pty
-	zpty -d $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME
+		# On older versions of zsh, we sometimes get extra bytes after the
+		# second null byte, so trim those off the end
+		suggestion="${${${(M)line:#*$'\0'*$'\0'*}#*$'\0'}%%$'\0'*}"
+	} always {
+		# Destroy the pty
+		zpty -d $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME
+	}
 }
 
 #--------------------------------------------------------------------#
