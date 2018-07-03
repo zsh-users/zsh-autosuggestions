@@ -69,8 +69,5 @@ ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 # Max size of buffer to trigger autosuggestion. Leave undefined for no upper bound.
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
 
-# Pty name for calculating autosuggestions asynchronously
-ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_async_pty
-
 # Pty name for capturing completions for completion suggestion strategy
 ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME=zsh_autosuggest_completion_pty
