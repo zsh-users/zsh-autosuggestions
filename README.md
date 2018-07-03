@@ -43,7 +43,7 @@ Set `ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE` to configure the style that the suggestion
 
 - `history`: Chooses the most recent match from history.
 - `match_prev_cmd`: Like `history`, but chooses the most recent match whose preceding history item matches the most recently executed command ([more info](src/strategies/match_prev_cmd.zsh)). Note that this strategy won't work as expected with ZSH options that don't preserve the history order such as `HIST_IGNORE_ALL_DUPS` or `HIST_EXPIRE_DUPS_FIRST`.
-- `completion`: (experimental) Chooses a suggestion based on what tab-completion would suggest. (requires `zpty` and `zutil` modules)
+- `completion`: (experimental) Chooses a suggestion based on what tab-completion would suggest. (requires `zpty` module)
 
 For example, setting `ZSH_AUTOSUGGEST_STRATEGY=(history completion)` will first try to find a suggestion from your history, but, if it can't find a match, will find a suggestion from the completion engine.
 
