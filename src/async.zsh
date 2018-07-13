@@ -41,10 +41,14 @@ _zsh_autosuggest_async_request() {
 # First arg will be fd ready for reading
 # Second arg will be passed in case of error
 _zsh_autosuggest_async_response() {
-	# Read everything from the fd and give it as a suggestion
-	zle autosuggest-suggest -- "$(cat <&$1)"
+	if [[ -z "$2" || "$2" == "hup" ]]; then
+		# Read everything from the fd and give it as a suggestion
+		zle autosuggest-suggest -- "$(cat <&$1)"
 
-	# Remove the handler and close the fd
+		# Close the fd
+		exec {1}<&-
+	fi
+
+	# Always remove the handler
 	zle -F "$1"
-	exec {1}<&-
 }
