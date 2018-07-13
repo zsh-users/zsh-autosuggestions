@@ -10,8 +10,9 @@ _zsh_autosuggest_async_request() {
 
 	# If we've got a pending request, cancel it
 	if [[ -n "$_ZSH_AUTOSUGGEST_ASYNC_FD" ]] && { true <&$_ZSH_AUTOSUGGEST_ASYNC_FD } 2>/dev/null; then
-		# Close the file descriptor
+		# Close the file descriptor and remove the handler
 		exec {_ZSH_AUTOSUGGEST_ASYNC_FD}<&-
+		zle -F $_ZSH_AUTOSUGGEST_ASYNC_FD
 
 		# Assume the child process created a new process group and send
 		# TERM to the group to attempt to kill all descendent processes
