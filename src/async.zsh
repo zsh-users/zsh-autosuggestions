@@ -13,9 +13,18 @@ _zsh_autosuggest_async_request() {
 		# Close the file descriptor
 		exec {_ZSH_AUTOSUGGEST_ASYNC_FD}<&-
 
-		# Assume the child process created a new process group and send
-		# TERM to the group to attempt to kill all descendent processes
-		kill -TERM -$_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
+		# Zsh will make a new process group for the child process only if job
+		# control is enabled (MONITOR option)
+		if [[ -o MONITOR ]]; then
+			# Send the signal to the process group to kill any processes that may
+			# have been forked by the suggestion strategy
+			kill -TERM -$_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
+		else
+			# Kill just the child process since it wasn't placed in a new process
+			# group. If the suggestion strategy forked any child processes they may
+			# be orphaned and left behind.
+			kill -TERM $_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
+		fi
 	fi
 
 	# Fork a process to fetch a suggestion and open a pipe to read from it
