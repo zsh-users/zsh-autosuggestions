@@ -74,7 +74,9 @@ _zsh_autosuggest_bind_widget() {
 
 # Map all configured widgets to the right autosuggest widgets
 _zsh_autosuggest_bind_widgets() {
-	local widget
+	emulate -L zsh
+
+ 	local widget
 	local ignore_widgets
 
 	ignore_widgets=(
