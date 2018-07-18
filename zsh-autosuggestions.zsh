@@ -184,7 +184,9 @@ _zsh_autosuggest_bind_widget() {
 
 # Map all configured widgets to the right autosuggest widgets
 _zsh_autosuggest_bind_widgets() {
-	local widget
+	emulate -L zsh
+
+ 	local widget
 	local ignore_widgets
 
 	ignore_widgets=(
@@ -291,6 +293,8 @@ _zsh_autosuggest_clear() {
 
 # Modify the buffer and get a new suggestion
 _zsh_autosuggest_modify() {
+	emulate -L zsh
+
 	local -i retval
 
 	# Only available in zsh >= 5.4
@@ -358,6 +362,8 @@ _zsh_autosuggest_fetch() {
 
 # Offer a suggestion
 _zsh_autosuggest_suggest() {
+	emulate -L zsh
+
 	local suggestion="$1"
 
 	if [[ -n "$suggestion" ]] && (( $#BUFFER )); then
