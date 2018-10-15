@@ -27,7 +27,7 @@ If you invoke the `forward-word` widget, it will partially accept the suggestion
 
 ## Configuration
 
-You may want to override the default global config variables after sourcing the plugin. Default values of these variables can be found [here](src/config.zsh).
+You may want to override the default global config variables. Default values of these variables can be found [here](src/config.zsh).
 
 **Note:** If you are using Oh My Zsh, you can put this configuration in a file in the `$ZSH_CUSTOM` directory. See their comments on [overriding internals](https://github.com/robbyrussell/oh-my-zsh/wiki/Customization#overriding-internals).
 
