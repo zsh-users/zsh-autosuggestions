@@ -11,8 +11,8 @@ RSpec.shared_context 'terminal session' do
 
   around do |example|
     before_sourcing.call
-
-    session.run_command((['source zsh-autosuggestions.zsh'] + options).join('; '))
+    session.run_command(options.join('; '))
+    session.run_command('source zsh-autosuggestions.zsh')
     after_sourcing.call
     session.clear_screen
 
