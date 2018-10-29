@@ -49,6 +49,25 @@ ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 
 ZSH_AUTOSUGGEST_STRATEGY=default
 
+# Holds currently recognized trigger – two first characters
+# of $BUFFER can be special, see the next parameter
+ZSH_AUTOSUGGEST_CURRENT_TRIGGER=""
+
+# Dynamically change the strategy - first two characters
+# of $BUFFER can be recognized as special: if they occur
+# in the map below - and if so then the strategy will be
+# changed for current single command
+typeset -gA ZSH_AUTOSUGGEST_DYNAMIC_STRATEGY_TRIGGER_MAP
+ZSH_AUTOSUGGEST_DYNAMIC_STRATEGY_TRIGGER_MAP=(
+	"@@" default
+	"%%" match_prev_cmd
+)
+
+# If the possible trigger will match above hash,
+# then a custom, dynamic strategy will be selected
+# and stored in this scalar; empty if no match.
+ZSH_AUTOSUGGEST_DYNAMIC_STRATEGY=""
+
 # Widgets that clear the suggestion
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
 	history-search-forward
@@ -211,6 +230,9 @@ _zsh_autosuggest_bind_widget() {
 
 # Map all configured widgets to the right autosuggest widgets
 _zsh_autosuggest_bind_widgets() {
+        # Clear dynamic-strategy
+        ZSH_AUTOSUGGEST_CURRENT_TRIGGER="" ZSH_AUTOSUGGEST_DYNAMIC_STRATEGY=""
+
 	local widget
 	local ignore_widgets
 
@@ -340,6 +362,23 @@ _zsh_autosuggest_modify() {
 		return $retval
 	fi
 
+	# Check if user want's to switch the strategy
+	local trigger_candidate strategy_candidate
+	# Basically TRIGGERS_MAP["first_two_letters_of_the_cmdline"],
+	# this can yield the strategy to use
+	trigger_candidate="${BUFFER[1,2]}"
+	strategy_candidate="${ZSH_AUTOSUGGEST_DYNAMIC_STRATEGY_TRIGGER_MAP[$trigger_candidate]}"
+	# An actual trigger occurred?
+	[[ -n "$strategy_candidate" ]] && {
+		ZSH_AUTOSUGGEST_CURRENT_TRIGGER="$trigger_candidate"
+		ZSH_AUTOSUGGEST_DYNAMIC_STRATEGY="$strategy_candidate"
+		BUFFER="${BUFFER##$trigger_candidate}" # this will trigger a reaction from F-Sy-H and Z-Sy-H, sadly
+		POSTDISPLAY=$'\n'"# Selected strategy: $strategy_candidate"
+		# Recreate async server so it has the new values of the globals
+		zpty -t "$ZSH_AUTOSUGGEST_ASYNC_PTY_NAME" &>/dev/null && _zsh_autosuggest_async_pty_recreate
+		return $retval
+	}
+
 	# Optimize if manually typing in the suggestion
 	if (( $#BUFFER > $#orig_buffer )); then
 		local added=${BUFFER#$orig_buffer}
@@ -378,7 +417,7 @@ _zsh_autosuggest_fetch() {
 		_zsh_autosuggest_async_request "$BUFFER"
 	else
 		local suggestion
-		_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$BUFFER"
+		_zsh_autosuggest_strategy_${ZSH_AUTOSUGGEST_DYNAMIC_STRATEGY:-$ZSH_AUTOSUGGEST_STRATEGY} "$BUFFER"
 		_zsh_autosuggest_suggest "$suggestion"
 	fi
 }
@@ -610,7 +649,7 @@ _zsh_autosuggest_async_server() {
 		# Run suggestion search in the background
 		(
 			local suggestion
-			_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$query"
+			_zsh_autosuggest_strategy_${ZSH_AUTOSUGGEST_DYNAMIC_STRATEGY:-$ZSH_AUTOSUGGEST_STRATEGY} "$query"
 			echo -n -E "$suggestion"$'\0'
 		) &
 
