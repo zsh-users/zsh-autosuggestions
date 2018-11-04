@@ -186,7 +186,7 @@ _zsh_autosuggest_bind_widget() {
 _zsh_autosuggest_bind_widgets() {
 	emulate -L zsh
 
- 	local widget
+	local widget
 	local ignore_widgets
 
 	ignore_widgets=(
@@ -287,6 +287,7 @@ _zsh_autosuggest_toggle() {
 _zsh_autosuggest_clear() {
 	# Remove the suggestion
 	unset POSTDISPLAY
+	history_index=1
 
 	_zsh_autosuggest_invoke_original_widget $@
 }
@@ -306,6 +307,7 @@ _zsh_autosuggest_modify() {
 
 	# Clear suggestion while waiting for next one
 	unset POSTDISPLAY
+	history_index=1
 
 	# Original widget may modify the buffer
 	_zsh_autosuggest_invoke_original_widget $@
@@ -349,14 +351,31 @@ _zsh_autosuggest_modify() {
 	return $retval
 }
 
+# Navigate to the next suggestion in the suggestion list
+_zsh_autosuggest_next() {
+	history_index=$(( history_index + 1 ))
+	_zsh_autosuggest_fetch
+}
+
+# Navigate to the previous suggestion in the suggestion list
+_zsh_autosuggest_previous() {
+	(( history_index > 1 )) && history_index=$(( history_index - 1 ))
+	_zsh_autosuggest_fetch
+}
+
 # Fetch a new suggestion based on what's currently in the buffer
 _zsh_autosuggest_fetch() {
+	if ! (( history_index > 0 )); then
+		history_index=1
+	fi
+
 	if [[ -n "${ZSH_AUTOSUGGEST_USE_ASYNC+x}" ]]; then
-		_zsh_autosuggest_async_request "$BUFFER"
+		_zsh_autosuggest_async_request "$history_index" "$BUFFER"
 	else
 		local suggestion
-		_zsh_autosuggest_fetch_suggestion "$BUFFER"
-		_zsh_autosuggest_suggest "$suggestion"
+		local capped_history_index
+		_zsh_autosuggest_fetch_suggestion "$history_index" "$BUFFER"
+		_zsh_autosuggest_suggest "$capped_history_index" "$suggestion"
 	fi
 }
 
@@ -364,12 +383,15 @@ _zsh_autosuggest_fetch() {
 _zsh_autosuggest_suggest() {
 	emulate -L zsh
 
-	local suggestion="$1"
+	local capped_history_index="$1"
+	local suggestion="$2"
 
 	if [[ -n "$suggestion" ]] && (( $#BUFFER )); then
 		POSTDISPLAY="${suggestion#$BUFFER}"
+		history_index="${capped_history_index}"
 	else
 		unset POSTDISPLAY
+		history_index=1
 	fi
 }
 
@@ -390,6 +412,7 @@ _zsh_autosuggest_accept() {
 
 		# Remove the suggestion
 		unset POSTDISPLAY
+		history_index=1
 
 		# Move the cursor to the end of the buffer
 		CURSOR=${#BUFFER}
@@ -405,6 +428,7 @@ _zsh_autosuggest_execute() {
 
 	# Remove the suggestion
 	unset POSTDISPLAY
+	history_index=1
 
 	# Call the original `accept-line` to handle syntax highlighting or
 	# other potential custom behavior
@@ -446,7 +470,7 @@ _zsh_autosuggest_partial_accept() {
 	return $retval
 }
 
-for action in clear modify fetch suggest accept partial_accept execute enable disable toggle; do
+for action in clear modify fetch suggest accept partial_accept execute enable disable toggle next previous; do
 	eval "_zsh_autosuggest_widget_$action() {
 		local -i retval
 
@@ -471,6 +495,8 @@ zle -N autosuggest-execute _zsh_autosuggest_widget_execute
 zle -N autosuggest-enable _zsh_autosuggest_widget_enable
 zle -N autosuggest-disable _zsh_autosuggest_widget_disable
 zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
+zle -N autosuggest-next _zsh_autosuggest_widget_next
+zle -N autosuggest-previous _zsh_autosuggest_widget_previous
 
 #--------------------------------------------------------------------#
 # Completion Suggestion Strategy                                     #
@@ -548,6 +574,10 @@ _zsh_autosuggest_strategy_completion() {
 	typeset -g suggestion
 	local line REPLY
 
+	# Ignore index parameter, since it does not apply to this strategy
+	typeset -g capped_history_index=1
+	shift
+
 	# Exit if we don't have completions
 	whence compdef >/dev/null || return
 
@@ -579,8 +609,8 @@ _zsh_autosuggest_strategy_completion() {
 #--------------------------------------------------------------------#
 # History Suggestion Strategy                                        #
 #--------------------------------------------------------------------#
-# Suggests the most recent history item that matches the given
-# prefix.
+# Suggests the history item that matches the given prefix and history
+# index
 #
 
 _zsh_autosuggest_strategy_history() {
@@ -590,15 +620,22 @@ _zsh_autosuggest_strategy_history() {
 	# Enable globbing flags so that we can use (#m)
 	setopt EXTENDED_GLOB
 
+	# Extract the paramenters for this function
+	typeset -g capped_history_index="${1}"
+	local query="${2}"
+
 	# Escape backslashes and all of the glob operators so we can use
 	# this string as a pattern to search the $history associative array.
 	# - (#m) globbing flag enables setting references for match data
 	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
-	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
+	local prefix="${query//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
 
 	# Get the history items that match
-	# - (r) subscript flag makes the pattern match on values
-	typeset -g suggestion="${history[(r)${prefix}*]}"
+	# - (R) subscript flag makes the pattern match on values
+	# - (k) returns the entry indices instead of values
+	local suggestions=(${(k)history[(R)$prefix*]})
+	(( capped_history_index > $#suggestions )) && capped_history_index=${#suggestions}
+	typeset -g suggestion="${history[${suggestions[${capped_history_index}]}]}"
 }
 
 #--------------------------------------------------------------------#
@@ -629,8 +666,12 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	# Enable globbing flags so that we can use (#m)
 	setopt EXTENDED_GLOB
 
+	# Extract the paramenters for this function
+	typeset -g capped_history_index="${1}"
+	local query="${2}"
+
 	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
-	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
+	local prefix="${query//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
 
 	# Get all history event numbers that correspond to history
 	# entries that match pattern $prefix*
@@ -638,13 +679,13 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	history_match_keys=(${(k)history[(R)$prefix*]})
 
 	# By default we use the first history number (most recent history entry)
-	local histkey="${history_match_keys[1]}"
+	local histkey="${history_match_keys[capped_history_index]}"
 
 	# Get the previously executed command
 	local prev_cmd="$(_zsh_autosuggest_escape_command "${history[$((HISTCMD-1))]}")"
 
 	# Iterate up to the first 200 history event numbers that match $prefix
-	for key in "${(@)history_match_keys[1,200]}"; do
+	for key in "${(@)history_match_keys[capped_history_index,200]}"; do
 		# Stop if we ran out of history
 		[[ $key -gt 1 ]] || break
 
@@ -668,6 +709,7 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 #
 
 _zsh_autosuggest_fetch_suggestion() {
+	typeset -g capped_history_index
 	typeset -g suggestion
 	local -a strategies
 	local strategy
@@ -677,7 +719,7 @@ _zsh_autosuggest_fetch_suggestion() {
 
 	for strategy in $strategies; do
 		# Try to get a suggestion from this strategy
-		_zsh_autosuggest_strategy_$strategy "$1"
+		_zsh_autosuggest_strategy_$strategy "$@"
 
 		# Break once we've found a suggestion
 		[[ -n "$suggestion" ]] && break
@@ -719,9 +761,10 @@ _zsh_autosuggest_async_request() {
 		echo $sysparams[pid]
 
 		# Fetch and print the suggestion
+		local capped_history_index
 		local suggestion
-		_zsh_autosuggest_fetch_suggestion "$1"
-		echo -nE "$suggestion"
+		_zsh_autosuggest_fetch_suggestion "$@"
+		echo -nE "$capped_history_index" "$suggestion"
 	)
 
 	# Read the pid from the child process
@@ -737,7 +780,15 @@ _zsh_autosuggest_async_request() {
 _zsh_autosuggest_async_response() {
 	if [[ -z "$2" || "$2" == "hup" ]]; then
 		# Read everything from the fd and give it as a suggestion
-		zle autosuggest-suggest -- "$(cat <&$1)"
+		local raw_input=`cat <&$1`
+
+		# Break up the output
+		# - (z) split into words using shell parsing to find the words
+		local input=(${(z)raw_input})
+		local capped_history_index="${input[1]}"
+		local suggestion="${input[2,-1]}"
+
+		zle autosuggest-suggest -- "$capped_history_index" "$suggestion"
 
 		# Close the fd
 		exec {1}<&-

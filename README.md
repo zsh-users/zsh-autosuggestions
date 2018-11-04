@@ -84,6 +84,8 @@ This plugin provides a few widgets that you can use with `bindkey`:
 5. `autosuggest-disable`: Disables suggestions.
 6. `autosuggest-enable`: Re-enables suggestions.
 7. `autosuggest-toggle`: Toggles between enabled/disabled suggestions.
+8. `autosuggest-next`: Suggests the next older entry from history.
+9. `autosuggest-previous`: Suggests the next newer entry from history.
 
 For example, this would bind <kbd>ctrl</kbd> + <kbd>space</kbd> to accept the current suggestion.
 

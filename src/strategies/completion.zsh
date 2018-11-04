@@ -75,6 +75,10 @@ _zsh_autosuggest_strategy_completion() {
 	typeset -g suggestion
 	local line REPLY
 
+	# Ignore index parameter, since it does not apply to this strategy
+	typeset -g capped_history_index=1
+	shift
+
 	# Exit if we don't have completions
 	whence compdef >/dev/null || return
 

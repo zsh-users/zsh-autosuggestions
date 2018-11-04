@@ -76,7 +76,7 @@ _zsh_autosuggest_bind_widget() {
 _zsh_autosuggest_bind_widgets() {
 	emulate -L zsh
 
- 	local widget
+	local widget
 	local ignore_widgets
 
 	ignore_widgets=(

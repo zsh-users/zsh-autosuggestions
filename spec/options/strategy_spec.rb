@@ -1,7 +1,7 @@
 describe 'a suggestion for a given prefix' do
   let(:history_strategy) { '_zsh_autosuggest_strategy_history() { suggestion="history" }' }
-  let(:foobar_strategy) { '_zsh_autosuggest_strategy_foobar() { [[ "foobar baz" = $1* ]] && suggestion="foobar baz" }' }
-  let(:foobaz_strategy) { '_zsh_autosuggest_strategy_foobaz() { [[ "foobaz bar" = $1* ]] && suggestion="foobaz bar" }' }
+  let(:foobar_strategy) { '_zsh_autosuggest_strategy_foobar() { [[ "foobar baz" = $2* ]] && suggestion="foobar baz" }' }
+  let(:foobaz_strategy) { '_zsh_autosuggest_strategy_foobaz() { [[ "foobaz bar" = $2* ]] && suggestion="foobaz bar" }' }
 
   let(:options) { [ history_strategy ] }
 

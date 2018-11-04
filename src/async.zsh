@@ -34,9 +34,10 @@ _zsh_autosuggest_async_request() {
 		echo $sysparams[pid]
 
 		# Fetch and print the suggestion
+		local capped_history_index
 		local suggestion
-		_zsh_autosuggest_fetch_suggestion "$1"
-		echo -nE "$suggestion"
+		_zsh_autosuggest_fetch_suggestion "$@"
+		echo -nE "$capped_history_index" "$suggestion"
 	)
 
 	# Read the pid from the child process
@@ -52,7 +53,15 @@ _zsh_autosuggest_async_request() {
 _zsh_autosuggest_async_response() {
 	if [[ -z "$2" || "$2" == "hup" ]]; then
 		# Read everything from the fd and give it as a suggestion
-		zle autosuggest-suggest -- "$(cat <&$1)"
+		local raw_input=`cat <&$1`
+
+		# Break up the output
+		# - (z) split into words using shell parsing to find the words
+		local input=(${(z)raw_input})
+		local capped_history_index="${input[1]}"
+		local suggestion="${input[2,-1]}"
+
+		zle autosuggest-suggest -- "$capped_history_index" "$suggestion"
 
 		# Close the fd
 		exec {1}<&-

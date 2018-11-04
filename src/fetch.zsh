@@ -7,6 +7,7 @@
 #
 
 _zsh_autosuggest_fetch_suggestion() {
+	typeset -g capped_history_index
 	typeset -g suggestion
 	local -a strategies
 	local strategy
@@ -16,7 +17,7 @@ _zsh_autosuggest_fetch_suggestion() {
 
 	for strategy in $strategies; do
 		# Try to get a suggestion from this strategy
-		_zsh_autosuggest_strategy_$strategy "$1"
+		_zsh_autosuggest_strategy_$strategy "$@"
 
 		# Break once we've found a suggestion
 		[[ -n "$suggestion" ]] && break
