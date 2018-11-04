@@ -25,15 +25,21 @@ _zsh_autosuggest_async_server() {
 
 	local last_pid
 
-	while IFS='' read -r -d $'\0' query; do
+	while IFS='' read -r -d $'\0' input; do
 		# Kill last bg process
 		kill -KILL $last_pid &>/dev/null
+
+		# Break up the input into a list
+		# - (p) recognize the same escape sequences as the print builtin
+		# - (s) force field splitting at the separator given '\1'
+		local query=( ${(ps:\1:)input} )
 
 		# Run suggestion search in the background
 		(
 			local suggestion
-			_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$query"
-			echo -n -E "$suggestion"$'\0'
+			local capped_history_index
+			_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "${query[1]}" "${query[2]}"
+			echo -n -E "$capped_history_index"$'\1'"$suggestion"$'\0'
 		) &
 
 		last_pid=$!
@@ -42,7 +48,7 @@ _zsh_autosuggest_async_server() {
 
 _zsh_autosuggest_async_request() {
 	# Write the query to the zpty process to fetch a suggestion
-	zpty -w -n $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "${1}"$'\0'
+	zpty -w -n $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "${1}"$'\1'"${2}"$'\0'
 }
 
 # Called when new data is ready to be read from the pty
@@ -51,10 +57,15 @@ _zsh_autosuggest_async_request() {
 _zsh_autosuggest_async_response() {
 	setopt LOCAL_OPTIONS EXTENDED_GLOB
 
-	local suggestion
+	local raw_input
 
-	zpty -rt $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME suggestion '*'$'\0' 2>/dev/null
-	zle autosuggest-suggest -- "${suggestion%%$'\0'##}"
+	zpty -rt $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME raw_input '*'$'\0' 2>/dev/null
+
+	local input=( ${(ps:\1:)raw_input%%$'\0'##} )
+	local capped_history_index="${input[1]}"
+	local suggestion="${input[2]}"
+
+	zle autosuggest-suggest -- "${capped_history_index}" "${suggestion}"
 }
 
 _zsh_autosuggest_async_pty_create() {

@@ -27,8 +27,12 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	# Enable globbing flags so that we can use (#m)
 	setopt EXTENDED_GLOB
 
+	# Extract the paramenters for this function
+	typeset -g capped_history_index="${1}"
+	local query="${2}"
+
 	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
-	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
+	local prefix="${query//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
 
 	# Get all history event numbers that correspond to history
 	# entries that match pattern $prefix*
@@ -36,13 +40,13 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	history_match_keys=(${(k)history[(R)$prefix*]})
 
 	# By default we use the first history number (most recent history entry)
-	local histkey="${history_match_keys[1]}"
+	local histkey="${history_match_keys[capped_history_index]}"
 
 	# Get the previously executed command
 	local prev_cmd="$(_zsh_autosuggest_escape_command "${history[$((HISTCMD-1))]}")"
 
 	# Iterate up to the first 200 history event numbers that match $prefix
-	for key in "${(@)history_match_keys[1,200]}"; do
+	for key in "${(@)history_match_keys[capped_history_index,200]}"; do
 		# Stop if we ran out of history
 		[[ $key -gt 1 ]] || break
 

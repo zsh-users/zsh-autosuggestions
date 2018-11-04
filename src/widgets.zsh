@@ -31,6 +31,7 @@ _zsh_autosuggest_toggle() {
 _zsh_autosuggest_clear() {
 	# Remove the suggestion
 	unset POSTDISPLAY
+	history_index=1
 
 	_zsh_autosuggest_invoke_original_widget $@
 }
@@ -91,25 +92,45 @@ _zsh_autosuggest_modify() {
 	return $retval
 }
 
+# Navigate to the next suggestion in the suggestion list
+_zsh_autosuggest_next() {
+	history_index=$(( history_index + 1 ))
+	_zsh_autosuggest_fetch
+}
+
+# Navigate to the previous suggestion in the suggestion list
+_zsh_autosuggest_previous() {
+	(( history_index > 1 )) && history_index=$(( history_index - 1 ))
+	_zsh_autosuggest_fetch
+}
+
 # Fetch a new suggestion based on what's currently in the buffer
 _zsh_autosuggest_fetch() {
+	if ! (( history_index > 0 )); then
+		history_index=1
+	fi
+
 	if zpty -t "$ZSH_AUTOSUGGEST_ASYNC_PTY_NAME" &>/dev/null; then
-		_zsh_autosuggest_async_request "$BUFFER"
+		_zsh_autosuggest_async_request ${history_index} "$BUFFER"
 	else
 		local suggestion
-		_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$BUFFER"
-		_zsh_autosuggest_suggest "$suggestion"
+		local capped_history_index
+		_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY ${history_index} "$BUFFER"
+		_zsh_autosuggest_suggest "$capped_history_index" "$suggestion"
 	fi
 }
 
 # Offer a suggestion
 _zsh_autosuggest_suggest() {
-	local suggestion="$1"
+	local capped_history_index="$1"
+	local suggestion="$2"
 
 	if [[ -n "$suggestion" ]] && (( $#BUFFER )); then
 		POSTDISPLAY="${suggestion#$BUFFER}"
+		history_index="${capped_history_index}"
 	else
 		unset POSTDISPLAY
+		history_index=1
 	fi
 }
 
@@ -130,6 +151,7 @@ _zsh_autosuggest_accept() {
 
 		# Remove the suggestion
 		unset POSTDISPLAY
+		history_index=1
 
 		# Move the cursor to the end of the buffer
 		CURSOR=${#BUFFER}
@@ -145,6 +167,7 @@ _zsh_autosuggest_execute() {
 
 	# Remove the suggestion
 	unset POSTDISPLAY
+	history_index=1
 
 	# Call the original `accept-line` to handle syntax highlighting or
 	# other potential custom behavior
@@ -186,7 +209,7 @@ _zsh_autosuggest_partial_accept() {
 	return $retval
 }
 
-for action in clear modify fetch suggest accept partial_accept execute enable disable toggle; do
+for action in clear modify fetch suggest accept partial_accept execute enable disable toggle next previous; do
 	eval "_zsh_autosuggest_widget_$action() {
 		local -i retval
 
@@ -211,3 +234,5 @@ zle -N autosuggest-execute _zsh_autosuggest_widget_execute
 zle -N autosuggest-enable _zsh_autosuggest_widget_enable
 zle -N autosuggest-disable _zsh_autosuggest_widget_disable
 zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
+zle -N autosuggest-next _zsh_autosuggest_widget_next
+zle -N autosuggest-previous _zsh_autosuggest_widget_previous

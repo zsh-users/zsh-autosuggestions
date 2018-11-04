@@ -312,6 +312,7 @@ _zsh_autosuggest_toggle() {
 _zsh_autosuggest_clear() {
 	# Remove the suggestion
 	unset POSTDISPLAY
+	history_index=1
 
 	_zsh_autosuggest_invoke_original_widget $@
 }
@@ -372,25 +373,45 @@ _zsh_autosuggest_modify() {
 	return $retval
 }
 
+# Navigate to the next suggestion in the suggestion list
+_zsh_autosuggest_next() {
+	history_index=$(( history_index + 1 ))
+	_zsh_autosuggest_fetch
+}
+
+# Navigate to the previous suggestion in the suggestion list
+_zsh_autosuggest_previous() {
+	(( history_index > 1 )) && history_index=$(( history_index - 1 ))
+	_zsh_autosuggest_fetch
+}
+
 # Fetch a new suggestion based on what's currently in the buffer
 _zsh_autosuggest_fetch() {
+	if ! (( history_index > 0 )); then
+		history_index=1
+	fi
+
 	if zpty -t "$ZSH_AUTOSUGGEST_ASYNC_PTY_NAME" &>/dev/null; then
-		_zsh_autosuggest_async_request "$BUFFER"
+		_zsh_autosuggest_async_request ${history_index} "$BUFFER"
 	else
 		local suggestion
-		_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$BUFFER"
-		_zsh_autosuggest_suggest "$suggestion"
+		local capped_history_index
+		_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY ${history_index} "$BUFFER"
+		_zsh_autosuggest_suggest "$capped_history_index" "$suggestion"
 	fi
 }
 
 # Offer a suggestion
 _zsh_autosuggest_suggest() {
-	local suggestion="$1"
+	local capped_history_index="$1"
+	local suggestion="$2"
 
 	if [[ -n "$suggestion" ]] && (( $#BUFFER )); then
 		POSTDISPLAY="${suggestion#$BUFFER}"
+		history_index="${capped_history_index}"
 	else
 		unset POSTDISPLAY
+		history_index=1
 	fi
 }
 
@@ -411,6 +432,7 @@ _zsh_autosuggest_accept() {
 
 		# Remove the suggestion
 		unset POSTDISPLAY
+		history_index=1
 
 		# Move the cursor to the end of the buffer
 		CURSOR=${#BUFFER}
@@ -426,6 +448,7 @@ _zsh_autosuggest_execute() {
 
 	# Remove the suggestion
 	unset POSTDISPLAY
+	history_index=1
 
 	# Call the original `accept-line` to handle syntax highlighting or
 	# other potential custom behavior
@@ -467,7 +490,7 @@ _zsh_autosuggest_partial_accept() {
 	return $retval
 }
 
-for action in clear modify fetch suggest accept partial_accept execute enable disable toggle; do
+for action in clear modify fetch suggest accept partial_accept execute enable disable toggle next previous; do
 	eval "_zsh_autosuggest_widget_$action() {
 		local -i retval
 
@@ -492,12 +515,14 @@ zle -N autosuggest-execute _zsh_autosuggest_widget_execute
 zle -N autosuggest-enable _zsh_autosuggest_widget_enable
 zle -N autosuggest-disable _zsh_autosuggest_widget_disable
 zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
+zle -N autosuggest-next _zsh_autosuggest_widget_next
+zle -N autosuggest-previous _zsh_autosuggest_widget_previous
 
 #--------------------------------------------------------------------#
 # Default Suggestion Strategy                                        #
 #--------------------------------------------------------------------#
-# Suggests the most recent history item that matches the given
-# prefix.
+# Suggests the history item that matches the given prefix and history
+# index
 #
 
 _zsh_autosuggest_strategy_default() {
@@ -507,15 +532,23 @@ _zsh_autosuggest_strategy_default() {
 	# Enable globbing flags so that we can use (#m)
 	setopt EXTENDED_GLOB
 
+	# Extract the paramenters for this function
+	typeset -g capped_history_index="${1}"
+	local query="${2}"
+
 	# Escape backslashes and all of the glob operators so we can use
 	# this string as a pattern to search the $history associative array.
 	# - (#m) globbing flag enables setting references for match data
 	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
-	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
+	local prefix="${query//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
 
 	# Get the history items that match
-	# - (r) subscript flag makes the pattern match on values
-	typeset -g suggestion="${history[(r)${prefix}*]}"
+	# - (R) subscript flag makes the pattern match on values
+	# - (k) returns the entry indices instead of values
+	local suggestions=(${(k)history[(R)$prefix*]})
+
+	(( capped_history_index > $#suggestions )) && capped_history_index=${#suggestions}
+	typeset -g suggestion="${history[${suggestions[${capped_history_index}]}]}"
 }
 
 #--------------------------------------------------------------------#
@@ -546,8 +579,12 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	# Enable globbing flags so that we can use (#m)
 	setopt EXTENDED_GLOB
 
+	# Extract the paramenters for this function
+	typeset -g capped_history_index="${1}"
+	local query="${2}"
+
 	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
-	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
+	local prefix="${query//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
 
 	# Get all history event numbers that correspond to history
 	# entries that match pattern $prefix*
@@ -555,13 +592,13 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	history_match_keys=(${(k)history[(R)$prefix*]})
 
 	# By default we use the first history number (most recent history entry)
-	local histkey="${history_match_keys[1]}"
+	local histkey="${history_match_keys[capped_history_index]}"
 
 	# Get the previously executed command
 	local prev_cmd="$(_zsh_autosuggest_escape_command "${history[$((HISTCMD-1))]}")"
 
 	# Iterate up to the first 200 history event numbers that match $prefix
-	for key in "${(@)history_match_keys[1,200]}"; do
+	for key in "${(@)history_match_keys[capped_history_index,200]}"; do
 		# Stop if we ran out of history
 		[[ $key -gt 1 ]] || break
 
@@ -603,15 +640,21 @@ _zsh_autosuggest_async_server() {
 
 	local last_pid
 
-	while IFS='' read -r -d $'\0' query; do
+	while IFS='' read -r -d $'\0' input; do
 		# Kill last bg process
 		kill -KILL $last_pid &>/dev/null
+
+		# Break up the input into a list
+		# - (p) recognize the same escape sequences as the print builtin
+		# - (s) force field splitting at the separator given '\1'
+		local query=( ${(ps:\1:)input} )
 
 		# Run suggestion search in the background
 		(
 			local suggestion
-			_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$query"
-			echo -n -E "$suggestion"$'\0'
+			local capped_history_index
+			_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "${query[1]}" "${query[2]}"
+			echo -n -E "$capped_history_index"$'\1'"$suggestion"$'\0'
 		) &
 
 		last_pid=$!
@@ -620,7 +663,7 @@ _zsh_autosuggest_async_server() {
 
 _zsh_autosuggest_async_request() {
 	# Write the query to the zpty process to fetch a suggestion
-	zpty -w -n $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "${1}"$'\0'
+	zpty -w -n $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "${1}"$'\1'"${2}"$'\0'
 }
 
 # Called when new data is ready to be read from the pty
@@ -629,10 +672,15 @@ _zsh_autosuggest_async_request() {
 _zsh_autosuggest_async_response() {
 	setopt LOCAL_OPTIONS EXTENDED_GLOB
 
-	local suggestion
+	local raw_input
 
-	zpty -rt $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME suggestion '*'$'\0' 2>/dev/null
-	zle autosuggest-suggest -- "${suggestion%%$'\0'##}"
+	zpty -rt $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME raw_input '*'$'\0' 2>/dev/null
+
+	local input=( ${(ps:\1:)raw_input%%$'\0'##} )
+	local capped_history_index="${input[1]}"
+	local suggestion="${input[2]}"
+
+	zle autosuggest-suggest -- "${capped_history_index}" "${suggestion}"
 }
 
 _zsh_autosuggest_async_pty_create() {
