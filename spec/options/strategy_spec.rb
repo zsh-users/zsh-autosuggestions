@@ -3,7 +3,11 @@ describe 'a suggestion for a given prefix' do
   let(:foobar_strategy) { '_zsh_autosuggest_strategy_foobar() { [[ "foobar baz" = $1* ]] && suggestion="foobar baz" }' }
   let(:foobaz_strategy) { '_zsh_autosuggest_strategy_foobaz() { [[ "foobaz bar" = $1* ]] && suggestion="foobaz bar" }' }
 
-  let(:options) { [ history_strategy ] }
+  let(:after_sourcing) do
+    -> do
+      session.run_command(history_strategy)
+    end
+  end
 
   it 'by default is determined by calling the `history` strategy function' do
     session.send_string('h')
@@ -11,11 +15,14 @@ describe 'a suggestion for a given prefix' do
   end
 
   context 'when ZSH_AUTOSUGGEST_STRATEGY is set to an array' do
-    let(:options) { [
-      foobar_strategy,
-      foobaz_strategy,
-      'ZSH_AUTOSUGGEST_STRATEGY=(foobar foobaz)'
-    ] }
+    let(:after_sourcing) do
+      -> do
+        session.
+          run_command(foobar_strategy).
+          run_command(foobaz_strategy).
+          run_command('ZSH_AUTOSUGGEST_STRATEGY=(foobar foobaz)')
+      end
+    end
 
     it 'is determined by the first strategy function to return a suggestion' do
       session.send_string('foo')
@@ -27,11 +34,14 @@ describe 'a suggestion for a given prefix' do
   end
 
   context 'when ZSH_AUTOSUGGEST_STRATEGY is set to a string' do
-    let(:options) { [
-      foobar_strategy,
-      foobaz_strategy,
-      'ZSH_AUTOSUGGEST_STRATEGY="foobar foobaz"'
-    ] }
+    let(:after_sourcing) do
+      -> do
+        session.
+          run_command(foobar_strategy).
+          run_command(foobaz_strategy).
+          run_command('ZSH_AUTOSUGGEST_STRATEGY="foobar foobaz"')
+      end
+    end
 
     it 'is determined by the first strategy function to return a suggestion' do
       session.send_string('foo')
