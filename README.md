@@ -139,6 +139,20 @@ Tests are written in ruby using the [`rspec`](http://rspec.info/) framework. The
 
 Test files live in `spec/`. To run the tests, run `make test`. To run a specific test, run `TESTS=spec/some_spec.rb make test`. You can also specify a `zsh` binary to use by setting the `TEST_ZSH_BIN` environment variable (ex: `TEST_ZSH_BIN=/bin/zsh make test`).
 
+A docker image for testing is available [on docker hub](https://hub.docker.com/r/ericfreese/zsh-autosuggestions-test). It comes with ruby, the bundler dependencies, and all supported versions of zsh installed.
+
+Pull the docker image with:
+
+```sh
+docker pull ericfreese/zsh-autosuggestions-test
+```
+
+To run the tests for a specific version of zsh (where `<version>` below is substituted with the contents of a line from the [`ZSH_VERSIONS`](ZSH_VERSIONS) file):
+
+```sh
+docker run -it -e TEST_ZSH_BIN=zsh-<version> -v $PWD:/zsh-autosuggestions zsh-autosuggestions-test make test
+```
+
 
 ## License
 
