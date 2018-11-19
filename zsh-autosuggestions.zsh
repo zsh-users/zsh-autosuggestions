@@ -47,7 +47,7 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 # Prefix to use when saving original versions of bound widgets
 ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 
-ZSH_AUTOSUGGEST_STRATEGY=default
+ZSH_AUTOSUGGEST_STRATEGY=history
 
 # Widgets that clear the suggestion
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
@@ -500,13 +500,13 @@ zle -N autosuggest-disable _zsh_autosuggest_widget_disable
 zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
 
 #--------------------------------------------------------------------#
-# Default Suggestion Strategy                                        #
+# History Suggestion Strategy                                        #
 #--------------------------------------------------------------------#
 # Suggests the most recent history item that matches the given
 # prefix.
 #
 
-_zsh_autosuggest_strategy_default() {
+_zsh_autosuggest_strategy_history() {
 	# Reset options to defaults and enable LOCAL_OPTIONS
 	emulate -L zsh
 

@@ -1,5 +1,5 @@
 describe 'a suggestion for a given prefix' do
-  let(:options) { ['_zsh_autosuggest_strategy_default() { suggestion="echo foo" }'] }
+  let(:options) { ['_zsh_autosuggest_strategy_history() { suggestion="echo foo" }'] }
 
   it 'is determined by calling the default strategy function' do
     session.send_string('e')
