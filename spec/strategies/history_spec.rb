@@ -1,6 +1,6 @@
 require 'strategies/special_characters_helper'
 
-describe 'the default suggestion strategy' do
+describe 'the `history` suggestion strategy' do
   it 'suggests the last matching history entry' do
     with_history('ls foo', 'ls bar', 'echo baz') do
       session.send_string('ls')
