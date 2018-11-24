@@ -6,15 +6,17 @@
 # Color to use when highlighting suggestion
 # Uses format of `region_highlight`
 # More info: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Zle-Widgets
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+: ${ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'}
 
 # Prefix to use when saving original versions of bound widgets
-ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
+: ${ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-}
 
-ZSH_AUTOSUGGEST_STRATEGY=default
+# Strategies to use to fetch a suggestion
+# Will try each strategy in order until a suggestion is returned
+(( ! ${+ZSH_AUTOSUGGEST_STRATEGY} )) && ZSH_AUTOSUGGEST_STRATEGY=(history)
 
 # Widgets that clear the suggestion
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
+(( ! ${+ZSH_AUTOSUGGEST_CLEAR_WIDGETS} )) && ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
 	history-search-forward
 	history-search-backward
 	history-beginning-search-forward
@@ -29,7 +31,7 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
 )
 
 # Widgets that accept the entire suggestion
-ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
+(( ! ${+ZSH_AUTOSUGGEST_ACCEPT_WIDGETS} )) && ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
 	forward-char
 	end-of-line
 	vi-forward-char
@@ -38,11 +40,11 @@ ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
 )
 
 # Widgets that accept the entire suggestion and execute it
-ZSH_AUTOSUGGEST_EXECUTE_WIDGETS=(
+(( ! ${+ZSH_AUTOSUGGEST_EXECUTE_WIDGETS} )) && ZSH_AUTOSUGGEST_EXECUTE_WIDGETS=(
 )
 
 # Widgets that accept the suggestion as far as the cursor moves
-ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
+(( ! ${+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS} )) && ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
 	forward-word
 	emacs-forward-word
 	vi-forward-word
@@ -54,7 +56,7 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
 )
 
 # Widgets that should be ignored (globbing supported but must be escaped)
-ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
+(( ! ${+ZSH_AUTOSUGGEST_IGNORE_WIDGETS} )) && ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 	orig-\*
 	beep
 	run-help
@@ -64,8 +66,8 @@ ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 	yank-pop
 )
 
-# Max size of buffer to trigger autosuggestion. Leave undefined for no upper bound.
-ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
+# Max size of buffer to trigger autosuggestion. Leave null for no upper bound.
+: ${ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=}
 
 # Pty name for calculating autosuggestions asynchronously
-ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_pty
+: ${ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_pty}

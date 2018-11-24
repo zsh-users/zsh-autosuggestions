@@ -6,12 +6,14 @@ RSpec.shared_context 'terminal session' do
   let(:term_opts) { {} }
   let(:session) { TerminalSession.new(term_opts) }
   let(:before_sourcing) { -> {} }
+  let(:after_sourcing) { -> {} }
   let(:options) { [] }
 
   around do |example|
     before_sourcing.call
-
-    session.run_command((['source zsh-autosuggestions.zsh'] + options).join('; '))
+    session.run_command(options.join('; '))
+    session.run_command('source zsh-autosuggestions.zsh')
+    after_sourcing.call
     session.clear_screen
 
     example.run

@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.5.0
+- Don't overwrite config with default values (#335)
+- Support fallback strategies by supplying array to suggestion config var
+- Rename "default" suggestion strategy to "history" to name it based on what it actually does
+- Reset opts in some functions affected by `GLOB_SUBST` (#334)
+- Support widgets starting with dashes (ex: `-a-widget`) (#337)
+- Skip async tests in zsh versions less than 5.0.8 because of reliability issues
+- Fix handling of newline + carriage return in async pty (#333)
+
+
 ## v0.4.3
 - Avoid bell when accepting suggestions with `autosuggest-accept` (#228)
 - Don't fetch suggestions after [up,down]-line-or-beginning-search (#227, #241)

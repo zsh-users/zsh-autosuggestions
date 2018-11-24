@@ -37,6 +37,8 @@ _zsh_autosuggest_clear() {
 
 # Modify the buffer and get a new suggestion
 _zsh_autosuggest_modify() {
+	emulate -L zsh
+
 	local -i retval
 
 	# Only available in zsh >= 5.4
@@ -97,13 +99,15 @@ _zsh_autosuggest_fetch() {
 		_zsh_autosuggest_async_request "$BUFFER"
 	else
 		local suggestion
-		_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$BUFFER"
+		_zsh_autosuggest_fetch_suggestion "$BUFFER"
 		_zsh_autosuggest_suggest "$suggestion"
 	fi
 }
 
 # Offer a suggestion
 _zsh_autosuggest_suggest() {
+	emulate -L zsh
+
 	local suggestion="$1"
 
 	if [[ -n "$suggestion" ]] && (( $#BUFFER )); then

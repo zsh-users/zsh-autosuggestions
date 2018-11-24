@@ -1,6 +1,6 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
 # https://github.com/zsh-users/zsh-autosuggestions
-# v0.4.3
+# v0.5.0
 # Copyright (c) 2013 Thiago de Arruda
 # Copyright (c) 2016-2018 Eric Freese
 # 
@@ -42,15 +42,17 @@ zmodload zsh/zpty
 # Color to use when highlighting suggestion
 # Uses format of `region_highlight`
 # More info: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Zle-Widgets
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+: ${ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'}
 
 # Prefix to use when saving original versions of bound widgets
-ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
+: ${ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-}
 
-ZSH_AUTOSUGGEST_STRATEGY=default
+# Strategies to use to fetch a suggestion
+# Will try each strategy in order until a suggestion is returned
+(( ! ${+ZSH_AUTOSUGGEST_STRATEGY} )) && ZSH_AUTOSUGGEST_STRATEGY=(history)
 
 # Widgets that clear the suggestion
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
+(( ! ${+ZSH_AUTOSUGGEST_CLEAR_WIDGETS} )) && ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
 	history-search-forward
 	history-search-backward
 	history-beginning-search-forward
@@ -65,7 +67,7 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
 )
 
 # Widgets that accept the entire suggestion
-ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
+(( ! ${+ZSH_AUTOSUGGEST_ACCEPT_WIDGETS} )) && ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
 	forward-char
 	end-of-line
 	vi-forward-char
@@ -74,11 +76,11 @@ ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=(
 )
 
 # Widgets that accept the entire suggestion and execute it
-ZSH_AUTOSUGGEST_EXECUTE_WIDGETS=(
+(( ! ${+ZSH_AUTOSUGGEST_EXECUTE_WIDGETS} )) && ZSH_AUTOSUGGEST_EXECUTE_WIDGETS=(
 )
 
 # Widgets that accept the suggestion as far as the cursor moves
-ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
+(( ! ${+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS} )) && ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
 	forward-word
 	emacs-forward-word
 	vi-forward-word
@@ -90,7 +92,7 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS=(
 )
 
 # Widgets that should be ignored (globbing supported but must be escaped)
-ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
+(( ! ${+ZSH_AUTOSUGGEST_IGNORE_WIDGETS} )) && ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 	orig-\*
 	beep
 	run-help
@@ -100,11 +102,11 @@ ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 	yank-pop
 )
 
-# Max size of buffer to trigger autosuggestion. Leave undefined for no upper bound.
-ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
+# Max size of buffer to trigger autosuggestion. Leave null for no upper bound.
+: ${ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=}
 
 # Pty name for calculating autosuggestions asynchronously
-ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_pty
+: ${ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_pty}
 
 #--------------------------------------------------------------------#
 # Utility Functions                                                  #
@@ -206,12 +208,14 @@ _zsh_autosuggest_bind_widget() {
 	}"
 
 	# Create the bound widget
-	zle -N $widget _zsh_autosuggest_bound_${bind_count}_$widget
+	zle -N -- $widget _zsh_autosuggest_bound_${bind_count}_$widget
 }
 
 # Map all configured widgets to the right autosuggest widgets
 _zsh_autosuggest_bind_widgets() {
-	local widget
+	emulate -L zsh
+
+ 	local widget
 	local ignore_widgets
 
 	ignore_widgets=(
@@ -318,6 +322,8 @@ _zsh_autosuggest_clear() {
 
 # Modify the buffer and get a new suggestion
 _zsh_autosuggest_modify() {
+	emulate -L zsh
+
 	local -i retval
 
 	# Only available in zsh >= 5.4
@@ -378,13 +384,15 @@ _zsh_autosuggest_fetch() {
 		_zsh_autosuggest_async_request "$BUFFER"
 	else
 		local suggestion
-		_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$BUFFER"
+		_zsh_autosuggest_fetch_suggestion "$BUFFER"
 		_zsh_autosuggest_suggest "$suggestion"
 	fi
 }
 
 # Offer a suggestion
 _zsh_autosuggest_suggest() {
+	emulate -L zsh
+
 	local suggestion="$1"
 
 	if [[ -n "$suggestion" ]] && (( $#BUFFER )); then
@@ -494,13 +502,13 @@ zle -N autosuggest-disable _zsh_autosuggest_widget_disable
 zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
 
 #--------------------------------------------------------------------#
-# Default Suggestion Strategy                                        #
+# History Suggestion Strategy                                        #
 #--------------------------------------------------------------------#
 # Suggests the most recent history item that matches the given
 # prefix.
 #
 
-_zsh_autosuggest_strategy_default() {
+_zsh_autosuggest_strategy_history() {
 	# Reset options to defaults and enable LOCAL_OPTIONS
 	emulate -L zsh
 
@@ -578,6 +586,29 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 }
 
 #--------------------------------------------------------------------#
+# Fetch Suggestion                                                   #
+#--------------------------------------------------------------------#
+# Loops through all specified strategies and returns a suggestion
+# from the first strategy to provide one.
+#
+
+_zsh_autosuggest_fetch_suggestion() {
+	typeset -g suggestion
+	local -a strategies
+
+	# Ensure we are working with an array
+	strategies=(${=ZSH_AUTOSUGGEST_STRATEGY})
+
+	for strategy in $strategies; do
+		# Try to get a suggestion from this strategy
+		_zsh_autosuggest_strategy_$strategy "$1"
+
+		# Break once we've found a suggestion
+		[[ -n "$suggestion" ]] && break
+	done
+}
+
+#--------------------------------------------------------------------#
 # Async                                                              #
 #--------------------------------------------------------------------#
 
@@ -595,8 +626,11 @@ _zsh_autosuggest_async_server() {
 		sleep 1 # Block for long enough for the signal to come through
 	}
 
-	# Output only newlines (not carriage return + newline)
+	# Don't add any extra carriage returns
 	stty -onlcr
+
+	# Don't translate carriage returns to newlines
+	stty -icrnl
 
 	# Silence any error messages
 	exec 2>/dev/null
@@ -610,7 +644,7 @@ _zsh_autosuggest_async_server() {
 		# Run suggestion search in the background
 		(
 			local suggestion
-			_zsh_autosuggest_strategy_$ZSH_AUTOSUGGEST_STRATEGY "$query"
+			_zsh_autosuggest_fetch_suggestion "$query"
 			echo -n -E "$suggestion"$'\0'
 		) &
 
