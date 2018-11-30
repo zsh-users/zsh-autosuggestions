@@ -49,7 +49,9 @@ zmodload zsh/zpty
 
 # Strategies to use to fetch a suggestion
 # Will try each strategy in order until a suggestion is returned
-(( ! ${+ZSH_AUTOSUGGEST_STRATEGY} )) && ZSH_AUTOSUGGEST_STRATEGY=(history)
+if (( ! ${+ZSH_AUTOSUGGEST_STRATEGY} )) || [ "$ZSH_AUTOSUGGEST_STRATEGY" = "default" ];then
+	ZSH_AUTOSUGGEST_STRATEGY=(history)
+fi
 
 # Widgets that clear the suggestion
 (( ! ${+ZSH_AUTOSUGGEST_CLEAR_WIDGETS} )) && ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
