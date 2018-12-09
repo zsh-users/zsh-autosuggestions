@@ -322,8 +322,6 @@ _zsh_autosuggest_clear() {
 
 # Modify the buffer and get a new suggestion
 _zsh_autosuggest_modify() {
-	emulate -L zsh
-
 	local -i retval
 
 	# Only available in zsh >= 5.4
@@ -339,6 +337,8 @@ _zsh_autosuggest_modify() {
 	# Original widget may modify the buffer
 	_zsh_autosuggest_invoke_original_widget $@
 	retval=$?
+
+	emulate -L zsh
 
 	# Don't fetch a new suggestion if there's more input to be read immediately
 	if (( $PENDING > 0 )) || (( $KEYS_QUEUED_COUNT > 0 )); then
