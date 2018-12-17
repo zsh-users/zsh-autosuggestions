@@ -26,6 +26,16 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 #--------------------------------------------------------------------#
+# Setup                                                              #
+#--------------------------------------------------------------------#
+
+# Precmd hooks for initializing the library and starting pty's
+autoload -Uz add-zsh-hook
+
+# Asynchronous suggestions are generated in a pty
+zmodload zsh/zpty
+
+#--------------------------------------------------------------------#
 # Global Configuration Variables                                     #
 #--------------------------------------------------------------------#
 
@@ -95,8 +105,8 @@
 # Max size of buffer to trigger autosuggestion. Leave null for no upper bound.
 : ${ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=}
 
-# Pty name for capturing completions for completion suggestion strategy
-: ${ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME=zsh_autosuggest_completion_pty}
+# Pty name for calculating autosuggestions asynchronously
+: ${ZSH_AUTOSUGGEST_ASYNC_PTY_NAME=zsh_autosuggest_pty}
 
 #--------------------------------------------------------------------#
 # Utility Functions                                                  #
@@ -107,6 +117,25 @@ _zsh_autosuggest_escape_command() {
 
 	# Escape special chars in the string (requires EXTENDED_GLOB)
 	echo -E "${1//(#m)[\"\'\\()\[\]|*?~]/\\$MATCH}"
+}
+
+#--------------------------------------------------------------------#
+# Feature Detection                                                  #
+#--------------------------------------------------------------------#
+
+_zsh_autosuggest_feature_detect_zpty_returns_fd() {
+	typeset -g _ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD
+	typeset -h REPLY
+
+	zpty zsh_autosuggest_feature_detect '{ zshexit() { kill -KILL $$; sleep 1 } }'
+
+	if (( REPLY )); then
+		_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD=1
+	else
+		_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD=0
+	fi
+
+	zpty -d zsh_autosuggest_feature_detect
 }
 
 #--------------------------------------------------------------------#
@@ -351,7 +380,7 @@ _zsh_autosuggest_modify() {
 
 # Fetch a new suggestion based on what's currently in the buffer
 _zsh_autosuggest_fetch() {
-	if [[ -n "${ZSH_AUTOSUGGEST_USE_ASYNC+x}" ]]; then
+	if zpty -t "$ZSH_AUTOSUGGEST_ASYNC_PTY_NAME" &>/dev/null; then
 		_zsh_autosuggest_async_request "$BUFFER"
 	else
 		local suggestion
@@ -473,110 +502,6 @@ zle -N autosuggest-disable _zsh_autosuggest_widget_disable
 zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
 
 #--------------------------------------------------------------------#
-# Completion Suggestion Strategy                                     #
-#--------------------------------------------------------------------#
-# Fetches a suggestion from the completion engine
-#
-
-_zsh_autosuggest_capture_postcompletion() {
-	# Always insert the first completion into the buffer
-	compstate[insert]=1
-
-	# Don't list completions
-	unset compstate[list]
-}
-
-_zsh_autosuggest_capture_completion_widget() {
-	local -a +h comppostfuncs
-	comppostfuncs=(_zsh_autosuggest_capture_postcompletion)
-
-	# Only capture completions at the end of the buffer
-	CURSOR=$#BUFFER
-
-	# Run the original widget wrapping `.complete-word` so we don't
-	# recursively try to fetch suggestions, since our pty is forked
-	# after autosuggestions is initialized.
-	zle -- ${(k)widgets[(r)completion:.complete-word:_main_complete]}
-
-	# The completion has been added, print the buffer as the suggestion
-	echo -nE - $'\0'$BUFFER$'\0'
-}
-
-zle -N autosuggest-capture-completion _zsh_autosuggest_capture_completion_widget
-
-_zsh_autosuggest_capture_setup() {
-	# There is a bug in zpty module in older zsh versions by which a
-	# zpty that exits will kill all zpty processes that were forked
-	# before it. Here we set up a zsh exit hook to SIGKILL the zpty
-	# process immediately, before it has a chance to kill any other
-	# zpty processes.
-	if ! is-at-least 5.4; then
-		zshexit() {
-			kill -KILL $$
-			sleep 1 # Block for long enough for the signal to come through
-		}
-	fi
-
-	bindkey '^I' autosuggest-capture-completion
-}
-
-_zsh_autosuggest_capture_completion_sync() {
-	_zsh_autosuggest_capture_setup
-
-	zle autosuggest-capture-completion
-}
-
-_zsh_autosuggest_capture_completion_async() {
-	_zsh_autosuggest_capture_setup
-
-	zmodload zsh/parameter 2>/dev/null || return # For `$functions`
-
-	# Make vared completion work as if for a normal command line
-	# https://stackoverflow.com/a/7057118/154703
-	autoload +X _complete
-	functions[_original_complete]=$functions[_complete]
-	_complete () {
-		unset 'compstate[vared]'
-		_original_complete "$@"
-	}
-
-	# Open zle with buffer set so we can capture completions for it
-	vared 1
-}
-
-_zsh_autosuggest_strategy_completion() {
-	typeset -g suggestion
-	local line REPLY
-
-	# Exit if we don't have completions
-	whence compdef >/dev/null || return
-
-	# Exit if we don't have zpty
-	zmodload zsh/zpty 2>/dev/null || return
-
-	# Zle will be inactive if we are in async mode
-	if zle; then
-		zpty $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME _zsh_autosuggest_capture_completion_sync
-	else
-		zpty $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME _zsh_autosuggest_capture_completion_async "\$1"
-		zpty -w $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME $'\t'
-	fi
-
-	{
-		# The completion result is surrounded by null bytes, so read the
-		# content between the first two null bytes.
-		zpty -r $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME line '*'$'\0''*'$'\0'
-
-		# On older versions of zsh, we sometimes get extra bytes after the
-		# second null byte, so trim those off the end
-		suggestion="${${${(M)line:#*$'\0'*$'\0'*}#*$'\0'}%%$'\0'*}"
-	} always {
-		# Destroy the pty
-		zpty -d $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME
-	}
-}
-
-#--------------------------------------------------------------------#
 # History Suggestion Strategy                                        #
 #--------------------------------------------------------------------#
 # Suggests the most recent history item that matches the given
@@ -688,63 +613,109 @@ _zsh_autosuggest_fetch_suggestion() {
 # Async                                                              #
 #--------------------------------------------------------------------#
 
-zmodload zsh/system
+# Zpty process is spawned running this function
+_zsh_autosuggest_async_server() {
+	emulate -R zsh
 
-_zsh_autosuggest_async_request() {
-	typeset -g _ZSH_AUTOSUGGEST_ASYNC_FD _ZSH_AUTOSUGGEST_CHILD_PID
+	# There is a bug in zpty module (fixed in zsh/master) by which a
+	# zpty that exits will kill all zpty processes that were forked
+	# before it. Here we set up a zsh exit hook to SIGKILL the zpty
+	# process immediately, before it has a chance to kill any other
+	# zpty processes.
+	zshexit() {
+		kill -KILL $$
+		sleep 1 # Block for long enough for the signal to come through
+	}
 
-	# If we've got a pending request, cancel it
-	if [[ -n "$_ZSH_AUTOSUGGEST_ASYNC_FD" ]] && { true <&$_ZSH_AUTOSUGGEST_ASYNC_FD } 2>/dev/null; then
-		# Close the file descriptor and remove the handler
-		exec {_ZSH_AUTOSUGGEST_ASYNC_FD}<&-
-		zle -F $_ZSH_AUTOSUGGEST_ASYNC_FD
+	# Don't add any extra carriage returns
+	stty -onlcr
 
-		# Zsh will make a new process group for the child process only if job
-		# control is enabled (MONITOR option)
-		if [[ -o MONITOR ]]; then
-			# Send the signal to the process group to kill any processes that may
-			# have been forked by the suggestion strategy
-			kill -TERM -$_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
-		else
-			# Kill just the child process since it wasn't placed in a new process
-			# group. If the suggestion strategy forked any child processes they may
-			# be orphaned and left behind.
-			kill -TERM $_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
-		fi
-	fi
+	# Don't translate carriage returns to newlines
+	stty -icrnl
 
-	# Fork a process to fetch a suggestion and open a pipe to read from it
-	exec {_ZSH_AUTOSUGGEST_ASYNC_FD}< <(
-		# Tell parent process our pid
-		echo $sysparams[pid]
+	# Silence any error messages
+	exec 2>/dev/null
 
-		# Fetch and print the suggestion
-		local suggestion
-		_zsh_autosuggest_fetch_suggestion "$1"
-		echo -nE "$suggestion"
-	)
+	local last_pid
 
-	# Read the pid from the child process
-	read _ZSH_AUTOSUGGEST_CHILD_PID <&$_ZSH_AUTOSUGGEST_ASYNC_FD
+	while IFS='' read -r -d $'\0' query; do
+		# Kill last bg process
+		kill -KILL $last_pid &>/dev/null
 
-	# When the fd is readable, call the response handler
-	zle -F "$_ZSH_AUTOSUGGEST_ASYNC_FD" _zsh_autosuggest_async_response
+		# Run suggestion search in the background
+		(
+			local suggestion
+			_zsh_autosuggest_fetch_suggestion "$query"
+			echo -n -E "$suggestion"$'\0'
+		) &
+
+		last_pid=$!
+	done
 }
 
-# Called when new data is ready to be read from the pipe
+_zsh_autosuggest_async_request() {
+	# Write the query to the zpty process to fetch a suggestion
+	zpty -w -n $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME "${1}"$'\0'
+}
+
+# Called when new data is ready to be read from the pty
 # First arg will be fd ready for reading
 # Second arg will be passed in case of error
 _zsh_autosuggest_async_response() {
-	if [[ -z "$2" || "$2" == "hup" ]]; then
-		# Read everything from the fd and give it as a suggestion
-		zle autosuggest-suggest -- "$(cat <&$1)"
+	setopt LOCAL_OPTIONS EXTENDED_GLOB
 
-		# Close the fd
-		exec {1}<&-
+	local suggestion
+
+	zpty -rt $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME suggestion '*'$'\0' 2>/dev/null
+	zle autosuggest-suggest -- "${suggestion%%$'\0'##}"
+}
+
+_zsh_autosuggest_async_pty_create() {
+	# With newer versions of zsh, REPLY stores the fd to read from
+	typeset -h REPLY
+
+	# If we won't get a fd back from zpty, try to guess it
+	if (( ! $_ZSH_AUTOSUGGEST_ZPTY_RETURNS_FD )); then
+		integer -l zptyfd
+		exec {zptyfd}>&1  # Open a new file descriptor (above 10).
+		exec {zptyfd}>&-  # Close it so it's free to be used by zpty.
 	fi
 
-	# Always remove the handler
-	zle -F "$1"
+	# Fork a zpty process running the server function
+	zpty -b $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME _zsh_autosuggest_async_server
+
+	# Store the fd so we can remove the handler later
+	if (( REPLY )); then
+		_ZSH_AUTOSUGGEST_PTY_FD=$REPLY
+	else
+		_ZSH_AUTOSUGGEST_PTY_FD=$zptyfd
+	fi
+
+	# Set up input handler from the zpty
+	zle -F $_ZSH_AUTOSUGGEST_PTY_FD _zsh_autosuggest_async_response
+}
+
+_zsh_autosuggest_async_pty_destroy() {
+	# Remove the input handler
+	zle -F $_ZSH_AUTOSUGGEST_PTY_FD &>/dev/null
+
+	# Destroy the zpty
+	zpty -d $ZSH_AUTOSUGGEST_ASYNC_PTY_NAME &>/dev/null
+}
+
+_zsh_autosuggest_async_pty_recreate() {
+	_zsh_autosuggest_async_pty_destroy
+	_zsh_autosuggest_async_pty_create
+}
+
+_zsh_autosuggest_async_start() {
+	typeset -g _ZSH_AUTOSUGGEST_PTY_FD
+
+	_zsh_autosuggest_feature_detect_zpty_returns_fd
+	_zsh_autosuggest_async_pty_recreate
+
+	# We recreate the pty to get a fresh list of history events
+	add-zsh-hook precmd _zsh_autosuggest_async_pty_recreate
 }
 
 #--------------------------------------------------------------------#
@@ -762,8 +733,11 @@ _zsh_autosuggest_start() {
 	# zsh-syntax-highlighting widgets. This also allows modifications
 	# to the widget list variables to take effect on the next precmd.
 	add-zsh-hook precmd _zsh_autosuggest_bind_widgets
+
+	if [[ -n "${ZSH_AUTOSUGGEST_USE_ASYNC+x}" ]]; then
+		_zsh_autosuggest_async_start
+	fi
 }
 
 # Start the autosuggestion widgets on the next precmd
-autoload -Uz add-zsh-hook
 add-zsh-hook precmd _zsh_autosuggest_start
