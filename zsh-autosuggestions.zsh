@@ -515,16 +515,16 @@ _zsh_autosuggest_partial_accept() {
 			return \$retval
 		}"
 	done
-}
 
-zle -N autosuggest-fetch _zsh_autosuggest_widget_fetch
-zle -N autosuggest-suggest _zsh_autosuggest_widget_suggest
-zle -N autosuggest-accept _zsh_autosuggest_widget_accept
-zle -N autosuggest-clear _zsh_autosuggest_widget_clear
-zle -N autosuggest-execute _zsh_autosuggest_widget_execute
-zle -N autosuggest-enable _zsh_autosuggest_widget_enable
-zle -N autosuggest-disable _zsh_autosuggest_widget_disable
-zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
+	zle -N autosuggest-fetch _zsh_autosuggest_widget_fetch
+	zle -N autosuggest-suggest _zsh_autosuggest_widget_suggest
+	zle -N autosuggest-accept _zsh_autosuggest_widget_accept
+	zle -N autosuggest-clear _zsh_autosuggest_widget_clear
+	zle -N autosuggest-execute _zsh_autosuggest_widget_execute
+	zle -N autosuggest-enable _zsh_autosuggest_widget_enable
+	zle -N autosuggest-disable _zsh_autosuggest_widget_disable
+	zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
+}
 
 #--------------------------------------------------------------------#
 # History Suggestion Strategy                                        #
