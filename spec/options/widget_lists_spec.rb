@@ -41,12 +41,20 @@ describe 'a zle widget' do
     end
   end
 
-  context 'when added to ZSH_AUTOSUGGEST_IGNORE_WIDGETS' do
-    let(:options) { ["ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(#{widget})"] }
+  context 'that accesses POSTDISPLAY' do
+    before { session.run_command("#{widget}() { zle -M \"POSTDISPLAY=$POSTDISPLAY\" }") }
 
-    it 'should not be wrapped with an autosuggest widget' do
-      session.run_command("echo $widgets[#{widget}]")
-      wait_for { session.content }.to end_with("\nuser:#{widget}")
+    context 'when added to ZSH_AUTOSUGGEST_IGNORE_WIDGETS' do
+      let(:options) { ["ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(#{widget})"] }
+
+      it 'gets the correct POSTDISPLAY value' do
+        with_history('echo hello') do
+          session.send_string('e')
+          wait_for { session.content }.to start_with('echo hello')
+          session.send_keys('C-b')
+          wait_for { session.content }.to end_with("\nPOSTDISPLAY=cho hello")
+        end
+      end
     end
   end
 

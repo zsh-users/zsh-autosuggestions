@@ -73,6 +73,7 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 }
 
 # Widgets that should be ignored (globbing supported but must be escaped)
+# Only relevant for zsh versions older than 5.4
 (( ! ${+ZSH_AUTOSUGGEST_IGNORE_WIDGETS} )) && {
 	typeset -ga ZSH_AUTOSUGGEST_IGNORE_WIDGETS
 	ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(

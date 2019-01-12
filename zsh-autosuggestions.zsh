@@ -31,6 +31,8 @@
 
 # Precmd hooks for initializing the library and starting pty's
 autoload -Uz add-zsh-hook
+autoload -Uz add-zle-hook-widget
+autoload -Uz is-at-least
 
 # Asynchronous suggestions are generated in a pty
 zmodload zsh/zpty
@@ -109,6 +111,7 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 }
 
 # Widgets that should be ignored (globbing supported but must be escaped)
+# Only relevant for zsh versions older than 5.4
 (( ! ${+ZSH_AUTOSUGGEST_IGNORE_WIDGETS} )) && {
 	typeset -ga ZSH_AUTOSUGGEST_IGNORE_WIDGETS
 	ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
@@ -233,11 +236,31 @@ _zsh_autosuggest_bind_widget() {
 	zle -N -- $widget _zsh_autosuggest_bound_${bind_count}_$widget
 }
 
+_zsh_autosuggest_bind_autosuggest_widgets() {
+	local widget
+
+	for widget in $ZSH_AUTOSUGGEST_CLEAR_WIDGETS; do
+		_zsh_autosuggest_bind_widget $widget clear
+	done
+
+	for widget in $ZSH_AUTOSUGGEST_ACCEPT_WIDGETS; do
+		_zsh_autosuggest_bind_widget $widget accept
+	done
+
+	for widget in $ZSH_AUTOSUGGEST_EXECUTE_WIDGETS; do
+		_zsh_autosuggest_bind_widget $widget execute
+	done
+
+	for widget in $ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS; do
+		_zsh_autosuggest_bind_widget $widget partial_accept
+	done
+}
+
 # Map all configured widgets to the right autosuggest widgets
-_zsh_autosuggest_bind_widgets() {
+_zsh_autosuggest_bind_modify_widgets() {
 	emulate -L zsh
 
- 	local widget
+	local widget
 	local ignore_widgets
 
 	ignore_widgets=(
@@ -247,22 +270,15 @@ _zsh_autosuggest_bind_widgets() {
 		autosuggest-\*
 		$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX\*
 		$ZSH_AUTOSUGGEST_IGNORE_WIDGETS
+		$ZSH_AUTOSUGGEST_CLEAR_WIDGETS
+		$ZSH_AUTOSUGGEST_ACCEPT_WIDGETS
+		$ZSH_AUTOSUGGEST_EXECUTE_WIDGETS
+		$ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS
 	)
 
-	# Find every widget we might want to bind and bind it appropriately
+	# Assume any widget omitted from the config arrays might modify the buffer
 	for widget in ${${(f)"$(builtin zle -la)"}:#${(j:|:)~ignore_widgets}}; do
-		if [[ -n ${ZSH_AUTOSUGGEST_CLEAR_WIDGETS[(r)$widget]} ]]; then
-			_zsh_autosuggest_bind_widget $widget clear
-		elif [[ -n ${ZSH_AUTOSUGGEST_ACCEPT_WIDGETS[(r)$widget]} ]]; then
-			_zsh_autosuggest_bind_widget $widget accept
-		elif [[ -n ${ZSH_AUTOSUGGEST_EXECUTE_WIDGETS[(r)$widget]} ]]; then
-			_zsh_autosuggest_bind_widget $widget execute
-		elif [[ -n ${ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS[(r)$widget]} ]]; then
-			_zsh_autosuggest_bind_widget $widget partial_accept
-		else
-			# Assume any unspecified widget might modify the buffer
-			_zsh_autosuggest_bind_widget $widget modify
-		fi
+		_zsh_autosuggest_bind_widget $widget modify
 	done
 }
 
@@ -346,56 +362,21 @@ _zsh_autosuggest_clear() {
 _zsh_autosuggest_modify() {
 	local -i retval
 
-	# Only available in zsh >= 5.4
-	local -i KEYS_QUEUED_COUNT
-
-	# Save the contents of the buffer/postdisplay
-	local orig_buffer="$BUFFER"
+	# Save the contents of the postdisplay
 	local orig_postdisplay="$POSTDISPLAY"
 
-	# Clear suggestion while waiting for next one
+	# Clear suggestion while original widget runs
 	unset POSTDISPLAY
 
 	# Original widget may modify the buffer
 	_zsh_autosuggest_invoke_original_widget $@
 	retval=$?
 
-	emulate -L zsh
+	# Restore postdisplay to be used in redraw
+	POSTDISPLAY="$orig_postdisplay"
 
-	# Don't fetch a new suggestion if there's more input to be read immediately
-	if (( $PENDING > 0 )) || (( $KEYS_QUEUED_COUNT > 0 )); then
-		POSTDISPLAY="$orig_postdisplay"
-		return $retval
-	fi
-
-	# Optimize if manually typing in the suggestion
-	if (( $#BUFFER > $#orig_buffer )); then
-		local added=${BUFFER#$orig_buffer}
-
-		# If the string added matches the beginning of the postdisplay
-		if [[ "$added" = "${orig_postdisplay:0:$#added}" ]]; then
-			POSTDISPLAY="${orig_postdisplay:$#added}"
-			return $retval
-		fi
-	fi
-
-	# Don't fetch a new suggestion if the buffer hasn't changed
-	if [[ "$BUFFER" = "$orig_buffer" ]]; then
-		POSTDISPLAY="$orig_postdisplay"
-		return $retval
-	fi
-
-	# Bail out if suggestions are disabled
-	if [[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]]; then
-		return $?
-	fi
-
-	# Get a new suggestion if the buffer is not empty after modification
-	if (( $#BUFFER > 0 )); then
-		if [[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
-			_zsh_autosuggest_fetch
-		fi
-	fi
+	# Run redraw to fetch a suggestion if needed
+	_zsh_autosuggest_redraw
 
 	return $retval
 }
@@ -497,9 +478,67 @@ _zsh_autosuggest_partial_accept() {
 	return $retval
 }
 
+_zsh_autosuggest_redraw() {
+	emulate -L zsh
+
+	typeset -g _ZSH_AUTOSUGGEST_LAST_BUFFER
+
+	# Only available in zsh >= 5.4
+	local -i KEYS_QUEUED_COUNT
+
+	local orig_buffer="$_ZSH_AUTOSUGGEST_LAST_BUFFER"
+	local widget
+
+	# Store the current state of the buffer for next time
+	_ZSH_AUTOSUGGEST_LAST_BUFFER="$BUFFER"
+
+	# Buffer hasn't changed
+	[[ "$BUFFER" = "$orig_buffer" ]] && return 0
+
+	local ignore_widgets
+	ignore_widgets=(
+		$ZSH_AUTOSUGGEST_CLEAR_WIDGETS
+		$ZSH_AUTOSUGGEST_ACCEPT_WIDGETS
+		$ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS
+		$ZSH_AUTOSUGGEST_IGNORE_WIDGETS
+	)
+
+	# Don't fetch a new suggestion after mapped widgets
+	for widget in $ignore_widgets; do
+		[[ "$LASTWIDGET" == "$widget" ]] && return 0
+	done
+
+	# Optimize if manually typing in the suggestion
+	if (( $#BUFFER > $#orig_buffer )); then
+		local added=${BUFFER#$orig_buffer}
+
+		# If the string added matches the beginning of the postdisplay
+		if [[ "$added" = "${POSTDISPLAY:0:$#added}" ]]; then
+			POSTDISPLAY="${POSTDISPLAY:$#added}"
+			return 0
+		fi
+	fi
+
+	unset POSTDISPLAY
+
+	# Don't fetch a new suggestion if there's more input to be read immediately
+	(( $PENDING > 0 )) || (( $KEYS_QUEUED_COUNT > 0 )) && return 0
+
+	# Buffer is empty
+	(( ! $#BUFFER )) && return 0
+
+	# Buffer longer than max size
+	[[ -n "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] && (( $#BUFFER > $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )) && return 0
+
+	# Suggestions disabled
+	[[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]] && return 0
+
+	_zsh_autosuggest_fetch
+}
+
 () {
 	local action
-	for action in clear modify fetch suggest accept partial_accept execute enable disable toggle; do
+	for action in clear modify fetch suggest accept partial_accept execute enable disable toggle redraw; do
 		eval "_zsh_autosuggest_widget_$action() {
 			local -i retval
 
@@ -516,6 +555,7 @@ _zsh_autosuggest_partial_accept() {
 		}"
 	done
 
+	zle -N autosuggest-redraw _zsh_autosuggest_widget_redraw
 	zle -N autosuggest-fetch _zsh_autosuggest_widget_fetch
 	zle -N autosuggest-suggest _zsh_autosuggest_widget_suggest
 	zle -N autosuggest-accept _zsh_autosuggest_widget_accept
@@ -751,13 +791,22 @@ _zsh_autosuggest_async_start() {
 _zsh_autosuggest_start() {
 	add-zsh-hook -d precmd _zsh_autosuggest_start
 
-	_zsh_autosuggest_bind_widgets
-
 	# Re-bind widgets on every precmd to ensure we wrap other wrappers.
 	# Specifically, highlighting breaks if our widgets are wrapped by
 	# zsh-syntax-highlighting widgets. This also allows modifications
 	# to the widget list variables to take effect on the next precmd.
-	add-zsh-hook precmd _zsh_autosuggest_bind_widgets
+	_zsh_autosuggest_bind_autosuggest_widgets
+	add-zsh-hook precmd _zsh_autosuggest_bind_autosuggest_widgets
+
+	# If available, use a ZLE redraw hook to trigger fetching suggestions.
+	# Otherwise, we need to wrap all widgets and fetch suggestions after
+	# running them.
+	if is-at-least 5.4; then
+		add-zle-hook-widget line-pre-redraw autosuggest-redraw
+	else
+		_zsh_autosuggest_bind_modify_widgets
+		add-zsh-hook precmd _zsh_autosuggest_bind_modify_widgets
+	fi
 
 	if [[ -n "${ZSH_AUTOSUGGEST_USE_ASYNC+x}" ]]; then
 		_zsh_autosuggest_async_start

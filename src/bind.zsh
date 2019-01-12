@@ -72,11 +72,31 @@ _zsh_autosuggest_bind_widget() {
 	zle -N -- $widget _zsh_autosuggest_bound_${bind_count}_$widget
 }
 
+_zsh_autosuggest_bind_autosuggest_widgets() {
+	local widget
+
+	for widget in $ZSH_AUTOSUGGEST_CLEAR_WIDGETS; do
+		_zsh_autosuggest_bind_widget $widget clear
+	done
+
+	for widget in $ZSH_AUTOSUGGEST_ACCEPT_WIDGETS; do
+		_zsh_autosuggest_bind_widget $widget accept
+	done
+
+	for widget in $ZSH_AUTOSUGGEST_EXECUTE_WIDGETS; do
+		_zsh_autosuggest_bind_widget $widget execute
+	done
+
+	for widget in $ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS; do
+		_zsh_autosuggest_bind_widget $widget partial_accept
+	done
+}
+
 # Map all configured widgets to the right autosuggest widgets
-_zsh_autosuggest_bind_widgets() {
+_zsh_autosuggest_bind_modify_widgets() {
 	emulate -L zsh
 
- 	local widget
+	local widget
 	local ignore_widgets
 
 	ignore_widgets=(
@@ -86,22 +106,15 @@ _zsh_autosuggest_bind_widgets() {
 		autosuggest-\*
 		$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX\*
 		$ZSH_AUTOSUGGEST_IGNORE_WIDGETS
+		$ZSH_AUTOSUGGEST_CLEAR_WIDGETS
+		$ZSH_AUTOSUGGEST_ACCEPT_WIDGETS
+		$ZSH_AUTOSUGGEST_EXECUTE_WIDGETS
+		$ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS
 	)
 
-	# Find every widget we might want to bind and bind it appropriately
+	# Assume any widget omitted from the config arrays might modify the buffer
 	for widget in ${${(f)"$(builtin zle -la)"}:#${(j:|:)~ignore_widgets}}; do
-		if [[ -n ${ZSH_AUTOSUGGEST_CLEAR_WIDGETS[(r)$widget]} ]]; then
-			_zsh_autosuggest_bind_widget $widget clear
-		elif [[ -n ${ZSH_AUTOSUGGEST_ACCEPT_WIDGETS[(r)$widget]} ]]; then
-			_zsh_autosuggest_bind_widget $widget accept
-		elif [[ -n ${ZSH_AUTOSUGGEST_EXECUTE_WIDGETS[(r)$widget]} ]]; then
-			_zsh_autosuggest_bind_widget $widget execute
-		elif [[ -n ${ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS[(r)$widget]} ]]; then
-			_zsh_autosuggest_bind_widget $widget partial_accept
-		else
-			# Assume any unspecified widget might modify the buffer
-			_zsh_autosuggest_bind_widget $widget modify
-		fi
+		_zsh_autosuggest_bind_widget $widget modify
 	done
 }
 

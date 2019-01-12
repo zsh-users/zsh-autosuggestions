@@ -39,56 +39,21 @@ _zsh_autosuggest_clear() {
 _zsh_autosuggest_modify() {
 	local -i retval
 
-	# Only available in zsh >= 5.4
-	local -i KEYS_QUEUED_COUNT
-
-	# Save the contents of the buffer/postdisplay
-	local orig_buffer="$BUFFER"
+	# Save the contents of the postdisplay
 	local orig_postdisplay="$POSTDISPLAY"
 
-	# Clear suggestion while waiting for next one
+	# Clear suggestion while original widget runs
 	unset POSTDISPLAY
 
 	# Original widget may modify the buffer
 	_zsh_autosuggest_invoke_original_widget $@
 	retval=$?
 
-	emulate -L zsh
+	# Restore postdisplay to be used in redraw
+	POSTDISPLAY="$orig_postdisplay"
 
-	# Don't fetch a new suggestion if there's more input to be read immediately
-	if (( $PENDING > 0 )) || (( $KEYS_QUEUED_COUNT > 0 )); then
-		POSTDISPLAY="$orig_postdisplay"
-		return $retval
-	fi
-
-	# Optimize if manually typing in the suggestion
-	if (( $#BUFFER > $#orig_buffer )); then
-		local added=${BUFFER#$orig_buffer}
-
-		# If the string added matches the beginning of the postdisplay
-		if [[ "$added" = "${orig_postdisplay:0:$#added}" ]]; then
-			POSTDISPLAY="${orig_postdisplay:$#added}"
-			return $retval
-		fi
-	fi
-
-	# Don't fetch a new suggestion if the buffer hasn't changed
-	if [[ "$BUFFER" = "$orig_buffer" ]]; then
-		POSTDISPLAY="$orig_postdisplay"
-		return $retval
-	fi
-
-	# Bail out if suggestions are disabled
-	if [[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]]; then
-		return $?
-	fi
-
-	# Get a new suggestion if the buffer is not empty after modification
-	if (( $#BUFFER > 0 )); then
-		if [[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
-			_zsh_autosuggest_fetch
-		fi
-	fi
+	# Run redraw to fetch a suggestion if needed
+	_zsh_autosuggest_redraw
 
 	return $retval
 }
@@ -190,9 +155,67 @@ _zsh_autosuggest_partial_accept() {
 	return $retval
 }
 
+_zsh_autosuggest_redraw() {
+	emulate -L zsh
+
+	typeset -g _ZSH_AUTOSUGGEST_LAST_BUFFER
+
+	# Only available in zsh >= 5.4
+	local -i KEYS_QUEUED_COUNT
+
+	local orig_buffer="$_ZSH_AUTOSUGGEST_LAST_BUFFER"
+	local widget
+
+	# Store the current state of the buffer for next time
+	_ZSH_AUTOSUGGEST_LAST_BUFFER="$BUFFER"
+
+	# Buffer hasn't changed
+	[[ "$BUFFER" = "$orig_buffer" ]] && return 0
+
+	local ignore_widgets
+	ignore_widgets=(
+		$ZSH_AUTOSUGGEST_CLEAR_WIDGETS
+		$ZSH_AUTOSUGGEST_ACCEPT_WIDGETS
+		$ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS
+		$ZSH_AUTOSUGGEST_IGNORE_WIDGETS
+	)
+
+	# Don't fetch a new suggestion after mapped widgets
+	for widget in $ignore_widgets; do
+		[[ "$LASTWIDGET" == "$widget" ]] && return 0
+	done
+
+	# Optimize if manually typing in the suggestion
+	if (( $#BUFFER > $#orig_buffer )); then
+		local added=${BUFFER#$orig_buffer}
+
+		# If the string added matches the beginning of the postdisplay
+		if [[ "$added" = "${POSTDISPLAY:0:$#added}" ]]; then
+			POSTDISPLAY="${POSTDISPLAY:$#added}"
+			return 0
+		fi
+	fi
+
+	unset POSTDISPLAY
+
+	# Don't fetch a new suggestion if there's more input to be read immediately
+	(( $PENDING > 0 )) || (( $KEYS_QUEUED_COUNT > 0 )) && return 0
+
+	# Buffer is empty
+	(( ! $#BUFFER )) && return 0
+
+	# Buffer longer than max size
+	[[ -n "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] && (( $#BUFFER > $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )) && return 0
+
+	# Suggestions disabled
+	[[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]] && return 0
+
+	_zsh_autosuggest_fetch
+}
+
 () {
 	local action
-	for action in clear modify fetch suggest accept partial_accept execute enable disable toggle; do
+	for action in clear modify fetch suggest accept partial_accept execute enable disable toggle redraw; do
 		eval "_zsh_autosuggest_widget_$action() {
 			local -i retval
 
@@ -209,6 +232,7 @@ _zsh_autosuggest_partial_accept() {
 		}"
 	done
 
+	zle -N autosuggest-redraw _zsh_autosuggest_widget_redraw
 	zle -N autosuggest-fetch _zsh_autosuggest_widget_fetch
 	zle -N autosuggest-suggest _zsh_autosuggest_widget_suggest
 	zle -N autosuggest-accept _zsh_autosuggest_widget_accept

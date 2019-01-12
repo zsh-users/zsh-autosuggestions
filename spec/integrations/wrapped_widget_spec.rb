@@ -1,16 +1,24 @@
 describe 'a wrapped widget' do
   let(:widget) { 'backward-delete-char' }
 
-  context 'initialized before sourcing the plugin' do
-    let(:before_sourcing) do
-      -> do
-        session.
-          run_command("_orig_#{widget}() { zle .#{widget} }").
-          run_command("zle -N orig-#{widget} _orig_#{widget}").
-          run_command("#{widget}-magic() { zle orig-#{widget}; BUFFER+=b }").
-          run_command("zle -N #{widget} #{widget}-magic")
-      end
+  let(:initialize_widget) do
+    -> do
+      session.run_command(<<~ZSH)
+        if [[ "$widgets[#{widget}]" == "builtin" ]]; then
+          _orig_#{widget}() { zle .#{widget} }
+          zle -N orig-#{widget} _orig_#{widget}
+        else
+          zle -N orig-#{widget} ${widgets[#{widget}]#*:}
+        fi
+
+        #{widget}-magic() { zle orig-#{widget}; BUFFER+=b }
+        zle -N #{widget} #{widget}-magic
+      ZSH
     end
+  end
+
+  context 'initialized before sourcing the plugin' do
+    let(:before_sourcing) { initialize_widget }
 
     it 'executes the custom behavior and the built-in behavior' do
       with_history('foobar', 'foodar') do
@@ -21,13 +29,7 @@ describe 'a wrapped widget' do
   end
 
   context 'initialized after sourcing the plugin' do
-    before do
-      session.
-        run_command("zle -N orig-#{widget} ${widgets[#{widget}]#*:}").
-        run_command("#{widget}-magic() { zle orig-#{widget}; BUFFER+=b }").
-        run_command("zle -N #{widget} #{widget}-magic").
-        clear_screen
-    end
+    let(:after_sourcing) { initialize_widget }
 
     it 'executes the custom behavior and the built-in behavior' do
       with_history('foobar', 'foodar') do
