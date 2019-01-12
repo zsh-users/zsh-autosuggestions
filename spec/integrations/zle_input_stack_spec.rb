@@ -9,8 +9,9 @@ describe 'using `zle -U`' do
 
   let(:options) { ['unset ZSH_AUTOSUGGEST_USE_ASYNC', 'ZSH_AUTOSUGGEST_STRATEGY=test'] }
 
-  # TODO: This is only possible with the $KEYS_QUEUED_COUNT widget parameter, coming soon...
-  xit 'does not fetch a suggestion for every inserted character' do
+  it 'does not fetch a suggestion for every inserted character' do
+    skip 'KEYS_QUEUED_COUNT not supported below v5.4.0' if session.zsh_version < Gem::Version.new('5.4.0')
+
     session.send_keys('C-b')
     wait_for { session.content }.to eq('echo hello')
   end
