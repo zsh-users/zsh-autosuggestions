@@ -4,21 +4,8 @@
 #--------------------------------------------------------------------#
 
 _zsh_autosuggest_incr_bind_count() {
-	if ((${+_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]})); then
-		((_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]++))
-	else
-		_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]=1
-	fi
-
-	typeset -gi bind_count=$_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]
-}
-
-_zsh_autosuggest_get_bind_count() {
-	if ((${+_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]})); then
-		typeset -gi bind_count=$_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]
-	else
-		typeset -gi bind_count=0
-	fi
+	typeset -gi bind_count=$((_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]+1))
+	_ZSH_AUTOSUGGEST_BIND_COUNTS[$1]=$bind_count
 }
 
 # Bind a single widget to an autosuggest widget, saving a reference to the original widget
@@ -34,7 +21,9 @@ _zsh_autosuggest_bind_widget() {
 	# Save a reference to the original widget
 	case $widgets[$widget] in
 		# Already bound
-		user:_zsh_autosuggest_(bound|orig)_*);;
+		user:_zsh_autosuggest_(bound|orig)_*)
+			bind_count=$((_ZSH_AUTOSUGGEST_BIND_COUNTS[$widget]))
+			;;
 
 		# User-defined widget
 		user:*)
@@ -55,8 +44,6 @@ _zsh_autosuggest_bind_widget() {
 			eval "zle -C $prefix$bind_count-${(q)widget} ${${(s.:.)widgets[$widget]}[2,3]}"
 			;;
 	esac
-
-	_zsh_autosuggest_get_bind_count $widget
 
 	# Pass the original widget's name explicitly into the autosuggest
 	# function. Use this passed in widget name to call the original
