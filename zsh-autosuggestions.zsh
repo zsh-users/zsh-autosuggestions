@@ -200,20 +200,20 @@ _zsh_autosuggest_bind_widget() {
 		# User-defined widget
 		user:*)
 			_zsh_autosuggest_incr_bind_count $widget
-			zle -N $prefix${bind_count}-$widget ${widgets[$widget]#*:}
+			zle -N $prefix$bind_count-$widget ${widgets[$widget]#*:}
 			;;
 
 		# Built-in widget
 		builtin)
 			_zsh_autosuggest_incr_bind_count $widget
 			eval "_zsh_autosuggest_orig_${(q)widget}() { zle .${(q)widget} }"
-			zle -N $prefix${bind_count}-$widget _zsh_autosuggest_orig_$widget
+			zle -N $prefix$bind_count-$widget _zsh_autosuggest_orig_$widget
 			;;
 
 		# Completion widget
 		completion:*)
 			_zsh_autosuggest_incr_bind_count $widget
-			eval "zle -C $prefix${bind_count}-${(q)widget} ${${(s.:.)widgets[$widget]}[2,3]}"
+			eval "zle -C $prefix$bind_count-${(q)widget} ${${(s.:.)widgets[$widget]}[2,3]}"
 			;;
 	esac
 
