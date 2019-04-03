@@ -13,7 +13,7 @@ for v in $(grep "^[^#]" ZSH_VERSIONS); do
               --enable-cap \
               --enable-multibyte \
               --with-term-lib='ncursesw tinfo' \
-              --without-tcsetpgrp \
+              --with-tcsetpgrp \
               --program-suffix="-$v"
 
   make install.bin
