@@ -9,6 +9,7 @@
 _zsh_autosuggest_fetch_suggestion() {
 	typeset -g suggestion
 	local -a strategies
+	local strategy
 
 	# Ensure we are working with an array
 	strategies=(${=ZSH_AUTOSUGGEST_STRATEGY})
