@@ -54,6 +54,8 @@ _zsh_autosuggest_async_request() {
 # First arg will be fd ready for reading
 # Second arg will be passed in case of error
 _zsh_autosuggest_async_response() {
+	emulate -L zsh
+
 	if [[ -z "$2" || "$2" == "hup" ]]; then
 		# Read everything from the fd and give it as a suggestion
 		zle autosuggest-suggest -- "$(cat <&$1)"
