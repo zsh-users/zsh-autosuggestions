@@ -63,7 +63,7 @@ Widgets that modify the buffer and are not found in any of these arrays will fet
 ### Disabling suggestion for large buffers
 
 Set `ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE` to an integer value to disable autosuggestion for large buffers. The default is unset, which means that autosuggestion will be tried for any buffer size. Recommended value is 20.
-This can be useful when pasting large amount of text in the terminal, to avoid triggering autosuggestion for too long strings.
+This can be useful when pasting large amount of text in the terminal, to avoid triggering autosuggestion for strings that are too long.
 
 ### Enable Asynchronous Mode
 

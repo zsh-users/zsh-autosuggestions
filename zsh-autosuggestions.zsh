@@ -122,10 +122,6 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 	)
 }
 
-# Max size of buffer to trigger autosuggestion. Leave null for no upper bound.
-(( ! ${+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE} )) &&
-typeset -g ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
-
 #--------------------------------------------------------------------#
 # Utility Functions                                                  #
 #--------------------------------------------------------------------#
@@ -356,7 +352,7 @@ _zsh_autosuggest_modify() {
 
 	# Get a new suggestion if the buffer is not empty after modification
 	if (( $#BUFFER > 0 )); then
-		if [[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
+		if (( ! ${+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE} )) || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
 			_zsh_autosuggest_fetch
 		fi
 	fi
