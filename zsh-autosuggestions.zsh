@@ -122,10 +122,6 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 	)
 }
 
-# Max size of buffer to trigger autosuggestion. Leave null for no upper bound.
-(( ! ${+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE} )) &&
-typeset -g ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=
-
 #--------------------------------------------------------------------#
 # Utility Functions                                                  #
 #--------------------------------------------------------------------#
@@ -356,7 +352,7 @@ _zsh_autosuggest_modify() {
 
 	# Get a new suggestion if the buffer is not empty after modification
 	if (( $#BUFFER > 0 )); then
-		if [[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
+		if (( ! ${+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE} )) || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
 			_zsh_autosuggest_fetch
 		fi
 	fi
@@ -366,7 +362,7 @@ _zsh_autosuggest_modify() {
 
 # Fetch a new suggestion based on what's currently in the buffer
 _zsh_autosuggest_fetch() {
-	if [[ -n "${ZSH_AUTOSUGGEST_USE_ASYNC+x}" ]]; then
+	if (( ${+ZSH_AUTOSUGGEST_USE_ASYNC} )); then
 		_zsh_autosuggest_async_request "$BUFFER"
 	else
 		local suggestion
@@ -673,15 +669,17 @@ _zsh_autosuggest_async_response() {
 
 # Start the autosuggestion widgets
 _zsh_autosuggest_start() {
-	add-zsh-hook -d precmd _zsh_autosuggest_start
+	# By default we re-bind widgets on every precmd to ensure we wrap other
+	# wrappers. Specifically, highlighting breaks if our widgets are wrapped by
+	# zsh-syntax-highlighting widgets. This also allows modifications to the
+	# widget list variables to take effect on the next precmd. However this has
+	# a decent performance hit, so users can set ZSH_AUTOSUGGEST_MANUAL_REBIND
+	# to disable the automatic re-binding.
+	if (( ${+ZSH_AUTOSUGGEST_MANUAL_REBIND} )); then
+		add-zsh-hook -d precmd _zsh_autosuggest_start
+	fi
 
 	_zsh_autosuggest_bind_widgets
-
-	# Re-bind widgets on every precmd to ensure we wrap other wrappers.
-	# Specifically, highlighting breaks if our widgets are wrapped by
-	# zsh-syntax-highlighting widgets. This also allows modifications
-	# to the widget list variables to take effect on the next precmd.
-	add-zsh-hook precmd _zsh_autosuggest_bind_widgets
 }
 
 # Start the autosuggestion widgets on the next precmd

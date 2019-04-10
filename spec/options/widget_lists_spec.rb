@@ -94,4 +94,27 @@ describe 'a modification to the widget lists' do
       wait_for { session.content(esc_seqs: true) }.to eq('echo hello')
     end
   end
+
+  context 'when manual rebind is enabled' do
+    let(:options) { ["ZSH_AUTOSUGGEST_MANUAL_REBIND=true"] }
+
+    it 'does not take effect until bind command is re-run' do
+      with_history('echo hello') do
+        session.send_string('e')
+        wait_for { session.content }.to eq('echo hello')
+        session.send_keys('C-b')
+        sleep 1
+        expect(session.content(esc_seqs: true)).not_to eq('echo hello')
+
+        session.send_keys('C-c')
+        session.run_command('_zsh_autosuggest_bind_widgets').clear_screen
+        wait_for { session.content }.to eq('')
+
+        session.send_string('e')
+        wait_for { session.content }.to eq('echo hello')
+        session.send_keys('C-b')
+        wait_for { session.content(esc_seqs: true) }.to eq('echo hello')
+      end
+    end
+  end
 end
