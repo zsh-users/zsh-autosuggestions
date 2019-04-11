@@ -63,11 +63,15 @@ Widgets that modify the buffer and are not found in any of these arrays will fet
 ### Disabling suggestion for large buffers
 
 Set `ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE` to an integer value to disable autosuggestion for large buffers. The default is unset, which means that autosuggestion will be tried for any buffer size. Recommended value is 20.
-This can be useful when pasting large amount of text in the terminal, to avoid triggering autosuggestion for too long strings.
+This can be useful when pasting large amount of text in the terminal, to avoid triggering autosuggestion for strings that are too long.
 
 ### Enable Asynchronous Mode
 
-As of `v0.4.0`, suggestions can be fetched asynchronously using the `zsh/zpty` module. To enable this behavior, set the `ZSH_AUTOSUGGEST_USE_ASYNC` variable (it can be set to anything).
+As of `v0.4.0`, suggestions can be fetched asynchronously. To enable this behavior, set the `ZSH_AUTOSUGGEST_USE_ASYNC` variable (it can be set to anything).
+
+### Disabling automatic widget re-binding
+
+Set `ZSH_AUTOSUGGEST_MANUAL_REBIND` (it can be set to anything) to disable automatic widget re-binding on each precmd. This can be a big boost to performance, but you'll need to handle re-binding yourself if any of the widget lists change or if you or another plugin wrap any of the autosuggest widgets. To re-bind widgets, run `_zsh_autosuggest_bind_widgets`.
 
 
 ### Key Bindings
