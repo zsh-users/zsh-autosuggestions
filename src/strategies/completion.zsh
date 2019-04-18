@@ -10,7 +10,7 @@ _zsh_autosuggest_capture_postcompletion() {
 	compstate[insert]=1
 
 	# Don't list completions
-	unset compstate[list]
+	unset 'compstate[list]'
 }
 
 _zsh_autosuggest_capture_completion_widget() {
