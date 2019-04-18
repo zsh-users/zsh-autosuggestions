@@ -496,6 +496,9 @@ _zsh_autosuggest_capture_postcompletion() {
 }
 
 _zsh_autosuggest_capture_completion_widget() {
+	# Add a post-completion hook to be called after all completions have been
+	# gathered. The hook can modify compstate to affect what is done with the
+	# gathered completions.
 	local -a +h comppostfuncs
 	comppostfuncs=(_zsh_autosuggest_capture_postcompletion)
 
