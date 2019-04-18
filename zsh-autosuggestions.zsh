@@ -590,8 +590,10 @@ _zsh_autosuggest_strategy_completion() {
 		# content between the first two null bytes.
 		zpty -r $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME line '*'$'\0''*'$'\0'
 
-		# On older versions of zsh, we sometimes get extra bytes after the
-		# second null byte, so trim those off the end
+		# Extract the suggestion from between the null bytes.  On older
+		# versions of zsh (older than 5.3), we sometimes get extra bytes after
+		# the second null byte, so trim those off the end.
+		# See http://www.zsh.org/mla/workers/2015/msg03290.html
 		suggestion="${${${(M)line:#*$'\0'*$'\0'*}#*$'\0'}%%$'\0'*}"
 	} always {
 		# Destroy the pty
