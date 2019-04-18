@@ -4,7 +4,7 @@ describe 'the `completion` suggestion strategy' do
     -> do
       session.
         run_command('autoload compinit && compinit').
-        run_command('_foo() { compadd bar }').
+        run_command('_foo() { compadd bar; compadd bat }').
         run_command('compdef _foo baz')
     end
   end
