@@ -28,6 +28,16 @@ _zsh_autosuggest_capture_completion_widget() {
 	# after autosuggestions is initialized.
 	zle -- ${(k)widgets[(r)completion:.complete-word:_main_complete]}
 
+	if is-at-least 5.0.3; then
+		# Don't do any cr/lf transformations. We need to do this immediately before
+		# output because if we do it in setup, onlcr will be re-enabled when we enter
+		# vared in the async code path. There is a bug in zpty module in older versions
+		# where the tty is not properly attached to the pty slave, resulting in stty
+		# getting stopped with a SIGTTOU. See zsh-workers thread 31660 and upstream
+		# commit f75904a38
+		stty -onlcr -ocrnl -F /dev/tty
+	fi
+
 	# The completion has been added, print the buffer as the suggestion
 	echo -nE - $'\0'$BUFFER$'\0'
 }
