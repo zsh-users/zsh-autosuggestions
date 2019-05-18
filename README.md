@@ -34,7 +34,9 @@ You may want to override the default global config variables. Default values of 
 
 ### Suggestion Highlight Style
 
-Set `ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE` to configure the style that the suggestion is shown with. The default is `fg=8`.
+Set `ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE` to configure the style that the suggestion is shown with. The default is `fg=8`, which follows the xterm-256-color convention.
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/1/15/Xterm_256color_chart.svg" width="100" height="100">
 
 
 ### Suggestion Strategy
