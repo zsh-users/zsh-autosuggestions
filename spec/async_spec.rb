@@ -34,9 +34,9 @@ context 'with asynchronous suggestions enabled' do
 
     it 'terminates the prompt and begins a new one' do
       session.send_keys('e')
-      sleep 0.1
+      sleep 0.5
       session.send_keys('C-c')
-      sleep 0.1
+      sleep 0.5
       session.send_keys('echo')
 
       wait_for { session.content }.to eq("e\necho")
