@@ -71,6 +71,7 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 		up-line-or-history
 		down-line-or-history
 		accept-line
+		copy-earlier-word
 	)
 }
 
