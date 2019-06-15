@@ -44,8 +44,12 @@ _zsh_autosuggest_capture_setup() {
 	# zpty processes.
 	if ! is-at-least 5.4; then
 		zshexit() {
-			kill -KILL $$
-			sleep 1 # Block for long enough for the signal to come through
+			# The zsh builtin `kill` fails sometimes in older versions
+			# https://unix.stackexchange.com/a/477647/156673
+			kill -KILL $$ 2>&- || command kill -KILL $$
+
+			# Block for long enough for the signal to come through
+			sleep 1
 		}
 	fi
 
