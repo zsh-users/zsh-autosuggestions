@@ -84,6 +84,7 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 		which-command
 		yank
 		yank-pop
+		zle-\*
 	)
 }
 
