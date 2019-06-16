@@ -85,7 +85,7 @@ _zsh_autosuggest_modify() {
 
 	# Get a new suggestion if the buffer is not empty after modification
 	if (( $#BUFFER > 0 )); then
-		if (( ! ${+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE} )) || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
+		if [[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
 			_zsh_autosuggest_fetch
 		fi
 	fi

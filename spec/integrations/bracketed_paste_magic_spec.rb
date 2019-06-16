@@ -24,4 +24,20 @@ describe 'pasting using bracketed-paste-magic' do
       end
     end
   end
+
+  context 'with `bracketed-paste` added to the list of widgets that clear the suggestion' do
+    let(:options) { ['ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(bracketed-paste)'] }
+
+    it 'does not retain an old suggestion' do
+      with_history ('echo foo') do
+        session.send_string('echo ')
+        wait_for { session.content }.to eq('echo foo')
+        session.paste_string('bar')
+        wait_for { session.content }.to eq('echo bar')
+        session.send_keys('C-a') # Any cursor movement works
+        sleep 1
+        expect(session.content).to eq('echo bar')
+      end
+    end
+  end
 end

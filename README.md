@@ -2,7 +2,7 @@
 
 _[Fish](http://fishshell.com/)-like fast/unobtrusive autosuggestions for zsh._
 
-It suggests commands as you type, based on command history.
+It suggests commands as you type.
 
 Requirements: Zsh v4.3.11 or later
 
@@ -34,15 +34,26 @@ You may want to override the default global config variables. Default values of 
 
 ### Suggestion Highlight Style
 
-Set `ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE` to configure the style that the suggestion is shown with. The default is `fg=8`.
+Set `ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE` to configure the style that the suggestion is shown with. The default is `fg=8`, which will set the foreground color to color 8 from the 256-color palette. If your terminal only supports 8 colors, you will need to use a number between 0 and 7.
+
+Background color can also be set, and the suggestion can be styled bold, underlined, or standout. For example, this would show suggestions with bold, underlined, pink text on a cyan background:
+
+```sh
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
+```
+
+For more info, read the Character Highlighting section of the zsh manual: `man zshzle` or [online](http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting).
 
 
 ### Suggestion Strategy
 
-`ZSH_AUTOSUGGEST_STRATEGY` is an array that specifies how suggestions should be generated. The strategies in the array are tried successively until a suggestion is found. There are currently two built-in strategies to choose from:
+`ZSH_AUTOSUGGEST_STRATEGY` is an array that specifies how suggestions should be generated. The strategies in the array are tried successively until a suggestion is found. There are currently three built-in strategies to choose from:
 
 - `history`: Chooses the most recent match from history.
 - `match_prev_cmd`: Like `history`, but chooses the most recent match whose preceding history item matches the most recently executed command ([more info](src/strategies/match_prev_cmd.zsh)). Note that this strategy won't work as expected with ZSH options that don't preserve the history order such as `HIST_IGNORE_ALL_DUPS` or `HIST_EXPIRE_DUPS_FIRST`.
+- `completion`: (experimental) Chooses a suggestion based on what tab-completion would suggest. (requires `zpty` module)
+
+For example, setting `ZSH_AUTOSUGGEST_STRATEGY=(history completion)` will first try to find a suggestion from your history, but, if it can't find a match, will find a suggestion from the completion engine.
 
 
 ### Widget Mapping
