@@ -86,7 +86,7 @@ _zsh_autosuggest_capture_completion_async() {
 	# https://stackoverflow.com/a/7057118/154703
 	autoload +X _complete
 	functions[_original_complete]=$functions[_complete]
-	_complete () {
+	function _complete() {
 		unset 'compstate[vared]'
 		_original_complete "$@"
 	}
