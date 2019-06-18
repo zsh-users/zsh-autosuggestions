@@ -1,8 +1,8 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
 # https://github.com/zsh-users/zsh-autosuggestions
-# v0.6.0
+# v0.6.1
 # Copyright (c) 2013 Thiago de Arruda
-# Copyright (c) 2016-2018 Eric Freese
+# Copyright (c) 2016-2019 Eric Freese
 # 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -568,7 +568,7 @@ _zsh_autosuggest_capture_completion_async() {
 	# https://stackoverflow.com/a/7057118/154703
 	autoload +X _complete
 	functions[_original_complete]=$functions[_complete]
-	_complete () {
+	function _complete() {
 		unset 'compstate[vared]'
 		_original_complete "$@"
 	}

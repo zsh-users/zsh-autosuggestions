@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.6.1
+- Fixed bug occurring when `_complete` had been aliased (#443)
+
 ## v0.6.0
 - Added `completion` suggestion strategy powered by completion system (#111)
 - Allow setting `ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE` to an empty string (#422)
