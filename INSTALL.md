@@ -1,6 +1,12 @@
-## Installation
+# Installation
 
-### Manual (Git Clone)
+* [Manual](#manual-git-clone)
+* [Antigen](#antigen)
+* [Oh My Zsh](#oh-my-zsh)
+* [Arch Linux](#arch-linux)
+* [macOS via Homebrew](#macos-via-homebrew)
+
+## Manual (Git Clone)
 
 1. Clone this repository somewhere on your machine. This guide will assume `~/.zsh/zsh-autosuggestions`.
 
@@ -16,7 +22,7 @@
 
 3. Start a new terminal session.
 
-### Antigen
+## Antigen
 
 1. Add the following to your `.zshrc`:
 
@@ -26,7 +32,7 @@
 
 2. Start a new terminal session.
 
-### Oh My Zsh
+## Oh My Zsh
 
 1. Clone this repository into `$ZSH_CUSTOM/plugins` (by default `~/.oh-my-zsh/custom/plugins`)
 
@@ -42,7 +48,7 @@
 
 3. Start a new terminal session.
 
-### Arch Linux
+## Arch Linux
 
 1. Install [`zsh-autosuggestions`](https://www.archlinux.org/packages/community/any/zsh-autosuggestions/) from the `community` repository.
 
@@ -60,7 +66,8 @@
 
 3. Start a new terminal session.
 
-### macOS via Homebrew
+## macOS via Homebrew
+
 1. Install the `zsh-autosuggestions` package using [Homebrew](https://brew.sh/).
 
     ```sh
@@ -74,4 +81,3 @@
     ```
 
 3. Start a new terminal session.
-
