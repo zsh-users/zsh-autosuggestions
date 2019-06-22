@@ -2,7 +2,7 @@
 
 _[Fish](http://fishshell.com/)-like fast/unobtrusive autosuggestions for zsh._
 
-It suggests commands as you type.
+It suggests commands as you type based on history and completions.
 
 Requirements: Zsh v4.3.11 or later
 

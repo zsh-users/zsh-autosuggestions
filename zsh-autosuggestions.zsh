@@ -1,6 +1,6 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
 # https://github.com/zsh-users/zsh-autosuggestions
-# v0.6.1
+# v0.6.2
 # Copyright (c) 2013 Thiago de Arruda
 # Copyright (c) 2016-2019 Eric Freese
 # 
@@ -398,7 +398,7 @@ _zsh_autosuggest_accept() {
 		unset POSTDISPLAY
 
 		# Move the cursor to the end of the buffer
-		CURSOR=${#BUFFER}
+		CURSOR=${max_cursor_pos}
 	fi
 
 	_zsh_autosuggest_invoke_original_widget $@
