@@ -63,5 +63,18 @@ describe 'when using vi mode' do
       end
     end
   end
-end
 
+  describe '`vi-delete`' do
+    it 'should be able to remove the last character in the buffer' do
+      skip 'deleting last char did not work below zsh version 5.0.8' if session.zsh_version < Gem::Version.new('5.0.8')
+
+      session.
+        send_string('echo foo').
+        send_keys('escape').
+        send_keys('d').
+        send_keys('l')
+
+      wait_for { session.content }.to eq('echo fo')
+    end
+  end
+end
