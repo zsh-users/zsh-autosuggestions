@@ -136,7 +136,11 @@ _zsh_autosuggest_accept() {
 		unset POSTDISPLAY
 
 		# Move the cursor to the end of the buffer
-		CURSOR=${max_cursor_pos}
+		if [[ "$KEYMAP" = "vicmd" ]]; then
+			CURSOR=$(($#BUFFER - 1))
+		else
+			CURSOR=$#BUFFER
+		fi
 	fi
 
 	_zsh_autosuggest_invoke_original_widget $@
