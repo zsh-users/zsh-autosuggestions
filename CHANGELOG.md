@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.6.3
+- Fixed bug moving cursor to end of buffer after accepting suggestion (#453)
+
 ## v0.6.2
 - Fixed bug deleting the last character in the buffer in vi mode (#450)
 - Degrade gracefully when user doesn't have `zsh/system` module installed (#447)
