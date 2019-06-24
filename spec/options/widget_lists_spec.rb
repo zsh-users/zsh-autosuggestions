@@ -5,12 +5,13 @@ describe 'a zle widget' do
   context 'when added to ZSH_AUTOSUGGEST_ACCEPT_WIDGETS' do
     let(:options) { ["ZSH_AUTOSUGGEST_ACCEPT_WIDGETS+=(#{widget})"] }
 
-    it 'accepts the suggestion when invoked' do
+    it 'accepts the suggestion and moves the cursor to the end of the buffer when invoked' do
       with_history('echo hello') do
         session.send_string('e')
         wait_for { session.content }.to eq('echo hello')
         session.send_keys('C-b')
         wait_for { session.content(esc_seqs: true) }.to eq('echo hello')
+        wait_for { session.cursor }.to eq([10, 0])
       end
     end
   end
