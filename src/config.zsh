@@ -17,7 +17,10 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 # Will try each strategy in order until a suggestion is returned
 (( ! ${+ZSH_AUTOSUGGEST_STRATEGY} )) && {
 	typeset -ga ZSH_AUTOSUGGEST_STRATEGY
-	ZSH_AUTOSUGGEST_STRATEGY=(history)
+	ZSH_AUTOSUGGEST_STRATEGY=(
+		'cd *:completion'
+		'*:history,completion'
+	)
 }
 
 # Widgets that clear the suggestion

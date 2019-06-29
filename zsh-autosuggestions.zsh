@@ -43,7 +43,10 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 # Will try each strategy in order until a suggestion is returned
 (( ! ${+ZSH_AUTOSUGGEST_STRATEGY} )) && {
 	typeset -ga ZSH_AUTOSUGGEST_STRATEGY
-	ZSH_AUTOSUGGEST_STRATEGY=(history)
+	ZSH_AUTOSUGGEST_STRATEGY=(
+		'cd *:completion'
+		'*:history,completion'
+	)
 }
 
 # Widgets that clear the suggestion
@@ -708,21 +711,46 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 
 _zsh_autosuggest_fetch_suggestion() {
 	typeset -g suggestion
-	local -a strategies
-	local strategy
+	local -a strategy_specs spec_parts strategies
+	local strategy_spec strategy prefix
 
 	# Ensure we are working with an array
-	strategies=(${=ZSH_AUTOSUGGEST_STRATEGY})
+	strategy_specs=(${ZSH_AUTOSUGGEST_STRATEGY})
 
-	for strategy in $strategies; do
-		# Try to get a suggestion from this strategy
-		_zsh_autosuggest_strategy_$strategy "$1"
+	echo "fetching.." >> debug.log
 
-		# Ensure the suggestion matches the prefix
-		[[ "$suggestion" != "$1"* ]] && unset suggestion
+	for strategy_spec in $strategy_specs; do
+		echo "trying spec: '$strategy_spec'" >> debug.log
+		spec_parts=(${(s/:/)strategy_spec})
+		prefix="${spec_parts[1]}"
 
-		# Break once we've found a valid suggestion
-		[[ -n "$suggestion" ]] && break
+		echo "checking prefix: $prefix" >> debug.log
+		echo "  spec parts: $spec_parts" >> debug.log
+
+		if [[ "$1" != ${~prefix} ]]; then
+			echo "  '$1' didn't match prefix: '$prefix'" >> debug.log
+			continue;
+		fi
+
+		strategies=(${(s/,/)${spec_parts[2]}})
+
+		echo "  trying strategies: $strategies" >> debug.log
+
+		for strategy in $strategies; do
+
+			echo "    trying strategy $strategy" >> debug.log
+
+			# Try to get a suggestion from this strategy
+			_zsh_autosuggest_strategy_$strategy "$1"
+
+			# Ensure the suggestion matches the prefix
+			[[ "$suggestion" != "$1"* ]] && unset suggestion
+
+			# Break once we've found a valid suggestion
+			[[ -n "$suggestion" ]] && return
+
+			echo "      didn't get suggestion" >> debug.log
+		done
 	done
 }
 
