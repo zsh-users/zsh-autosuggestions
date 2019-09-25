@@ -6,7 +6,8 @@ It suggests commands as you type based on history and completions.
 
 Requirements: Zsh v4.3.11 or later
 
-[![CircleCI](https://circleci.com/gh/zsh-users/zsh-autosuggestions.svg?style=svg)](https://circleci.com/gh/zsh-users/zsh-autosuggestions)
+[![CircleCI](https://img.shields.io/circleci/build/github/zsh-users/zsh-autosuggestions.svg)](https://circleci.com/gh/zsh-users/zsh-autosuggestions)
+[![Chat on Gitter](https://img.shields.io/gitter/room/zsh-users/zsh-autosuggestions.svg)](https://gitter.im/zsh-users/zsh-autosuggestions)
 
 <a href="https://asciinema.org/a/37390" target="_blank"><img src="https://asciinema.org/a/37390.png" width="400" /></a>
 
