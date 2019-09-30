@@ -5,7 +5,6 @@ jobs:
     shell: /bin/bash --login
     docker:
     - image: ericfreese/zsh-autosuggestions-test:latest
-      command: /sbin/init
     steps:
     - checkout
     - run:
