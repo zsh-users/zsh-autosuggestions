@@ -35,7 +35,7 @@ You may want to override the default global config variables. Default values of 
 
 ### Suggestion Highlight Style
 
-Set `ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE` to configure the style that the suggestion is shown with. The default is `fg=8`, which will set the foreground color to color 8 from the 256-color palette. If your terminal only supports 8 colors, you will need to use a number between 0 and 7.
+Set `ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE` to configure the style that the suggestion is shown with. The default is `fg=8`, which will set the foreground color to color 8 from the [256-color palette](https://upload.wikimedia.org/wikipedia/commons/1/15/Xterm_256color_chart.svg). If your terminal only supports 8 colors, you will need to use a number between 0 and 7.
 
 Background color can also be set, and the suggestion can be styled bold, underlined, or standout. For example, this would show suggestions with bold, underlined, pink text on a cyan background:
 
