@@ -5,7 +5,9 @@ describe 'the `completion` suggestion strategy' do
       session.
         run_command('autoload compinit && compinit').
         run_command('_foo() { compadd bar; compadd bat }').
-        run_command('compdef _foo baz')
+        run_command('_num() { compadd two; compadd three }').
+        run_command('compdef _foo baz').
+        run_command('compdef _num one')
     end
   end
 
@@ -34,6 +36,21 @@ describe 'the `completion` suggestion strategy' do
     it 'suggests the first completion result' do
       session.send_string('baz ')
       wait_for { session.content }.to eq('baz bar')
+    end
+  end
+
+  context 'when ZSH_AUTOSUGGEST_COMPLETION_IGNORE is set to a pattern' do
+    let(:options) { ['ZSH_AUTOSUGGEST_STRATEGY=completion', 'ZSH_AUTOSUGGEST_COMPLETION_IGNORE="one *"'] }
+
+    it 'makes suggestions when the buffer does not match the pattern' do
+      session.send_string('baz ')
+      wait_for { session.content }.to eq('baz bar')
+    end
+
+    it 'does not make suggestions when the buffer matches the pattern' do
+      session.send_string('one t')
+      sleep 1
+      expect(session.content).to eq('one t')
     end
   end
 

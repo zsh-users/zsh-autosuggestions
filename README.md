@@ -93,6 +93,12 @@ Set `ZSH_AUTOSUGGEST_HISTORY_IGNORE` to a glob pattern to prevent offering sugge
 
 **Note:** This only affects the `history` and `match_prev_cmd` suggestion strategies.
 
+### Skipping completion suggestions for certain cases
+
+Set `ZSH_AUTOSUGGEST_COMPLETION_IGNORE` to a glob pattern to prevent offering completion suggestions when the buffer matches that pattern. For example, set it to `"git *"` to disable completion suggestions for git subcommands.
+
+**Note:** This only affects the `completion` suggestion strategy.
+
 
 ### Key Bindings
 
