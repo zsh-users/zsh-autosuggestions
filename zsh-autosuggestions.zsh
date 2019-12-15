@@ -318,7 +318,7 @@ _zsh_autosuggest_modify() {
 	emulate -L zsh
 
 	# Don't fetch a new suggestion if there's more input to be read immediately
-	if (( $PENDING > 0 )) || (( $KEYS_QUEUED_COUNT > 0 )); then
+	if (( $PENDING > 0 || $KEYS_QUEUED_COUNT > 0 )); then
 		POSTDISPLAY="$orig_postdisplay"
 		return $retval
 	fi
