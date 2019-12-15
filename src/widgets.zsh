@@ -128,7 +128,7 @@ _zsh_autosuggest_accept() {
 	fi
 
 	# Only accept if the cursor is at the end of the buffer
-	if [[ $CURSOR = $max_cursor_pos ]]; then
+	if (( $CURSOR == $max_cursor_pos )); then
 		# Add the suggestion to the buffer
 		BUFFER="$BUFFER$POSTDISPLAY"
 
