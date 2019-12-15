@@ -122,7 +122,7 @@ _zsh_autosuggest_strategy_completion() {
 		# versions of zsh (older than 5.3), we sometimes get extra bytes after
 		# the second null byte, so trim those off the end.
 		# See http://www.zsh.org/mla/workers/2015/msg03290.html
-		suggestion="${${line#*$'\0'}%$'\0'*}"
+		suggestion="${${(@0)line}[2]}"
 	} always {
 		# Destroy the pty
 		zpty -d $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME
