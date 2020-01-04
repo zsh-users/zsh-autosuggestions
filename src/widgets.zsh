@@ -56,7 +56,7 @@ _zsh_autosuggest_modify() {
 	emulate -L zsh
 
 	# Don't fetch a new suggestion if there's more input to be read immediately
-	if (( $PENDING > 0 )) || (( $KEYS_QUEUED_COUNT > 0 )); then
+	if (( $PENDING > 0 || $KEYS_QUEUED_COUNT > 0 )); then
 		POSTDISPLAY="$orig_postdisplay"
 		return $retval
 	fi
@@ -119,7 +119,7 @@ _zsh_autosuggest_suggest() {
 
 # Accept the entire suggestion
 _zsh_autosuggest_accept() {
-	local -i max_cursor_pos=$#BUFFER
+	local -i retval max_cursor_pos=$#BUFFER
 
 	# When vicmd keymap is active, the cursor can't move all the way
 	# to the end of the buffer
@@ -127,23 +127,33 @@ _zsh_autosuggest_accept() {
 		max_cursor_pos=$((max_cursor_pos - 1))
 	fi
 
-	# Only accept if the cursor is at the end of the buffer
-	if [[ $CURSOR = $max_cursor_pos ]]; then
-		# Add the suggestion to the buffer
-		BUFFER="$BUFFER$POSTDISPLAY"
-
-		# Remove the suggestion
-		unset POSTDISPLAY
-
-		# Move the cursor to the end of the buffer
-		if [[ "$KEYMAP" = "vicmd" ]]; then
-			CURSOR=$(($#BUFFER - 1))
-		else
-			CURSOR=$#BUFFER
-		fi
+	# If we're not in a valid state to accept a suggestion, just run the
+	# original widget and bail out
+	if (( $CURSOR != $max_cursor_pos || !$#POSTDISPLAY )); then
+		_zsh_autosuggest_invoke_original_widget $@
+		return
 	fi
 
+	# Only accept if the cursor is at the end of the buffer
+	# Add the suggestion to the buffer
+	BUFFER="$BUFFER$POSTDISPLAY"
+
+	# Remove the suggestion
+	unset POSTDISPLAY
+
+	# Run the original widget before manually moving the cursor so that the
+	# cursor movement doesn't make the widget do something unexpected
 	_zsh_autosuggest_invoke_original_widget $@
+	retval=$?
+
+	# Move the cursor to the end of the buffer
+	if [[ "$KEYMAP" = "vicmd" ]]; then
+		CURSOR=$(($#BUFFER - 1))
+	else
+		CURSOR=$#BUFFER
+	fi
+
+	return $retval
 }
 
 # Accept the entire suggestion and execute it
