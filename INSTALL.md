@@ -42,7 +42,7 @@
     plugins=(zsh-autosuggestions)
     ```
 
-3. Start a new terminal session.
+3. Start a new terminal session or run `. ~/.zshrc`.
 
 ## Manual (Git Clone)
 
