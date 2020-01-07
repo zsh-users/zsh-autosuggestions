@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.6.4
+- Fix `vi-forward-char` triggering a bell when using it to accept a suggestion (#488)
+- New configuration option to skip completion suggestions when buffer matches a pattern (#487)
+- New configuration option to ignore history entries matching a pattern (#456)
+
 ## v0.6.3
 - Fixed bug moving cursor to end of buffer after accepting suggestion (#453)
 

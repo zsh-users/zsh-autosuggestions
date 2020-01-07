@@ -1,6 +1,6 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
 # https://github.com/zsh-users/zsh-autosuggestions
-# v0.6.3
+# v0.6.4
 # Copyright (c) 2013 Thiago de Arruda
 # Copyright (c) 2016-2019 Eric Freese
 # 
@@ -318,7 +318,7 @@ _zsh_autosuggest_modify() {
 	emulate -L zsh
 
 	# Don't fetch a new suggestion if there's more input to be read immediately
-	if (( $PENDING > 0 )) || (( $KEYS_QUEUED_COUNT > 0 )); then
+	if (( $PENDING > 0 || $KEYS_QUEUED_COUNT > 0 )); then
 		POSTDISPLAY="$orig_postdisplay"
 		return $retval
 	fi
@@ -381,7 +381,7 @@ _zsh_autosuggest_suggest() {
 
 # Accept the entire suggestion
 _zsh_autosuggest_accept() {
-	local -i max_cursor_pos=$#BUFFER
+	local -i retval max_cursor_pos=$#BUFFER
 
 	# When vicmd keymap is active, the cursor can't move all the way
 	# to the end of the buffer
@@ -389,23 +389,33 @@ _zsh_autosuggest_accept() {
 		max_cursor_pos=$((max_cursor_pos - 1))
 	fi
 
-	# Only accept if the cursor is at the end of the buffer
-	if [[ $CURSOR = $max_cursor_pos ]]; then
-		# Add the suggestion to the buffer
-		BUFFER="$BUFFER$POSTDISPLAY"
-
-		# Remove the suggestion
-		unset POSTDISPLAY
-
-		# Move the cursor to the end of the buffer
-		if [[ "$KEYMAP" = "vicmd" ]]; then
-			CURSOR=$(($#BUFFER - 1))
-		else
-			CURSOR=$#BUFFER
-		fi
+	# If we're not in a valid state to accept a suggestion, just run the
+	# original widget and bail out
+	if (( $CURSOR != $max_cursor_pos || !$#POSTDISPLAY )); then
+		_zsh_autosuggest_invoke_original_widget $@
+		return
 	fi
 
+	# Only accept if the cursor is at the end of the buffer
+	# Add the suggestion to the buffer
+	BUFFER="$BUFFER$POSTDISPLAY"
+
+	# Remove the suggestion
+	unset POSTDISPLAY
+
+	# Run the original widget before manually moving the cursor so that the
+	# cursor movement doesn't make the widget do something unexpected
 	_zsh_autosuggest_invoke_original_widget $@
+	retval=$?
+
+	# Move the cursor to the end of the buffer
+	if [[ "$KEYMAP" = "vicmd" ]]; then
+		CURSOR=$(($#BUFFER - 1))
+	else
+		CURSOR=$#BUFFER
+	fi
+
+	return $retval
 }
 
 # Accept the entire suggestion and execute it
@@ -582,6 +592,12 @@ _zsh_autosuggest_capture_completion_async() {
 }
 
 _zsh_autosuggest_strategy_completion() {
+	# Reset options to defaults and enable LOCAL_OPTIONS
+	emulate -L zsh
+
+	# Enable extended glob for completion ignore pattern
+	setopt EXTENDED_GLOB
+
 	typeset -g suggestion
 	local line REPLY
 
@@ -590,6 +606,9 @@ _zsh_autosuggest_strategy_completion() {
 
 	# Exit if we don't have zpty
 	zmodload zsh/zpty 2>/dev/null || return
+
+	# Exit if our search string matches the ignore pattern
+	[[ -n "$ZSH_AUTOSUGGEST_COMPLETION_IGNORE" ]] && [[ "$1" == $~ZSH_AUTOSUGGEST_COMPLETION_IGNORE ]] && return
 
 	# Zle will be inactive if we are in async mode
 	if zle; then
@@ -608,7 +627,7 @@ _zsh_autosuggest_strategy_completion() {
 		# versions of zsh (older than 5.3), we sometimes get extra bytes after
 		# the second null byte, so trim those off the end.
 		# See http://www.zsh.org/mla/workers/2015/msg03290.html
-		suggestion="${${line#*$'\0'}%$'\0'*}"
+		suggestion="${${(@0)line}[2]}"
 	} always {
 		# Destroy the pty
 		zpty -d $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME
@@ -626,7 +645,7 @@ _zsh_autosuggest_strategy_history() {
 	# Reset options to defaults and enable LOCAL_OPTIONS
 	emulate -L zsh
 
-	# Enable globbing flags so that we can use (#m)
+	# Enable globbing flags so that we can use (#m) and (x~y) glob operator
 	setopt EXTENDED_GLOB
 
 	# Escape backslashes and all of the glob operators so we can use
@@ -635,9 +654,16 @@ _zsh_autosuggest_strategy_history() {
 	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
 	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
 
-	# Get the history items that match
+	# Get the history items that match the prefix, excluding those that match
+	# the ignore pattern
+	local pattern="$prefix*"
+	if [[ -n $ZSH_AUTOSUGGEST_HISTORY_IGNORE ]]; then
+		pattern="($pattern)~($ZSH_AUTOSUGGEST_HISTORY_IGNORE)"
+	fi
+
+	# Give the first history item matching the pattern as the suggestion
 	# - (r) subscript flag makes the pattern match on values
-	typeset -g suggestion="${history[(r)${prefix}*]}"
+	typeset -g suggestion="${history[(r)$pattern]}"
 }
 
 #--------------------------------------------------------------------#
@@ -665,16 +691,23 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	# Reset options to defaults and enable LOCAL_OPTIONS
 	emulate -L zsh
 
-	# Enable globbing flags so that we can use (#m)
+	# Enable globbing flags so that we can use (#m) and (x~y) glob operator
 	setopt EXTENDED_GLOB
 
 	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
 	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
 
+	# Get the history items that match the prefix, excluding those that match
+	# the ignore pattern
+	local pattern="$prefix*"
+	if [[ -n $ZSH_AUTOSUGGEST_HISTORY_IGNORE ]]; then
+		pattern="($pattern)~($ZSH_AUTOSUGGEST_HISTORY_IGNORE)"
+	fi
+
 	# Get all history event numbers that correspond to history
-	# entries that match pattern $prefix*
+	# entries that match the pattern
 	local history_match_keys
-	history_match_keys=(${(k)history[(R)$prefix*]})
+	history_match_keys=(${(k)history[(R)$~pattern]})
 
 	# By default we use the first history number (most recent history entry)
 	local histkey="${history_match_keys[1]}"

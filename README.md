@@ -53,8 +53,8 @@ For more info, read the Character Highlighting section of the zsh manual: `man z
 `ZSH_AUTOSUGGEST_STRATEGY` is an array that specifies how suggestions should be generated. The strategies in the array are tried successively until a suggestion is found. There are currently three built-in strategies to choose from:
 
 - `history`: Chooses the most recent match from history.
+- `completion`: Chooses a suggestion based on what tab-completion would suggest. (requires `zpty` module)
 - `match_prev_cmd`: Like `history`, but chooses the most recent match whose preceding history item matches the most recently executed command ([more info](src/strategies/match_prev_cmd.zsh)). Note that this strategy won't work as expected with ZSH options that don't preserve the history order such as `HIST_IGNORE_ALL_DUPS` or `HIST_EXPIRE_DUPS_FIRST`.
-- `completion`: (experimental) Chooses a suggestion based on what tab-completion would suggest. (requires `zpty` module)
 
 For example, setting `ZSH_AUTOSUGGEST_STRATEGY=(history completion)` will first try to find a suggestion from your history, but, if it can't find a match, will find a suggestion from the completion engine.
 
@@ -86,6 +86,18 @@ As of `v0.4.0`, suggestions can be fetched asynchronously. To enable this behavi
 ### Disabling automatic widget re-binding
 
 Set `ZSH_AUTOSUGGEST_MANUAL_REBIND` (it can be set to anything) to disable automatic widget re-binding on each precmd. This can be a big boost to performance, but you'll need to handle re-binding yourself if any of the widget lists change or if you or another plugin wrap any of the autosuggest widgets. To re-bind widgets, run `_zsh_autosuggest_bind_widgets`.
+
+### Ignoring history suggestions that match a pattern
+
+Set `ZSH_AUTOSUGGEST_HISTORY_IGNORE` to a glob pattern to prevent offering suggestions for history entries that match the pattern. For example, set it to `"cd *"` to never suggest any `cd` commands from history. Or set to `"?(#c50,)"` to never suggest anything 50 characters or longer.
+
+**Note:** This only affects the `history` and `match_prev_cmd` suggestion strategies.
+
+### Skipping completion suggestions for certain cases
+
+Set `ZSH_AUTOSUGGEST_COMPLETION_IGNORE` to a glob pattern to prevent offering completion suggestions when the buffer matches that pattern. For example, set it to `"git *"` to disable completion suggestions for git subcommands.
+
+**Note:** This only affects the `completion` suggestion strategy.
 
 
 ### Key Bindings
