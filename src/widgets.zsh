@@ -20,7 +20,7 @@ _zsh_autosuggest_enable() {
 
 # Toggle suggestions (enable/disable)
 _zsh_autosuggest_toggle() {
-	if [[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]]; then
+	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )); then
 		_zsh_autosuggest_enable
 	else
 		_zsh_autosuggest_disable
@@ -79,7 +79,7 @@ _zsh_autosuggest_modify() {
 	fi
 
 	# Bail out if suggestions are disabled
-	if [[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]]; then
+	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )); then
 		return $?
 	fi
 
