@@ -467,8 +467,21 @@ _zsh_autosuggest_partial_accept() {
 }
 
 () {
+	typeset -ga _ZSH_AUTOSUGGEST_BUILTIN_ACTIONS
+
+	_ZSH_AUTOSUGGEST_BUILTIN_ACTIONS=(
+		clear
+		fetch
+		suggest
+		accept
+		execute
+		enable
+		disable
+		toggle
+	)
+
 	local action
-	for action in clear modify fetch suggest accept partial_accept execute enable disable toggle; do
+	for action in $_ZSH_AUTOSUGGEST_BUILTIN_ACTIONS modify partial_accept; do
 		eval "_zsh_autosuggest_widget_$action() {
 			local -i retval
 
@@ -485,14 +498,9 @@ _zsh_autosuggest_partial_accept() {
 		}"
 	done
 
-	zle -N autosuggest-fetch _zsh_autosuggest_widget_fetch
-	zle -N autosuggest-suggest _zsh_autosuggest_widget_suggest
-	zle -N autosuggest-accept _zsh_autosuggest_widget_accept
-	zle -N autosuggest-clear _zsh_autosuggest_widget_clear
-	zle -N autosuggest-execute _zsh_autosuggest_widget_execute
-	zle -N autosuggest-enable _zsh_autosuggest_widget_enable
-	zle -N autosuggest-disable _zsh_autosuggest_widget_disable
-	zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
+	for action in $_ZSH_AUTOSUGGEST_BUILTIN_ACTIONS; do
+		zle -N autosuggest-$action _zsh_autosuggest_widget_$action
+	done
 }
 
 #--------------------------------------------------------------------#
