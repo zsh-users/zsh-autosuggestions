@@ -854,5 +854,13 @@ _zsh_autosuggest_start() {
 # Mark for auto-loading the functions that we use
 autoload -Uz add-zsh-hook is-at-least
 
+# Automatically enable asynchronous mode in newer versions of zsh. Disable for
+# older versions because there is a bug when using async mode where ^C does not
+# work immediately after fetching a suggestion.
+# See https://github.com/zsh-users/zsh-autosuggestions/issues/364
+if is-at-least 5.0.8; then
+	typeset -g ZSH_AUTOSUGGEST_USE_ASYNC=
+fi
+
 # Start the autosuggestion widgets on the next precmd
 add-zsh-hook precmd _zsh_autosuggest_start
