@@ -18,6 +18,8 @@ _zsh_autosuggest_start() {
 	_zsh_autosuggest_bind_widgets
 }
 
+# Mark for auto-loading the functions that we use
+autoload -Uz add-zsh-hook is-at-least
+
 # Start the autosuggestion widgets on the next precmd
-autoload -Uz add-zsh-hook
 add-zsh-hook precmd _zsh_autosuggest_start
