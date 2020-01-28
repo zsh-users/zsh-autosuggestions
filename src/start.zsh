@@ -18,6 +18,14 @@ _zsh_autosuggest_start() {
 	_zsh_autosuggest_bind_widgets
 }
 
-# Start the autosuggestion widgets on the next precmd
-autoload -Uz add-zsh-hook
-add-zsh-hook precmd _zsh_autosuggest_start
+# Mark for auto-loading the functions that we use
+autoload -Uz add-zsh-hook is-at-least
+
+# If zle is already running, go ahead and start the autosuggestion widgets.
+# Otherwise, wait until the next precmd.
+if zle; then
+	_zsh_autosuggest_start
+	(( ! ${+ZSH_AUTOSUGGEST_MANUAL_REBIND} )) && add-zsh-hook precmd _zsh_autosuggest_start
+else
+	add-zsh-hook precmd _zsh_autosuggest_start
+fi
