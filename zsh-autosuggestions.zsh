@@ -549,8 +549,6 @@ _zsh_autosuggest_capture_completion_widget() {
 zle -N autosuggest-capture-completion _zsh_autosuggest_capture_completion_widget
 
 _zsh_autosuggest_capture_setup() {
-	autoload -Uz is-at-least
-
 	# There is a bug in zpty module in older zsh versions by which a
 	# zpty that exits will kill all zpty processes that were forked
 	# before it. Here we set up a zsh exit hook to SIGKILL the zpty
@@ -861,6 +859,16 @@ _zsh_autosuggest_start() {
 	_zsh_autosuggest_bind_widgets
 }
 
+# Mark for auto-loading the functions that we use
+autoload -Uz add-zsh-hook is-at-least
+
+# Automatically enable asynchronous mode in newer versions of zsh. Disable for
+# older versions because there is a bug when using async mode where ^C does not
+# work immediately after fetching a suggestion.
+# See https://github.com/zsh-users/zsh-autosuggestions/issues/364
+if is-at-least 5.0.8; then
+	typeset -g ZSH_AUTOSUGGEST_USE_ASYNC=
+fi
+
 # Start the autosuggestion widgets on the next precmd
-autoload -Uz add-zsh-hook
 add-zsh-hook precmd _zsh_autosuggest_start
