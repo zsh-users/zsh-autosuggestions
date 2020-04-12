@@ -95,7 +95,7 @@ Set `ZSH_AUTOSUGGEST_HISTORY_IGNORE` to a glob pattern to prevent offering sugge
 
 ### Skipping completion suggestions for certain cases
 
-Set `ZSH_AUTOSUGGEST_COMPLETION_IGNORE` to a glob pattern to prevent offering completion suggestions when the buffer matches that pattern. For example, set it to `"git *"` to disable completion suggestions for git subcommands.
+Set `ZSH_AUTOSUGGEST_COMPLETION_IGNORE` to a glob pattern to prevent offering completion suggestions when the buffer matches that pattern. For example, set it to `"git *"` to disable completion suggestions for git subcommands. Multiple patterns are separated by `|`, eg. `rsync *| scp *` to disable (slow) completions for remote paths.
 
 **Note:** This only affects the `completion` suggestion strategy.
 
