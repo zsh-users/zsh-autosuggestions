@@ -82,7 +82,6 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 		run-help
 		set-local-history
 		which-command
-		yank
 		yank-pop
 		zle-\*
 	)
@@ -91,3 +90,30 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 # Pty name for capturing completions for completion suggestion strategy
 (( ! ${+ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME} )) &&
 typeset -g ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME=zsh_autosuggest_completion_pty
+
+# Widgets that should preserve ZLE_KILL flag
+(( ! ${+ZSH_AUTOSUGGEST_ZLE_KILL_WIDGETS} )) && {
+	typeset -ga ZSH_AUTOSUGGEST_ZLE_KILL_WIDGETS
+	ZSH_AUTOSUGGEST_ZLE_KILL_WIDGETS=(
+		kill-\*
+		backward-kill-\*
+	)
+}
+
+# Widgets that should preserve ZLE_YANK flag
+(( ! ${+ZSH_AUTOSUGGEST_ZLE_YANK_WIDGETS} )) && {
+	typeset -ga ZSH_AUTOSUGGEST_ZLE_YANK_WIDGETS
+	ZSH_AUTOSUGGEST_ZLE_YANK_WIDGETS=(
+		bracketed-paste
+		vi-put-after
+		yank
+	)
+}
+
+# Widgets that should preserve ZLE_YANKBEFORE flag
+(( ! ${+ZSH_AUTOSUGGEST_ZLE_YANKBEFORE_WIDGETS} )) && {
+	typeset -ga ZSH_AUTOSUGGEST_ZLE_YANKBEFORE_WIDGETS
+	ZSH_AUTOSUGGEST_ZLE_YANKBEFORE_WIDGETS=(
+		vi-put-before
+	)
+}
