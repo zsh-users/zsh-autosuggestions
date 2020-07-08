@@ -85,6 +85,9 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 		yank-pop
 		zle-\*
 	)
+	if [[ "${ZSH_VERSION}" < 5.2 ]]; then
+		ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=(yank)
+	fi
 }
 
 # Pty name for capturing completions for completion suggestion strategy
