@@ -9,7 +9,8 @@
 
 | System  | Package |
 | ------------- | ------------- |
-| Debian / Ubuntu | [zsh-autosuggestions OBS repository](https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-autosuggestions&package=zsh-autosuggestions) |
+| Debian | [zsh-autosuggestions](https://packages.debian.org/buster/zsh-autosuggestions) (or [OBS repository](https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-autosuggestions&package=zsh-autosuggestions) for old releases) |
+| Ubuntu | [zsh-autosuggestions](https://packages.ubuntu.com/focal/zsh-autosuggestions) (or [OBS repository](https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-autosuggestions&package=zsh-autosuggestions) for old releases) |
 | Fedora / CentOS / RHEL / Scientific Linux | [zsh-autosuggestions OBS repository](https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-autosuggestions&package=zsh-autosuggestions) |
 | OpenSUSE / SLE | [zsh-autosuggestions OBS repository](https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-autosuggestions&package=zsh-autosuggestions) |
 | Arch Linux / Manjaro / Antergos / Hyperbola | [zsh-autosuggestions](https://www.archlinux.org/packages/zsh-autosuggestions), [zsh-autosuggestions-git](https://aur.archlinux.org/packages/zsh-autosuggestions-git) |
