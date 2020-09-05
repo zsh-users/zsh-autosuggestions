@@ -43,7 +43,7 @@ shared_examples 'special characters' do
         wait_for { session.content }.to eq('echo "#yolo"')
       end
 
-      with_history('echo "#foo"', 'echo $#abc') do
+      with_history('echo "#foo"', 'echo ${#abc}') do
         session.send_string('echo "#')
         wait_for { session.content }.to eq('echo "#foo"')
       end

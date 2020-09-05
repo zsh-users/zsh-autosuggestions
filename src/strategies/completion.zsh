@@ -21,7 +21,7 @@ _zsh_autosuggest_capture_completion_widget() {
 	comppostfuncs=(_zsh_autosuggest_capture_postcompletion)
 
 	# Only capture completions at the end of the buffer
-	CURSOR=$#BUFFER
+	CURSOR=${#BUFFER}
 
 	# Run the original widget wrapping `.complete-word` so we don't
 	# recursively try to fetch suggestions, since our pty is forked

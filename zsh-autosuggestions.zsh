@@ -253,8 +253,8 @@ _zsh_autosuggest_highlight_reset() {
 _zsh_autosuggest_highlight_apply() {
 	typeset -g _ZSH_AUTOSUGGEST_LAST_HIGHLIGHT
 
-	if (( $#POSTDISPLAY )); then
-		typeset -g _ZSH_AUTOSUGGEST_LAST_HIGHLIGHT="$#BUFFER $(($#BUFFER + $#POSTDISPLAY)) $ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE"
+	if (( ${#POSTDISPLAY} )); then
+		typeset -g _ZSH_AUTOSUGGEST_LAST_HIGHLIGHT="${#BUFFER} $((${#BUFFER} + ${#POSTDISPLAY})) $ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE"
 		region_highlight+=("$_ZSH_AUTOSUGGEST_LAST_HIGHLIGHT")
 	else
 		unset _ZSH_AUTOSUGGEST_LAST_HIGHLIGHT
@@ -275,7 +275,7 @@ _zsh_autosuggest_disable() {
 _zsh_autosuggest_enable() {
 	unset _ZSH_AUTOSUGGEST_DISABLED
 
-	if (( $#BUFFER )); then
+	if (( ${#BUFFER} )); then
 		_zsh_autosuggest_fetch
 	fi
 }
@@ -324,12 +324,12 @@ _zsh_autosuggest_modify() {
 	fi
 
 	# Optimize if manually typing in the suggestion
-	if (( $#BUFFER > $#orig_buffer )); then
+	if (( ${#BUFFER} > ${#orig_buffer} )); then
 		local added=${BUFFER#$orig_buffer}
 
 		# If the string added matches the beginning of the postdisplay
-		if [[ "$added" = "${orig_postdisplay:0:$#added}" ]]; then
-			POSTDISPLAY="${orig_postdisplay:$#added}"
+		if [[ "$added" = "${orig_postdisplay:0:${#added}}" ]]; then
+			POSTDISPLAY="${orig_postdisplay:${#added}}"
 			return $retval
 		fi
 	fi
@@ -346,8 +346,8 @@ _zsh_autosuggest_modify() {
 	fi
 
 	# Get a new suggestion if the buffer is not empty after modification
-	if (( $#BUFFER > 0 )); then
-		if [[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
+	if (( ${#BUFFER} > 0 )); then
+		if [[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || (( ${#BUFFER} <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
 			_zsh_autosuggest_fetch
 		fi
 	fi
@@ -372,7 +372,7 @@ _zsh_autosuggest_suggest() {
 
 	local suggestion="$1"
 
-	if [[ -n "$suggestion" ]] && (( $#BUFFER )); then
+	if [[ -n "$suggestion" ]] && (( ${#BUFFER} )); then
 		POSTDISPLAY="${suggestion#$BUFFER}"
 	else
 		unset POSTDISPLAY
@@ -381,7 +381,7 @@ _zsh_autosuggest_suggest() {
 
 # Accept the entire suggestion
 _zsh_autosuggest_accept() {
-	local -i retval max_cursor_pos=$#BUFFER
+	local -i retval max_cursor_pos=${#BUFFER}
 
 	# When vicmd keymap is active, the cursor can't move all the way
 	# to the end of the buffer
@@ -391,7 +391,7 @@ _zsh_autosuggest_accept() {
 
 	# If we're not in a valid state to accept a suggestion, just run the
 	# original widget and bail out
-	if (( $CURSOR != $max_cursor_pos || !$#POSTDISPLAY )); then
+	if (( $CURSOR != $max_cursor_pos || !${#POSTDISPLAY} )); then
 		_zsh_autosuggest_invoke_original_widget $@
 		return
 	fi
@@ -410,9 +410,9 @@ _zsh_autosuggest_accept() {
 
 	# Move the cursor to the end of the buffer
 	if [[ "$KEYMAP" = "vicmd" ]]; then
-		CURSOR=$(($#BUFFER - 1))
+		CURSOR=$((${#BUFFER} - 1))
 	else
-		CURSOR=$#BUFFER
+		CURSOR=${#BUFFER}
 	fi
 
 	return $retval
@@ -452,9 +452,9 @@ _zsh_autosuggest_partial_accept() {
 	fi
 
 	# If we've moved past the end of the original buffer
-	if (( $cursor_loc > $#original_buffer )); then
+	if (( $cursor_loc > ${#original_buffer} )); then
 		# Set POSTDISPLAY to text right of the cursor
-		POSTDISPLAY="${BUFFER[$(($cursor_loc + 1)),$#BUFFER]}"
+		POSTDISPLAY="${BUFFER[$(($cursor_loc + 1)),${#BUFFER}]}"
 
 		# Clip the buffer at the cursor
 		BUFFER="${BUFFER[1,$cursor_loc]}"
@@ -517,7 +517,7 @@ _zsh_autosuggest_capture_completion_widget() {
 	comppostfuncs=(_zsh_autosuggest_capture_postcompletion)
 
 	# Only capture completions at the end of the buffer
-	CURSOR=$#BUFFER
+	CURSOR=${#BUFFER}
 
 	# Run the original widget wrapping `.complete-word` so we don't
 	# recursively try to fetch suggestions, since our pty is forked
