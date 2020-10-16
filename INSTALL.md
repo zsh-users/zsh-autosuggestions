@@ -39,7 +39,7 @@
 2. Add the plugin to the list of plugins for Oh My Zsh to load (inside `~/.zshrc`):
 
     ```sh
-    plugins=(zsh-autosuggestions)
+    plugins=([plugins...] zsh-syntax-highlighting)
     ```
 
 3. Start a new terminal session.
