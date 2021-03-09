@@ -39,7 +39,10 @@
 2. Add the plugin to the list of plugins for Oh My Zsh to load (inside `~/.zshrc`):
 
     ```sh
-    plugins=(zsh-autosuggestions)
+    plugins=( 
+        # other plugins...
+        zsh-autosuggestions
+    )
     ```
 
 3. Start a new terminal session.
