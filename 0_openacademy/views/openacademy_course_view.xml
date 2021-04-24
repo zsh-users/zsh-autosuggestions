@@ -1,0 +1,74 @@
+<odoo>
+  <data>
+      <!-- explicit list view definition: định nghĩa chế độ xem danh sách rõ ràng -->
+		<record id="course_tree_view" model="ir.ui.view">
+			<field name="name">course_tree</field>
+			<field name="model">openacademy.course</field>  <!-- phải trùng name model -->
+			<field name="arch" type="xml">
+				<tree>
+					<field name="name" />
+					<field name="description" />
+					<field name="class_ids"/>
+				</tree>
+			</field>
+		</record>
+		<!-- form view -->
+		<!-- <record model="ir.ui.view" id="course_form_view">
+            <field name="name">course_form</field>
+            <field name="model">openacademy.course</field>
+            <field name="arch" type="xml">
+                <form string="Course Form">
+					<sheet>
+						<group>
+							<field name="name" />
+						</group>
+						<notebook>
+							<page string="Description">
+								<field name="description" />
+							</page>
+							<page string="About">
+								This is an example of notebooks
+							</page>
+						</notebook>
+					</sheet>
+                </form>
+            </field>
+        </record> -->
+        <!-- search view -->
+		<record id="course_search_view" model="ir.ui.view">
+			<field name="name">course_search</field>
+			<field name="model">openacademy.course</field>
+			<field name="arch" type="xml">
+				<search>
+					<field name="name" />
+					<field name="description" />
+				</search>
+			</field>
+		</record>
+		
+    <!-- actions opening views on models : tập hợp tất cả các chế độ view -->
+        <!--
+            The following tag is an action definition for a "window action",
+            that is an action opening a view or a set of views, hiển thị phần view bảng
+        -->
+        <record id="course_list_action" model="ir.actions.act_window">
+            <field name="name">Courses</field>
+            <field name="res_model">openacademy.course</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Create the first courses
+                </p>
+            </field>
+        </record>
+        
+    <!-- top level menu: no parent -->
+        <menuitem id="openacademy_menu" name="Open Academy"/>
+        
+        <!-- the following menuitem should appear *after*
+             its parent openacademy_menu and *after* its
+             action course_list_action -->
+        <menuitem id="courses_menu_1" name="Courses" parent="openacademy_menu" />
+        <menuitem id="course_menu_sub_1" name="Môn học" parent="courses_menu_1" action="course_list_action"/>
+        <menuitem id="course_menu_sub_2" name="Năng khiếu" parent="courses_menu_1" action="course_list_action"/>
+  </data>
+</odoo>

@@ -1,0 +1,27 @@
+<odoo>
+	<data>
+		<record id="class_add_tree_view" model="ir.ui.view">
+			<field name="name">class_course_tree</field>
+			<field name="model">openacademy.class</field> 
+			<field name="arch" type="xml">
+				<tree>
+					<field name="room" />
+				</tree>
+			</field>
+		</record>
+		<!-- action window -->
+		<record id="class_add_action" model="ir.actions.act_window">
+            <field name="name">Class add</field>
+            <field name="res_model">openacademy.class</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Create the add room class in course
+                </p>
+            </field>
+        </record>
+        
+        <menuitem id="openacademy_class_add_menu" name="add_class" parent = "openacademy_menu"
+        		  action="class_add_action"/>
+        		  
+	</data>
+</odoo>

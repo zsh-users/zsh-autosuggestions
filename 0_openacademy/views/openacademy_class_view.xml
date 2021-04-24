@@ -1,0 +1,34 @@
+<odoo>
+  <data>
+      <!-- explicit list view definition: định nghĩa chế độ xem danh sách rõ ràng -->
+		<record id="class_course_tree_view" model="ir.ui.view">
+			<field name="name">class_course_tree</field>
+			<field name="model">openacademy.class</field> 
+			<field name="arch" type="xml">
+				<tree>
+					<field name="name" />
+					<field name ="description"/>
+					<field name="room"/>
+				</tree>
+			</field>
+		</record>
+	 
+    <!-- actions opening views on models : tập hợp tất cả các chế độ view -->
+        <!--
+            The following tag is an action definition for a "window action",
+            that is an action opening a view or a set of views, hiển thị phần view bảng
+        -->
+        <record id="class_list_action" model="ir.actions.act_window">
+            <field name="name">Class</field>
+            <field name="res_model">openacademy.class</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Create the first class course
+                </p>
+            </field>
+        </record>
+        
+         <menuitem id="openacademy_class_menu" name="Class" parent = "openacademy_menu"
+        		  action="class_list_action"/>
+  </data>
+</odoo>
