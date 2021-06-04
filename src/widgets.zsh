@@ -20,7 +20,7 @@ _zsh_autosuggest_enable() {
 
 # Toggle suggestions (enable/disable)
 _zsh_autosuggest_toggle() {
-	if [[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]]; then
+	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )); then
 		_zsh_autosuggest_enable
 	else
 		_zsh_autosuggest_disable
@@ -61,25 +61,14 @@ _zsh_autosuggest_modify() {
 		return $retval
 	fi
 
-	# Optimize if manually typing in the suggestion
-	if (( $#BUFFER > $#orig_buffer )); then
-		local added=${BUFFER#$orig_buffer}
-
-		# If the string added matches the beginning of the postdisplay
-		if [[ "$added" = "${orig_postdisplay:0:$#added}" ]]; then
-			POSTDISPLAY="${orig_postdisplay:$#added}"
-			return $retval
-		fi
-	fi
-
-	# Don't fetch a new suggestion if the buffer hasn't changed
-	if [[ "$BUFFER" = "$orig_buffer" ]]; then
-		POSTDISPLAY="$orig_postdisplay"
+	# Optimize if manually typing in the suggestion or if buffer hasn't changed
+	if [[ "$BUFFER" = "$orig_buffer"* && "$orig_postdisplay" = "${BUFFER:$#orig_buffer}"* ]]; then
+		POSTDISPLAY="${orig_postdisplay:$(($#BUFFER - $#orig_buffer))}"
 		return $retval
 	fi
 
 	# Bail out if suggestions are disabled
-	if [[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]]; then
+	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )); then
 		return $?
 	fi
 
@@ -205,8 +194,21 @@ _zsh_autosuggest_partial_accept() {
 }
 
 () {
+	typeset -ga _ZSH_AUTOSUGGEST_BUILTIN_ACTIONS
+
+	_ZSH_AUTOSUGGEST_BUILTIN_ACTIONS=(
+		clear
+		fetch
+		suggest
+		accept
+		execute
+		enable
+		disable
+		toggle
+	)
+
 	local action
-	for action in clear modify fetch suggest accept partial_accept execute enable disable toggle; do
+	for action in $_ZSH_AUTOSUGGEST_BUILTIN_ACTIONS modify partial_accept; do
 		eval "_zsh_autosuggest_widget_$action() {
 			local -i retval
 
@@ -223,12 +225,7 @@ _zsh_autosuggest_partial_accept() {
 		}"
 	done
 
-	zle -N autosuggest-fetch _zsh_autosuggest_widget_fetch
-	zle -N autosuggest-suggest _zsh_autosuggest_widget_suggest
-	zle -N autosuggest-accept _zsh_autosuggest_widget_accept
-	zle -N autosuggest-clear _zsh_autosuggest_widget_clear
-	zle -N autosuggest-execute _zsh_autosuggest_widget_execute
-	zle -N autosuggest-enable _zsh_autosuggest_widget_enable
-	zle -N autosuggest-disable _zsh_autosuggest_widget_disable
-	zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
+	for action in $_ZSH_AUTOSUGGEST_BUILTIN_ACTIONS; do
+		zle -N autosuggest-$action _zsh_autosuggest_widget_$action
+	done
 }

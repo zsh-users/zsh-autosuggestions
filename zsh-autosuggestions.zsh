@@ -1,8 +1,8 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
 # https://github.com/zsh-users/zsh-autosuggestions
-# v0.6.4
+# v0.7.0
 # Copyright (c) 2013 Thiago de Arruda
-# Copyright (c) 2016-2019 Eric Freese
+# Copyright (c) 2016-2021 Eric Freese
 # 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -199,7 +199,7 @@ _zsh_autosuggest_bind_widgets() {
 	ignore_widgets=(
 		.\*
 		_\*
-		autosuggest-\*
+		${_ZSH_AUTOSUGGEST_BUILTIN_ACTIONS/#/autosuggest-}
 		$ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX\*
 		$ZSH_AUTOSUGGEST_IGNORE_WIDGETS
 	)
@@ -282,7 +282,7 @@ _zsh_autosuggest_enable() {
 
 # Toggle suggestions (enable/disable)
 _zsh_autosuggest_toggle() {
-	if [[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]]; then
+	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )); then
 		_zsh_autosuggest_enable
 	else
 		_zsh_autosuggest_disable
@@ -323,25 +323,14 @@ _zsh_autosuggest_modify() {
 		return $retval
 	fi
 
-	# Optimize if manually typing in the suggestion
-	if (( $#BUFFER > $#orig_buffer )); then
-		local added=${BUFFER#$orig_buffer}
-
-		# If the string added matches the beginning of the postdisplay
-		if [[ "$added" = "${orig_postdisplay:0:$#added}" ]]; then
-			POSTDISPLAY="${orig_postdisplay:$#added}"
-			return $retval
-		fi
-	fi
-
-	# Don't fetch a new suggestion if the buffer hasn't changed
-	if [[ "$BUFFER" = "$orig_buffer" ]]; then
-		POSTDISPLAY="$orig_postdisplay"
+	# Optimize if manually typing in the suggestion or if buffer hasn't changed
+	if [[ "$BUFFER" = "$orig_buffer"* && "$orig_postdisplay" = "${BUFFER:$#orig_buffer}"* ]]; then
+		POSTDISPLAY="${orig_postdisplay:$(($#BUFFER - $#orig_buffer))}"
 		return $retval
 	fi
 
 	# Bail out if suggestions are disabled
-	if [[ -n "${_ZSH_AUTOSUGGEST_DISABLED+x}" ]]; then
+	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )); then
 		return $?
 	fi
 
@@ -467,8 +456,21 @@ _zsh_autosuggest_partial_accept() {
 }
 
 () {
+	typeset -ga _ZSH_AUTOSUGGEST_BUILTIN_ACTIONS
+
+	_ZSH_AUTOSUGGEST_BUILTIN_ACTIONS=(
+		clear
+		fetch
+		suggest
+		accept
+		execute
+		enable
+		disable
+		toggle
+	)
+
 	local action
-	for action in clear modify fetch suggest accept partial_accept execute enable disable toggle; do
+	for action in $_ZSH_AUTOSUGGEST_BUILTIN_ACTIONS modify partial_accept; do
 		eval "_zsh_autosuggest_widget_$action() {
 			local -i retval
 
@@ -485,14 +487,9 @@ _zsh_autosuggest_partial_accept() {
 		}"
 	done
 
-	zle -N autosuggest-fetch _zsh_autosuggest_widget_fetch
-	zle -N autosuggest-suggest _zsh_autosuggest_widget_suggest
-	zle -N autosuggest-accept _zsh_autosuggest_widget_accept
-	zle -N autosuggest-clear _zsh_autosuggest_widget_clear
-	zle -N autosuggest-execute _zsh_autosuggest_widget_execute
-	zle -N autosuggest-enable _zsh_autosuggest_widget_enable
-	zle -N autosuggest-disable _zsh_autosuggest_widget_disable
-	zle -N autosuggest-toggle _zsh_autosuggest_widget_toggle
+	for action in $_ZSH_AUTOSUGGEST_BUILTIN_ACTIONS; do
+		zle -N autosuggest-$action _zsh_autosuggest_widget_$action
+	done
 }
 
 #--------------------------------------------------------------------#
@@ -541,8 +538,6 @@ _zsh_autosuggest_capture_completion_widget() {
 zle -N autosuggest-capture-completion _zsh_autosuggest_capture_completion_widget
 
 _zsh_autosuggest_capture_setup() {
-	autoload -Uz is-at-least
-
 	# There is a bug in zpty module in older zsh versions by which a
 	# zpty that exits will kill all zpty processes that were forked
 	# before it. Here we set up a zsh exit hook to SIGKILL the zpty
@@ -804,7 +799,8 @@ _zsh_autosuggest_async_request() {
 
 	# There's a weird bug here where ^C stops working unless we force a fork
 	# See https://github.com/zsh-users/zsh-autosuggestions/issues/364
-	command true
+	autoload -Uz is-at-least
+	is-at-least 5.8 || command true
 
 	# Read the pid from the child process
 	read _ZSH_AUTOSUGGEST_CHILD_PID <&$_ZSH_AUTOSUGGEST_ASYNC_FD
@@ -853,6 +849,16 @@ _zsh_autosuggest_start() {
 	_zsh_autosuggest_bind_widgets
 }
 
+# Mark for auto-loading the functions that we use
+autoload -Uz add-zsh-hook is-at-least
+
+# Automatically enable asynchronous mode in newer versions of zsh. Disable for
+# older versions because there is a bug when using async mode where ^C does not
+# work immediately after fetching a suggestion.
+# See https://github.com/zsh-users/zsh-autosuggestions/issues/364
+if is-at-least 5.0.8; then
+	typeset -g ZSH_AUTOSUGGEST_USE_ASYNC=
+fi
+
 # Start the autosuggestion widgets on the next precmd
-autoload -Uz add-zsh-hook
 add-zsh-hook precmd _zsh_autosuggest_start
