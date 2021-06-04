@@ -323,20 +323,9 @@ _zsh_autosuggest_modify() {
 		return $retval
 	fi
 
-	# Optimize if manually typing in the suggestion
-	if (( $#BUFFER > $#orig_buffer )); then
-		local added=${BUFFER#$orig_buffer}
-
-		# If the string added matches the beginning of the postdisplay
-		if [[ "$added" = "${orig_postdisplay:0:$#added}" ]]; then
-			POSTDISPLAY="${orig_postdisplay:$#added}"
-			return $retval
-		fi
-	fi
-
-	# Don't fetch a new suggestion if the buffer hasn't changed
-	if [[ "$BUFFER" = "$orig_buffer" ]]; then
-		POSTDISPLAY="$orig_postdisplay"
+	# Optimize if manually typing in the suggestion or if buffer hasn't changed
+	if [[ "$BUFFER" = "$orig_buffer"* && "$orig_postdisplay" = "${BUFFER:$#orig_buffer}"* ]]; then
+		POSTDISPLAY="${orig_postdisplay:$(($#BUFFER - $#orig_buffer))}"
 		return $retval
 	fi
 
