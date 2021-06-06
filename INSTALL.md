@@ -45,6 +45,8 @@
     )
     ```
 
+If you have other plugins, separate them by space, e.g. `plugins=(git zsh-autosuggestions)`.
+
 3. Start a new terminal session.
 
 ## Manual (Git Clone)
