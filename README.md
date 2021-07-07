@@ -30,7 +30,7 @@ If you invoke the `forward-word` widget, it will partially accept the suggestion
 
 You may want to override the default global config variables. Default values of these variables can be found [here](src/config.zsh).
 
-**For Arch installs with Pacman:** If you install zsh-autosuggestions using pacman, the default config location is `/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh`. Add the following line to  `~/.zshrc` and source it for completions to be offered:
+**For Arch installs with Pacman:** If you install zsh-autosuggestions using pacman, the default config location is `/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh`. Add the following line to  `~/.zshrc` for completions to be offered:
 ``` sh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 ```
