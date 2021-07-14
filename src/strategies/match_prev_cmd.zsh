@@ -48,9 +48,9 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	# Get the previously executed command
 	local prev_cmd="$(_zsh_autosuggest_escape_command "${history[$((HISTCMD-1))]}")"
 
-	# Iterate up to the first 200 history event numbers that match $prefix
+	# Iterate over the most recent history event numbers that match $prefix.
 	local key
-	for key in "${(@)history_match_keys[1,200]}"; do
+	for key in "${(@)history_match_keys[1,$ZSH_AUTOSUGGEST_MATCH_PREV_MAX_CMDS]}"; do
 		# Stop if we ran out of history
 		[[ $key -gt 1 ]] || break
 

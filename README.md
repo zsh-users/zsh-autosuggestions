@@ -58,6 +58,9 @@ For more info, read the Character Highlighting section of the zsh manual: `man z
 
 For example, setting `ZSH_AUTOSUGGEST_STRATEGY=(history completion)` will first try to find a suggestion from your history, but, if it can't find a match, will find a suggestion from the completion engine.
 
+#### When `ZSH_AUTOSUGGEST_STRATEGY` contains `match_prev_cmd`:
+
+- `ZSH_AUTOSUGGEST_MATCH_PREV_MAX_CMDS`: The previous command is only looked at of a number of the most recent commands that match the current prefix. This sets the maximum number of commands to consider. Set it to -1 to always use all matches.
 
 ### Widget Mapping
 

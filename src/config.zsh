@@ -20,6 +20,11 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 	ZSH_AUTOSUGGEST_STRATEGY=(history)
 }
 
+# Maximum number of commands to consider for match_prev_cmd strategy
+# Set to -1 to always use all matches
+(( ! ${+ZSH_AUTOSUGGEST_MATCH_PREV_MAX_CMDS} )) &&
+typeset -g ZSH_AUTOSUGGEST_MATCH_PREV_MAX_CMDS=200
+
 # Widgets that clear the suggestion
 (( ! ${+ZSH_AUTOSUGGEST_CLEAR_WIDGETS} )) && {
 	typeset -ga ZSH_AUTOSUGGEST_CLEAR_WIDGETS
