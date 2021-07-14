@@ -49,6 +49,7 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	local prev_cmd="$(_zsh_autosuggest_escape_command "${history[$((HISTCMD-1))]}")"
 
 	# Iterate up to the first 200 history event numbers that match $prefix
+	local key
 	for key in "${(@)history_match_keys[1,200]}"; do
 		# Stop if we ran out of history
 		[[ $key -gt 1 ]] || break
