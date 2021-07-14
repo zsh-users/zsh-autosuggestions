@@ -60,7 +60,8 @@ For example, setting `ZSH_AUTOSUGGEST_STRATEGY=(history completion)` will first 
 
 #### When `ZSH_AUTOSUGGEST_STRATEGY` contains `match_prev_cmd`:
 
-- `ZSH_AUTOSUGGEST_MATCH_PREV_MAX_CMDS`: The previous command is only looked at of a number of the most recent commands that match the current prefix. This sets the maximum number of commands to consider. Set it to -1 to always use all matches.
+- `ZSH_AUTOSUGGEST_MATCH_PREV_MAX_CMDS`: The previous commands are only looked at of a number of the most recent commands that match the current prefix. This sets the maximum number of commands to consider. Set it to -1 to always use all matches.
+- `ZSH_AUTOSUGGEST_MATCH_NUM_PREV_CMDS`: Number of previous commands that should match. Setting this to a value below 1 results in the strategy `history` to be simulated (with extra steps).
 
 ### Widget Mapping
 

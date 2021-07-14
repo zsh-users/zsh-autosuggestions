@@ -25,6 +25,10 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 (( ! ${+ZSH_AUTOSUGGEST_MATCH_PREV_MAX_CMDS} )) &&
 typeset -g ZSH_AUTOSUGGEST_MATCH_PREV_MAX_CMDS=200
 
+# Number of previous commands that should match.
+(( ! ${+ZSH_AUTOSUGGEST_MATCH_NUM_PREV_CMDS} )) &&
+typeset -g ZSH_AUTOSUGGEST_MATCH_NUM_PREV_CMDS=1
+
 # Widgets that clear the suggestion
 (( ! ${+ZSH_AUTOSUGGEST_CLEAR_WIDGETS} )) && {
 	typeset -ga ZSH_AUTOSUGGEST_CLEAR_WIDGETS
