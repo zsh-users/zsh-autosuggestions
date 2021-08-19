@@ -42,7 +42,7 @@
 2. Add the plugin to the list of plugins for Oh My Zsh to load (inside `~/.zshrc`):
 
     ```sh
-    plugins=( 
+    plugins=(
         # other plugins...
         zsh-autosuggestions
     )
@@ -52,13 +52,14 @@
 
 ## Homebrew
 
-1. Install command: 
+1. Install command:
+
     ```sh
     brew install zsh-autosuggestions
     ```
 
-2. To activate the autosuggestions, add the following at the end of your .zshrc: 
-    
+2. To activate the autosuggestions, add the following at the end of your .zshrc:
+
     ```sh
     source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
     ```
