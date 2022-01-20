@@ -35,10 +35,10 @@
 (( ! ${+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE} )) &&
 typeset -g ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#808080'
 
-#1=Red,    5=Purple,     9=Red
-#2=Cyan,   6=Light_Blue, 0=Black
-#3=Yellow, 7=White
-#4=Blue,   8=Dull_Cyan || or you can use Hexa Color code as 'fg=#e91e63' ||
+# 1=Red,    5=Purple,     9=Red
+# 2=Cyan,   6=Light_Blue, 0=Black
+# 3=Yellow, 7=White
+# 4=Blue,   8=Dull_Cyan (or you can use Hexa Color code as 'fg=#e91e63')
 
 # Prefix to use when saving original versions of bound widgets
 (( ! ${+ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX} )) &&
