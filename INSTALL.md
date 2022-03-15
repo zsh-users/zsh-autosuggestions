@@ -9,6 +9,7 @@
 
 | System  | Package |
 | ------------- | ------------- |
+| Alpine Linux | [zsh-autosuggestions](https://pkgs.alpinelinux.org/packages?name=zsh-autosuggestions) |
 | Debian / Ubuntu | [zsh-autosuggestions OBS repository](https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-autosuggestions&package=zsh-autosuggestions) |
 | Fedora / CentOS / RHEL / Scientific Linux | [zsh-autosuggestions OBS repository](https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-autosuggestions&package=zsh-autosuggestions) |
 | OpenSUSE / SLE | [zsh-autosuggestions OBS repository](https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-autosuggestions&package=zsh-autosuggestions) |
