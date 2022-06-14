@@ -18,6 +18,11 @@
 | Mac OS | [homebrew](https://github.com/Homebrew/homebrew-core/blob/master/Formula/zsh-autosuggestions.rb)  |
 | NetBSD | [pkgsrc](http://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/shells/zsh-autosuggestions/README.html)  |
 
+insert in top of `.zshrc`
+```zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+```
+
 ## Antigen
 
 1. Add the following to your `.zshrc`:
