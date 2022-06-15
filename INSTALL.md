@@ -2,6 +2,7 @@
 
 * [Packages](#packages)
 * [Antigen](#antigen)
+* [Fig](#fig)
 * [Oh My Zsh](#oh-my-zsh)
 * [Manual](#manual-git-clone)
 
@@ -27,6 +28,14 @@
     ```
 
 2. Start a new terminal session.
+
+## Fig
+
+[Fig](https://fig.io) adds apps, shortcuts, and autocomplete to your existing terminal.
+
+Install `zsh-autosuggestions` in just one click.
+
+<a href="https://fig.io/plugins/other/zsh-autosuggestions" target="_blank"><img src="https://fig.io/badges/install-with-fig.svg" /></a>
 
 ## Oh My Zsh
 
