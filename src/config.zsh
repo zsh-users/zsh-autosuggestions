@@ -28,6 +28,8 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 		history-search-backward
 		history-beginning-search-forward
 		history-beginning-search-backward
+		history-beginning-search-forward-end
+		history-beginning-search-backward-end
 		history-substring-search-up
 		history-substring-search-down
 		up-line-or-beginning-search
