@@ -8,7 +8,7 @@ _zsh_autosuggest_highlight_reset() {
 	typeset -g _ZSH_AUTOSUGGEST_LAST_HIGHLIGHT
 
 	if [[ -n "$_ZSH_AUTOSUGGEST_LAST_HIGHLIGHT" ]]; then
-		region_highlight=("${(@)region_highlight:#$_ZSH_AUTOSUGGEST_LAST_HIGHLIGHT}")
+		region_highlight=("${region_highlight[@]:#$_ZSH_AUTOSUGGEST_LAST_HIGHLIGHT}")
 		unset _ZSH_AUTOSUGGEST_LAST_HIGHLIGHT
 	fi
 }
