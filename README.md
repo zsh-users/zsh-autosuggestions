@@ -105,7 +105,7 @@ Set `ZSH_AUTOSUGGEST_COMPLETION_IGNORE` to a [glob pattern](http://zsh.sourcefor
 
 ### Autosuggestion widgets
 
-This plugin provides a few widgets that you can use with `bindkey`:
+This plugin adds a few [zle widgets](http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Zle-Widgets):
 
 1. `autosuggest-accept`: Accepts the current suggestion.
 2. `autosuggest-execute`: Accepts and executes the current suggestion.
@@ -115,12 +115,22 @@ This plugin provides a few widgets that you can use with `bindkey`:
 6. `autosuggest-enable`: Re-enables suggestions.
 7. `autosuggest-toggle`: Toggles between enabled/disabled suggestions.
 
-For example, this would bind <kbd>ctrl</kbd> + <kbd>space</kbd> to accept the current suggestion.
+You can bind any of these widgets to a keyboard shortcut with [`bindkey`](https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Zle-Builtins). For example, the following command would bind <kbd>ctrl</kbd> + <kbd>space</kbd> to accept the current suggestion.
 
 ```sh
 bindkey '^ ' autosuggest-accept
 ```
 
+You can also call any of them directly with `zle`. For example, the following command would accept the current suggestion (for an explanation of `ZSH_AUTOSUGGEST_IGNORE_WIDGETS` see [Widget mapping](#widget-mapping), above).
+
+```sh
+my_widget() {
+  zle autosuggest-accept
+}
+typeset -ga ZSH_AUTOSUGGEST_IGNORE_WIDGETS
+ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=( my_widget )
+zle -N my_widget
+```
 
 ## Troubleshooting
 
