@@ -73,6 +73,7 @@ Widgets that modify the buffer and are not found in any of these arrays will fet
 
 **Note:** A widget shouldn't belong to more than one of the above arrays.
 
+**Note:** Any widget which calls one of the [autosuggestion widgets](#autosuggestion-widgets) must be added to `ZSH_AUTOSUGGEST_IGNORE_WIDGETS` before creating the new widget's keymap.
 
 ### Disabling suggestion for large buffers
 
@@ -102,7 +103,7 @@ Set `ZSH_AUTOSUGGEST_COMPLETION_IGNORE` to a [glob pattern](http://zsh.sourcefor
 **Note:** This only affects the `completion` suggestion strategy.
 
 
-### Key Bindings
+### Autosuggestion widgets
 
 This plugin provides a few widgets that you can use with `bindkey`:
 
