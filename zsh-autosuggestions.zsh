@@ -3,7 +3,7 @@
 # v0.7.0
 # Copyright (c) 2013 Thiago de Arruda
 # Copyright (c) 2016-2021 Eric Freese
-# 
+#
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -12,10 +12,10 @@
 # copies of the Software, and to permit persons to whom the
 # Software is furnished to do so, subject to the following
 # conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -337,10 +337,9 @@ _zsh_autosuggest_modify() {
 	fi
 
 	# Get a new suggestion if the buffer is not empty after modification
-	if (( $#BUFFER > 0 )); then
-		if [[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE )); then
+	if ([[ -z "$ZSH_AUTOSUGGEST_BUFFER_MIN_SIZE" ]] || (( $#BUFFER >= $ZSH_AUTOSUGGEST_BUFFER_MIN_SIZE ))) && \
+		 ([[ -z "$ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE" ]] || (( $#BUFFER <= $ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE ))); then
 			_zsh_autosuggest_fetch
-		fi
 	fi
 
 	return $retval
