@@ -44,7 +44,6 @@ _zsh_autosuggest_async_request() {
 
 	# There's a weird bug here where ^C stops working unless we force a fork
 	# See https://github.com/zsh-users/zsh-autosuggestions/issues/364
-	autoload -Uz is-at-least
 	is-at-least 5.8 || command true
 
 	# Read the pid from the child process
