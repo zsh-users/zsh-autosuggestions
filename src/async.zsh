@@ -64,7 +64,7 @@ _zsh_autosuggest_async_response() {
 	if [[ -z "$2" || "$2" == "hup" ]]; then
 		# Read everything from the fd and give it as a suggestion
 		IFS='' read -rd '' -u $1 suggestion
-		zle autosuggest-suggest -- "$suggestion"
+		_zsh_autosuggest_async_suggest "$suggestion"
 
 		# Close the fd
 		exec {1}<&-
@@ -72,4 +72,15 @@ _zsh_autosuggest_async_response() {
 
 	# Always remove the handler
 	zle -F "$1"
+}
+
+_zsh_autosuggest_async_suggest() {
+	# Before 5.9, async suggestions break widgets that rely on LASTWIDGET
+	# such as copy-earlier-word and {up,down}-line-or-beginning-search. In
+	# 5.9, a flag was added to `zle` that will skip setting LASTWIDGET so
+	# that those widgets that depend on it will continue to work
+	# See https://www.zsh.org/mla/workers/2020/msg00824.html
+	local nolast
+	is-at-least 5.9 && nolast=supported
+	zle autosuggest-suggest ${=nolast:+-f nolast} -- "$1"
 }
