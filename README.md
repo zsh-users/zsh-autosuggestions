@@ -53,7 +53,7 @@ For more info, read the Character Highlighting section of the zsh manual: `man z
 `ZSH_AUTOSUGGEST_STRATEGY` is an array that specifies how suggestions should be generated. The strategies in the array are tried successively until a suggestion is found. There are currently three built-in strategies to choose from:
 
 - `history`: Chooses the most recent match from history.
-- `completion`: Chooses a suggestion based on what tab-completion would suggest. (requires `zpty` module)
+- `completion`: Chooses a suggestion based on what tab-completion would suggest. (requires `zpty` module, which is included with zsh since 4.0.1)
 - `match_prev_cmd`: Like `history`, but chooses the most recent match whose preceding history item matches the most recently executed command ([more info](src/strategies/match_prev_cmd.zsh)). Note that this strategy won't work as expected with ZSH options that don't preserve the history order such as `HIST_IGNORE_ALL_DUPS` or `HIST_EXPIRE_DUPS_FIRST`.
 
 For example, setting `ZSH_AUTOSUGGEST_STRATEGY=(history completion)` will first try to find a suggestion from your history, but, if it can't find a match, will find a suggestion from the completion engine.
