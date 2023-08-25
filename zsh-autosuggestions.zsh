@@ -771,7 +771,7 @@ _zsh_autosuggest_async_request() {
 
 		# We won't know the pid unless the user has zsh/system module installed
 		if (( _ZSH_AUTOSUGGEST_CHILD_PID )); then
-			kill -TERM $_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
+			kill -TERM -- $_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
 		fi
 	fi
 
