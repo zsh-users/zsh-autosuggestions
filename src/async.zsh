@@ -16,18 +16,7 @@ _zsh_autosuggest_async_request() {
 
 		# We won't know the pid unless the user has zsh/system module installed
 		if (( _ZSH_AUTOSUGGEST_CHILD_PID )); then
-			# Zsh will make a new process group for the child process only if job
-			# control is enabled (MONITOR option)
-			if [[ -o MONITOR ]]; then
-				# Send the signal to the process group to kill any processes that may
-				# have been forked by the suggestion strategy
-				kill -TERM -$_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
-			else
-				# Kill just the child process since it wasn't placed in a new process
-				# group. If the suggestion strategy forked any child processes they may
-				# be orphaned and left behind.
-				kill -TERM $_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
-			fi
+			kill -TERM $_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
 		fi
 	fi
 
@@ -49,6 +38,15 @@ _zsh_autosuggest_async_request() {
 
 	# Read the pid from the child process
 	read _ZSH_AUTOSUGGEST_CHILD_PID <&$_ZSH_AUTOSUGGEST_ASYNC_FD
+
+	# Zsh will make a new process group for the child process only if job
+	# control is enabled (MONITOR option)
+	if [[ -o MONITOR ]]; then
+		# If we need to kill the background process in the future, we'll send
+		# SIGTERM to the process group to kill any processes that may have been
+		# forked by the suggestion strategy
+		_ZSH_AUTOSUGGEST_CHILD_PID=${_ZSH_AUTOSUGGEST_CHILD_PID:+-$_ZSH_AUTOSUGGEST_CHILD_PID}
+	fi
 
 	# When the fd is readable, call the response handler
 	zle -F "$_ZSH_AUTOSUGGEST_ASYNC_FD" _zsh_autosuggest_async_response
