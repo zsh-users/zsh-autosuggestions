@@ -15,7 +15,7 @@ _zsh_autosuggest_async_request() {
 		zle -F $_ZSH_AUTOSUGGEST_ASYNC_FD
 
 		# We won't know the pid unless the user has zsh/system module installed
-		if [[ -n "$_ZSH_AUTOSUGGEST_CHILD_PID" ]]; then
+		if (( _ZSH_AUTOSUGGEST_CHILD_PID )); then
 			# Zsh will make a new process group for the child process only if job
 			# control is enabled (MONITOR option)
 			if [[ -o MONITOR ]]; then
