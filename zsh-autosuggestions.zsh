@@ -817,7 +817,7 @@ _zsh_autosuggest_async_response() {
 
 	local suggestion
 
-	if [[ -z "$2" || "$2" == "hup" ]]; then
+	if [[ $# == 1 || "$2" == "hup" ]]; then
 		# Read everything from the fd and give it as a suggestion
 		IFS='' read -rd '' -u $1 suggestion
 		zle autosuggest-suggest -- "$suggestion"
