@@ -39,7 +39,7 @@ _zsh_autosuggest_async_request() {
 		# Fetch and print the suggestion
 		local suggestion
 		_zsh_autosuggest_fetch_suggestion "$1"
-		echo -nE "$suggestion"
+		echo -nE - "$suggestion"
 	)
 
 	# There's a weird bug here where ^C stops working unless we force a fork
