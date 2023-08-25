@@ -777,8 +777,8 @@ _zsh_autosuggest_async_request() {
 
 	# Fork a process to fetch a suggestion and open a pipe to read from it
 	exec {_ZSH_AUTOSUGGEST_ASYNC_FD}< <(
-		# Tell parent process our pid
-		echo $sysparams[pid]
+		# Tell parent process our pid if we can
+		echo ${sysparams[pid]:-}
 
 		# Fetch and print the suggestion
 		local suggestion
