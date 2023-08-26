@@ -813,6 +813,7 @@ _zsh_autosuggest_async_request() {
 _zsh_autosuggest_async_response() {
 	emulate -L zsh
 
+	typeset -g _ZSH_AUTOSUGGEST_ASYNC_FD _ZSH_AUTOSUGGEST_CHILD_PID
 	local suggestion
 
 	if [[ $# == 1 || "$2" == "hup" ]]; then
@@ -822,6 +823,8 @@ _zsh_autosuggest_async_response() {
 
 		# Close the fd
 		exec {1}<&-
+		_ZSH_AUTOSUGGEST_ASYNC_FD=
+		_ZSH_AUTOSUGGEST_ASYNC_PID=
 	fi
 
 	# Always remove the handler
