@@ -1,4 +1,4 @@
-SRC_DIR    := ./src
+SRC_DIR := ./src
 
 SRC_FILES := \
 	$(SRC_DIR)/config.zsh \
