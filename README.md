@@ -181,7 +181,7 @@ docker pull ericfreese/zsh-autosuggestions-test
 To run the tests for a specific version of zsh (where `<version>` below is substituted with the contents of a line from the [`ZSH_VERSIONS`](ZSH_VERSIONS) file):
 
 ```sh
-docker run -it -e TEST_ZSH_BIN=zsh-<version> -v $PWD:/zsh-autosuggestions zsh-autosuggestions-test make test
+docker run -it -e TEST_ZSH_BIN=zsh-<version> -v $PWD:/zsh-autosuggestions ericfreese/zsh-autosuggestions-test make test
 ```
 
 
