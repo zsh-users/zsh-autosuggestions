@@ -46,6 +46,15 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 	ZSH_AUTOSUGGEST_STRATEGY=(history)
 }
 
+# Maximum number of commands to consider for match_prev_cmd strategy
+# Set to -1 to always use all matches
+(( ! ${+ZSH_AUTOSUGGEST_MATCH_PREV_MAX_CMDS} )) &&
+typeset -g ZSH_AUTOSUGGEST_MATCH_PREV_MAX_CMDS=200
+
+# Number of previous commands that should match.
+(( ! ${+ZSH_AUTOSUGGEST_MATCH_NUM_PREV_CMDS} )) &&
+typeset -g ZSH_AUTOSUGGEST_MATCH_NUM_PREV_CMDS=1
+
 # Widgets that clear the suggestion
 (( ! ${+ZSH_AUTOSUGGEST_CLEAR_WIDGETS} )) && {
 	typeset -ga ZSH_AUTOSUGGEST_CLEAR_WIDGETS
@@ -666,9 +675,9 @@ _zsh_autosuggest_strategy_history() {
 #--------------------------------------------------------------------#
 # Match Previous Command Suggestion Strategy                         #
 #--------------------------------------------------------------------#
-# Suggests the most recent history item that matches the given
-# prefix and whose preceding history item also matches the most
-# recently executed command.
+# Suggests the most recent history item that all_match the given
+# prefix and whose preceding history items also all_match the most
+# recently executed commands.
 #
 # For example, suppose your history has the following entries:
 #   - pwd
@@ -679,6 +688,9 @@ _zsh_autosuggest_strategy_history() {
 # Given the history list above, when you type 'ls', the suggestion
 # will be 'ls foo' rather than 'ls bar' because your most recently
 # executed command (pwd) was previously followed by 'ls foo'.
+#
+# You can customize how many commands have to match by setting
+# `ZSH_AUTOSUGGEST_MATCH_NUM_PREV_CMDS`.
 #
 # Note that this strategy won't work as expected with ZSH options that don't
 # preserve the history order such as `HIST_IGNORE_ALL_DUPS` or
@@ -709,17 +721,30 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	# By default we use the first history number (most recent history entry)
 	local histkey="${history_match_keys[1]}"
 
-	# Get the previously executed command
-	local prev_cmd="$(_zsh_autosuggest_escape_command "${history[$((HISTCMD-1))]}")"
+	# Get the previously executed commands
+	local -a prev_cmds
+	local i
+	for ((i = 1; i <= $ZSH_AUTOSUGGEST_MATCH_NUM_PREV_CMDS; i++)); do
+		prev_cmds+="$(_zsh_autosuggest_escape_command "${history[$((HISTCMD-i))]}")"
+	done
 
-	# Iterate up to the first 200 history event numbers that match $prefix
-	for key in "${(@)history_match_keys[1,200]}"; do
+	# Iterate over the most recent history event numbers that match $prefix.
+	local key all_match
+	for key in "${(@)history_match_keys[1,$ZSH_AUTOSUGGEST_MATCH_PREV_MAX_CMDS]}"; do
 		# Stop if we ran out of history
 		[[ $key -gt 1 ]] || break
 
-		# See if the history entry preceding the suggestion matches the
-		# previous command, and use it if it does
-		if [[ "${history[$((key - 1))]}" == "$prev_cmd" ]]; then
+		# See if the history entries preceding the suggestion match the previous
+		# commands, and use it if they do
+		all_match=1
+		for ((i = 1; i <= $ZSH_AUTOSUGGEST_MATCH_NUM_PREV_CMDS; i++)); do
+			if [[ "${history[$((key - i))]}" != "$prev_cmds[i]" ]]; then
+				all_match=0
+				break
+			fi
+		done
+
+		if (( all_match )); then
 			histkey="$key"
 			break
 		fi
