@@ -25,6 +25,10 @@ describe 'a suggestion' do
       wait_for { session.content }.to eq(long_command)
     end
 
-    it 'is not provided when the buffer is longer than the specified length'
+    it 'is not provided when the buffer is longer than the specified length' do
+      session.send_string(long_command[0...(buffer_max_size + 1)])
+      sleep 1
+      expect(session.content).to eq(long_command[0...(buffer_max_size + 1)])
+    end
   end
 end

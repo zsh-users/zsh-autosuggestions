@@ -9,10 +9,17 @@ describe 'using `zle -U`' do
 
   let(:options) { ['unset ZSH_AUTOSUGGEST_USE_ASYNC', 'ZSH_AUTOSUGGEST_STRATEGY=test'] }
 
-  # TODO: This is only possible with the $KEYS_QUEUED_COUNT widget parameter, coming soon...
-  xit 'does not fetch a suggestion for every inserted character' do
+  # This is only possible with the $KEYS_QUEUED_COUNT widget parameter
+  it 'does not fetch a suggestion for every inserted character' do
     session.send_keys('C-b')
-    wait_for { session.content }.to eq('echo hello')
+
+    # Check if zsh >= 5.4
+    version_arr = ENV['TEST_ZSH_BIN'].split('zsh-')[1].split('.')
+    if version_arr[0].to_i >= 6 || (version_arr[0].to_i == 5 && version_arr[1].to_i >= 4)
+      wait_for { session.content }.to eq('echo hello')
+    else
+      skip "depends on KEYS_QUEUED_COUNT which requires zsh 5.4 or above"
+    end
   end
 
   it 'shows a suggestion when the widget completes' do
