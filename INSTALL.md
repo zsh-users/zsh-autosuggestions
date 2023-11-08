@@ -20,6 +20,15 @@
 | Mac OS | [homebrew](https://github.com/Homebrew/homebrew-core/blob/master/Formula/z/zsh-autosuggestions.rb)  |
 | NetBSD | [pkgsrc](http://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/shells/zsh-autosuggestions/README.html)  |
 
+## Arch Linux / Manjaro / Antergos / Hyperbola
+
+1. Install **zsh-autosuggestions** using the package listed in the table above.
+
+2. Add the following to your `.zshrc`:
+```sh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+```
+
 ## Antigen
 
 1. Add the following to your `.zshrc`:
