@@ -111,7 +111,6 @@ typeset -g ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME=zsh_autosuggest_completion_pty
 	ZSH_AUTOSUGGEST_ZLE_YANK_WIDGETS=(
 		bracketed-paste
 		vi-put-after
-		yank
 	)
 }
 
@@ -120,5 +119,6 @@ typeset -g ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME=zsh_autosuggest_completion_pty
 	typeset -ga ZSH_AUTOSUGGEST_ZLE_YANKBEFORE_WIDGETS
 	ZSH_AUTOSUGGEST_ZLE_YANKBEFORE_WIDGETS=(
 		vi-put-before
+		yank
 	)
 }
