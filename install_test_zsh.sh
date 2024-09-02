@@ -7,6 +7,8 @@ for v in $(grep "^[^#]" ZSH_VERSIONS); do
   cd zsh-$v
 
   curl -L https://api.github.com/repos/zsh-users/zsh/tarball/zsh-$v | tar xz --strip=1
+  curl -o config.guess 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=refs/heads/master'
+  curl -o config.sub 'https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD'
 
   ./Util/preconfig
   ./configure --enable-pcre \
