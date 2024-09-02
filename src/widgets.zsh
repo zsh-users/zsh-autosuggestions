@@ -30,7 +30,7 @@ _zsh_autosuggest_toggle() {
 # Clear the suggestion
 _zsh_autosuggest_clear() {
 	# Remove the suggestion
-	unset POSTDISPLAY
+	POSTDISPLAY=
 
 	_zsh_autosuggest_invoke_original_widget $@
 }
@@ -47,7 +47,7 @@ _zsh_autosuggest_modify() {
 	local orig_postdisplay="$POSTDISPLAY"
 
 	# Clear suggestion while waiting for next one
-	unset POSTDISPLAY
+	POSTDISPLAY=
 
 	# Original widget may modify the buffer
 	_zsh_autosuggest_invoke_original_widget $@
@@ -102,7 +102,7 @@ _zsh_autosuggest_suggest() {
 	if [[ -n "$suggestion" ]] && (( $#BUFFER )); then
 		POSTDISPLAY="${suggestion#$BUFFER}"
 	else
-		unset POSTDISPLAY
+		POSTDISPLAY=
 	fi
 }
 
@@ -128,7 +128,7 @@ _zsh_autosuggest_accept() {
 	BUFFER="$BUFFER$POSTDISPLAY"
 
 	# Remove the suggestion
-	unset POSTDISPLAY
+	POSTDISPLAY=
 
 	# Run the original widget before manually moving the cursor so that the
 	# cursor movement doesn't make the widget do something unexpected
@@ -151,7 +151,7 @@ _zsh_autosuggest_execute() {
 	BUFFER="$BUFFER$POSTDISPLAY"
 
 	# Remove the suggestion
-	unset POSTDISPLAY
+	POSTDISPLAY=
 
 	# Call the original `accept-line` to handle syntax highlighting or
 	# other potential custom behavior
