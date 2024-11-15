@@ -1,0 +1,51 @@
+on: [push, pull_request]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  IMAGE_CACHE_PATH: /tmp/.image-cache
+  IMAGE_CACHE_NAME: zsh-autosuggestions-test
+jobs:
+  determine-versions:
+    runs-on: ubuntu-22.04
+    outputs:
+      versions: ${{ steps.set-versions.outputs.versions }}
+    steps:
+    - uses: actions/checkout@v3
+    - id: set-versions
+      run: |
+        echo "versions=$(
+          grep "^[^#]" ZSH_VERSIONS \
+          | sed -E 's/(^|$)/"/g' \
+          | paste -sd ',' - \
+          | sed -e 's/^/[/' -e 's/$/]/'
+        )" >> $GITHUB_OUTPUT
+  test:
+    needs: determine-versions
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.determine-versions.outputs.versions) }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Docker image cache
+      id: image-cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.IMAGE_CACHE_PATH }}
+        key: image-cache-${{ matrix.version }}-${{ hashFiles('Dockerfile', 'install_test_zsh.sh', 'Gemfile.lock') }}
+    - name: Load cached docker image if available
+      if: ${{ steps.image-cache.outputs.cache-hit }}
+      run: gunzip < $IMAGE_CACHE_PATH/$IMAGE_CACHE_NAME.tar.gz | docker load
+    - name: Build the docker image if necessary
+      if: ${{ !steps.image-cache.outputs.cache-hit }}
+      run: |
+        docker build --build-arg TEST_ZSH_VERSION=${{ matrix.version }} -t $IMAGE_CACHE_NAME .
+        mkdir -p $IMAGE_CACHE_PATH
+        docker save $IMAGE_CACHE_NAME | gzip > $IMAGE_CACHE_PATH/$IMAGE_CACHE_NAME.tar.gz
+    - name: Run the tests
+      run: |
+        docker run --rm \
+          -v $PWD:/zsh-autosuggestions \
+          $IMAGE_CACHE_NAME \
+          make test

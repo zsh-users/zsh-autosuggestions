@@ -1,6 +1,6 @@
 # Fish-like fast/unobtrusive autosuggestions for zsh.
 # https://github.com/zsh-users/zsh-autosuggestions
-# v0.7.0
+# v0.7.1
 # Copyright (c) 2013 Thiago de Arruda
 # Copyright (c) 2016-2021 Eric Freese
 # 
@@ -54,6 +54,8 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 		history-search-backward
 		history-beginning-search-forward
 		history-beginning-search-backward
+		history-beginning-search-forward-end
+		history-beginning-search-backward-end
 		history-substring-search-up
 		history-substring-search-down
 		up-line-or-beginning-search
@@ -292,7 +294,7 @@ _zsh_autosuggest_toggle() {
 # Clear the suggestion
 _zsh_autosuggest_clear() {
 	# Remove the suggestion
-	unset POSTDISPLAY
+	POSTDISPLAY=
 
 	_zsh_autosuggest_invoke_original_widget $@
 }
@@ -309,7 +311,7 @@ _zsh_autosuggest_modify() {
 	local orig_postdisplay="$POSTDISPLAY"
 
 	# Clear suggestion while waiting for next one
-	unset POSTDISPLAY
+	POSTDISPLAY=
 
 	# Original widget may modify the buffer
 	_zsh_autosuggest_invoke_original_widget $@
@@ -364,7 +366,7 @@ _zsh_autosuggest_suggest() {
 	if [[ -n "$suggestion" ]] && (( $#BUFFER )); then
 		POSTDISPLAY="${suggestion#$BUFFER}"
 	else
-		unset POSTDISPLAY
+		POSTDISPLAY=
 	fi
 }
 
@@ -390,7 +392,7 @@ _zsh_autosuggest_accept() {
 	BUFFER="$BUFFER$POSTDISPLAY"
 
 	# Remove the suggestion
-	unset POSTDISPLAY
+	POSTDISPLAY=
 
 	# Run the original widget before manually moving the cursor so that the
 	# cursor movement doesn't make the widget do something unexpected
@@ -413,7 +415,7 @@ _zsh_autosuggest_execute() {
 	BUFFER="$BUFFER$POSTDISPLAY"
 
 	# Remove the suggestion
-	unset POSTDISPLAY
+	POSTDISPLAY=
 
 	# Call the original `accept-line` to handle syntax highlighting or
 	# other potential custom behavior
@@ -766,7 +768,7 @@ _zsh_autosuggest_async_request() {
 	# If we've got a pending request, cancel it
 	if [[ -n "$_ZSH_AUTOSUGGEST_ASYNC_FD" ]] && { true <&$_ZSH_AUTOSUGGEST_ASYNC_FD } 2>/dev/null; then
 		# Close the file descriptor and remove the handler
-		exec {_ZSH_AUTOSUGGEST_ASYNC_FD}<&-
+		builtin exec {_ZSH_AUTOSUGGEST_ASYNC_FD}<&-
 		zle -F $_ZSH_AUTOSUGGEST_ASYNC_FD
 
 		# We won't know the pid unless the user has zsh/system module installed
@@ -787,7 +789,7 @@ _zsh_autosuggest_async_request() {
 	fi
 
 	# Fork a process to fetch a suggestion and open a pipe to read from it
-	exec {_ZSH_AUTOSUGGEST_ASYNC_FD}< <(
+	builtin exec {_ZSH_AUTOSUGGEST_ASYNC_FD}< <(
 		# Tell parent process our pid
 		echo $sysparams[pid]
 
@@ -823,11 +825,12 @@ _zsh_autosuggest_async_response() {
 		zle autosuggest-suggest -- "$suggestion"
 
 		# Close the fd
-		exec {1}<&-
+		builtin exec {1}<&-
 	fi
 
 	# Always remove the handler
 	zle -F "$1"
+	_ZSH_AUTOSUGGEST_ASYNC_FD=
 }
 
 #--------------------------------------------------------------------#
