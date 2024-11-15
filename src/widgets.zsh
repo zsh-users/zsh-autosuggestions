@@ -162,11 +162,13 @@ _zsh_autosuggest_execute() {
 _zsh_autosuggest_partial_accept() {
 	local -i retval cursor_loc
 
-	# Save the contents of the buffer so we can restore later if needed
+	# Save the original buffer/postdisplay so we can restore later if needed
 	local original_buffer="$BUFFER"
+	local original_postdisplay="$POSTDISPLAY"
 
 	# Temporarily accept the suggestion.
 	BUFFER="$BUFFER$POSTDISPLAY"
+	unset POSTDISPLAY
 
 	# Original widget moves the cursor
 	_zsh_autosuggest_invoke_original_widget $@
@@ -186,8 +188,9 @@ _zsh_autosuggest_partial_accept() {
 		# Clip the buffer at the cursor
 		BUFFER="${BUFFER[1,$cursor_loc]}"
 	else
-		# Restore the original buffer
+		# Restore the original buffer/postdisplay
 		BUFFER="$original_buffer"
+		POSTDISPLAY="$original_postdisplay"
 	fi
 
 	return $retval
