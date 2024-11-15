@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.7.1
+- Clear POSTDISPLAY instead of unsetting (#634)
+- Always reset async file descriptor after consuming it (#630)
+- Always use builtin `exec` (#628)
+- Add `history-beginning-search-*-end` widgets to clear widget list (#619)
+- Switch CI from Circle CI to GitHub Actions
+
 ## v0.7.0
 - Enable asynchronous mode by default (#498)
 - No longer wrap user widgets starting with `autosuggest-` prefix (#496)
