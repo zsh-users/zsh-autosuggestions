@@ -15,7 +15,7 @@
 | Fedora / CentOS / RHEL / Scientific Linux | [zsh-autosuggestions OBS repository](https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-autosuggestions&package=zsh-autosuggestions) |
 | OpenSUSE / SLE | [zsh-autosuggestions OBS repository](https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-autosuggestions&package=zsh-autosuggestions) |
 | Arch Linux / Manjaro / Antergos / Hyperbola | [zsh-autosuggestions](https://www.archlinux.org/packages/zsh-autosuggestions), [zsh-autosuggestions-git](https://aur.archlinux.org/packages/zsh-autosuggestions-git) |
-| NixOS | [zsh-autosuggestions](https://github.com/NixOS/nixpkgs/blob/master/pkgs/shells/zsh/zsh-autosuggestions/default.nix) |
+| NixOS | [zsh-autosuggestions](https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/zs/zsh-autosuggestions/package.nix) |
 | Void Linux | [zsh-autosuggestions](https://github.com/void-linux/void-packages/blob/master/srcpkgs/zsh-autosuggestions/template) |
 | Mac OS | [homebrew](https://github.com/Homebrew/homebrew-core/blob/master/Formula/z/zsh-autosuggestions.rb)  |
 | NetBSD | [pkgsrc](http://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/shells/zsh-autosuggestions/README.html)  |
