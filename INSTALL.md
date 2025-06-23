@@ -17,7 +17,7 @@
 | Arch Linux / Manjaro / Antergos / Hyperbola | [zsh-autosuggestions](https://www.archlinux.org/packages/zsh-autosuggestions), [zsh-autosuggestions-git](https://aur.archlinux.org/packages/zsh-autosuggestions-git) |
 | NixOS | [zsh-autosuggestions](https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/zs/zsh-autosuggestions/package.nix) |
 | Void Linux | [zsh-autosuggestions](https://github.com/void-linux/void-packages/blob/master/srcpkgs/zsh-autosuggestions/template) |
-| Mac OS | [homebrew](https://github.com/Homebrew/homebrew-core/blob/master/Formula/z/zsh-autosuggestions.rb)  |
+| Mac OS | [homebrew](https://formulae.brew.sh/formula/zsh-autosuggestions)  |
 | NetBSD | [pkgsrc](http://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/shells/zsh-autosuggestions/README.html)  |
 
 ## Antigen
