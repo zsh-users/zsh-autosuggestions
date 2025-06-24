@@ -57,10 +57,10 @@
     brew install zsh-autosuggestions
     ```
 
-2. To activate the autosuggestions, add the following at the end of your .zshrc: 
-    
+2. To activate the autosuggestions, add the following at the end of your .zshrc. Running this command on the terminal will add the source line to the end of your .zshrc:
+
     ```sh
-    source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    echo "source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
     ```
 
 3. Start a new terminal session.
@@ -73,10 +73,10 @@
     git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
     ```
 
-2. Add the following to your `.zshrc`:
+2. Add the following to your `.zshrc`. Running this command on the terminal will add the source line to the end of your `.zshrc`:
 
     ```sh
-    source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+    echo "source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
     ```
 
 3. Start a new terminal session.
