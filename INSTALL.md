@@ -19,6 +19,7 @@
 | Void Linux | [zsh-autosuggestions](https://github.com/void-linux/void-packages/blob/master/srcpkgs/zsh-autosuggestions/template) |
 | Mac OS | [homebrew](https://formulae.brew.sh/formula/zsh-autosuggestions)  |
 | NetBSD | [pkgsrc](http://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/shells/zsh-autosuggestions/README.html)  |
+| FreeBSD | [pkg](https://cgit.freebsd.org/ports/tree/shells/zsh-autosuggestions) |
 
 ## Antigen
 
