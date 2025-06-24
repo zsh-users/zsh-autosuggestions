@@ -57,13 +57,17 @@
     brew install zsh-autosuggestions
     ```
 
-2. To activate the autosuggestions, add the following at the end of your .zshrc: 
-    
+2. To activate the autosuggestions, open your .zshrc: 
+    ```sh
+    nano ~/.zshrc
+    ```
+
+3. Go to the bottom and add the following at the end of the file:
     ```sh
     source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
     ```
 
-3. Start a new terminal session.
+4. Start a new terminal session.
 
 ## Manual (Git Clone)
 
