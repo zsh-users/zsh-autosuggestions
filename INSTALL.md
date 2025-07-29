@@ -21,6 +21,15 @@
 | NetBSD | [pkgsrc](http://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/shells/zsh-autosuggestions/README.html)  |
 | FreeBSD | [pkg](https://cgit.freebsd.org/ports/tree/shells/zsh-autosuggestions) |
 
+## Arch Linux / Manjaro / Antergos / Hyperbola
+
+1. Install **zsh-autosuggestions** using the package listed in the table above.
+
+2. Add the following to your `.zshrc`:
+```sh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+```
+
 ## Antigen
 
 1. Add the following to your `.zshrc`:
