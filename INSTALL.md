@@ -21,6 +21,11 @@
 | NetBSD | [pkgsrc](http://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/shells/zsh-autosuggestions/README.html)  |
 | FreeBSD | [pkg](https://cgit.freebsd.org/ports/tree/shells/zsh-autosuggestions) |
 
+Then source it in your `.zshrc`:
+```
+source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+```
+
 ## Antigen
 
 1. Add the following to your `.zshrc`:
