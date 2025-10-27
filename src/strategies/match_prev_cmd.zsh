@@ -27,8 +27,11 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	# Enable globbing flags so that we can use (#m) and (x~y) glob operator
 	setopt EXTENDED_GLOB
 
+	local raw_prefix="$1"
+	local -i offset=${2:-0}
+
 	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
-	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
+	local prefix="${raw_prefix//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
 
 	# Get the history items that match the prefix, excluding those that match
 	# the ignore pattern
@@ -37,10 +40,9 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 		pattern="($pattern)~($ZSH_AUTOSUGGEST_HISTORY_IGNORE)"
 	fi
 
-	# Get all history event numbers that correspond to history
-	# entries that match the pattern
+	# Get all history event numbers that correspond to history entries that match the pattern
 	local history_match_keys
-	history_match_keys=(${(k)history[(R)$~pattern]})
+	history_match_keys=(${(kOn)history[(R)$pattern]})
 
 	# By default we use the first history number (most recent history entry)
 	local histkey="${history_match_keys[1]}"
@@ -61,6 +63,27 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 		fi
 	done
 
-	# Give back the matched history entry
-	typeset -g suggestion="$history[$histkey]"
+	local -a ordered_keys matches
+	if [[ -n "$histkey" ]]; then
+		ordered_keys=("$histkey")
+	fi
+
+	for key in "${(@)history_match_keys[1,200]}"; do
+		[[ -n "$key" ]] || continue
+		[[ "$key" = "$histkey" ]] && continue
+		ordered_keys+=("$key")
+	done
+
+	matches=()
+	for key in $ordered_keys; do
+		matches+=("${history[$key]}")
+	done
+
+	REPLY=$#matches
+
+	if (( offset < $#matches )); then
+		typeset -g suggestion="${matches[offset+1]}"
+	else
+		unset suggestion
+	fi
 }

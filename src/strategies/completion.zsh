@@ -101,7 +101,8 @@ _zsh_autosuggest_strategy_completion() {
 	setopt EXTENDED_GLOB
 
 	typeset -g suggestion
-	local line REPLY
+	local -i offset=${2:-0}
+	local line
 
 	# Exit if we don't have completions
 	whence compdef >/dev/null || return
@@ -134,4 +135,13 @@ _zsh_autosuggest_strategy_completion() {
 		# Destroy the pty
 		zpty -d $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME
 	}
+
+	if [[ -n "$suggestion" ]]; then
+		REPLY=1
+		if (( offset > 0 )); then
+			unset suggestion
+		fi
+	else
+		REPLY=0
+	fi
 }

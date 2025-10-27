@@ -1,4 +1,3 @@
-
 #--------------------------------------------------------------------#
 # History Suggestion Strategy                                        #
 #--------------------------------------------------------------------#
@@ -13,20 +12,41 @@ _zsh_autosuggest_strategy_history() {
 	# Enable globbing flags so that we can use (#m) and (x~y) glob operator
 	setopt EXTENDED_GLOB
 
+	local raw_prefix="$1"
+	local -i offset=${2:-0}
+
 	# Escape backslashes and all of the glob operators so we can use
-	# this string as a pattern to search the $history associative array.
+	# this string as a pattern to search the history list.
 	# - (#m) globbing flag enables setting references for match data
 	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
-	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
+	local prefix="${raw_prefix//(#m)[\\*?\[\]<>()|^~#]/\\$MATCH}"
 
-	# Get the history items that match the prefix, excluding those that match
-	# the ignore pattern
+	# Build the matcher, excluding entries that match the ignore pattern
 	local pattern="$prefix*"
 	if [[ -n $ZSH_AUTOSUGGEST_HISTORY_IGNORE ]]; then
 		pattern="($pattern)~($ZSH_AUTOSUGGEST_HISTORY_IGNORE)"
 	fi
 
-	# Give the first history item matching the pattern as the suggestion
-	# - (r) subscript flag makes the pattern match on values
-	typeset -g suggestion="${history[(r)$pattern]}"
+	local fc_output
+	fc_output=$(builtin fc -ln 2>/dev/null)
+
+	local -a matches
+	matches=()
+
+	local line
+	for line in ${(f)fc_output}; do
+		if [[ "$line" == ${~pattern} ]]; then
+			matches=("$line" "${matches[@]}")
+		fi
+	done
+
+    # no-op: keep vars local to this function to avoid global pollution
+
+	REPLY=$#matches
+
+	if (( offset < $#matches )); then
+		typeset -g suggestion="${matches[offset+1]}"
+	else
+		unset suggestion
+	fi
 }
