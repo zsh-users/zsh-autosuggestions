@@ -267,6 +267,11 @@ _zsh_autosuggest_highlight_apply() {
 # Autosuggest Widget Implementations                                 #
 #--------------------------------------------------------------------#
 
+typeset -gi _ZSH_AUTOSUGGEST_SUGGESTION_INDEX=0
+typeset -gi _ZSH_AUTOSUGGEST_PENDING_OFFSET=0
+typeset -g _ZSH_AUTOSUGGEST_PENDING_BUFFER
+typeset -g _ZSH_AUTOSUGGEST_LAST_PREFIX
+
 # Disable suggestions
 _zsh_autosuggest_disable() {
 	typeset -g _ZSH_AUTOSUGGEST_DISABLED
@@ -282,6 +287,69 @@ _zsh_autosuggest_enable() {
 	fi
 }
 
+_zsh_autosuggest_next() {
+	emulate -L zsh
+
+	# Do nothing if suggestions are disabled or there's no buffer to base suggestions on
+	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )) || (( $#BUFFER == 0 )); then
+		return 0
+	fi
+
+	local -i current_index=${_ZSH_AUTOSUGGEST_SUGGESTION_INDEX:-0}
+	local -i next_index=$((current_index + 1))
+
+	# Fetch synchronously to avoid races
+	_zsh_autosuggest_fetch $next_index "sync"
+
+	# If no suggestion at next_index, wrap back to 0
+	if (( _ZSH_AUTOSUGGEST_SUGGESTION_INDEX != next_index )); then
+		_zsh_autosuggest_fetch 0 "sync"
+	fi
+
+	return 0
+}
+
+_zsh_autosuggest_previous() {
+	emulate -L zsh
+
+	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )) || (( $#BUFFER == 0 )); then
+		return 0
+	fi
+
+	local -i current_index=${_ZSH_AUTOSUGGEST_SUGGESTION_INDEX:-0}
+
+	if (( current_index > 0 )); then
+		local -i prev_index=$((current_index - 1))
+		_zsh_autosuggest_fetch $prev_index "sync"
+		return 0
+	fi
+
+	# We are at the first suggestion; step forward until we can't to find the last entry.
+	_zsh_autosuggest_fetch 0 "sync"
+
+	if [[ -z "$POSTDISPLAY" ]]; then
+		return 0
+	fi
+
+	local -i probe=0
+	local -i last_index=0
+
+	while true; do
+		(( probe++ ))
+		_zsh_autosuggest_fetch $probe "sync"
+
+		if (( _ZSH_AUTOSUGGEST_SUGGESTION_INDEX == probe )); then
+			last_index=$probe
+			continue
+		fi
+
+		break
+	done
+
+	_zsh_autosuggest_fetch $last_index "sync"
+
+	return 0
+}
 # Toggle suggestions (enable/disable)
 _zsh_autosuggest_toggle() {
 	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )); then
@@ -295,6 +363,8 @@ _zsh_autosuggest_toggle() {
 _zsh_autosuggest_clear() {
 	# Remove the suggestion
 	POSTDISPLAY=
+	_ZSH_AUTOSUGGEST_SUGGESTION_INDEX=0
+	_ZSH_AUTOSUGGEST_LAST_PREFIX="$BUFFER"
 
 	_zsh_autosuggest_invoke_original_widget $@
 }
@@ -348,12 +418,50 @@ _zsh_autosuggest_modify() {
 
 # Fetch a new suggestion based on what's currently in the buffer
 _zsh_autosuggest_fetch() {
+	local -i offset=${1:-0}
+	local mode="${2:-auto}"
+	local use_async=0
+
+	# Reset offset if the buffer changed since the last suggestion lookup
+	if [[ "$BUFFER" != "${_ZSH_AUTOSUGGEST_LAST_PREFIX-}" ]]; then
+		offset=0
+	fi
+
 	if (( ${+ZSH_AUTOSUGGEST_USE_ASYNC} )); then
-		_zsh_autosuggest_async_request "$BUFFER"
+		use_async=1
+	fi
+
+	if [[ "$mode" == "sync" ]]; then
+		use_async=0
+		# Cancel any pending async request so results don't race the sync fetch
+		_zsh_autosuggest_async_cancel
+	fi
+
+	_ZSH_AUTOSUGGEST_PENDING_OFFSET=$offset
+	_ZSH_AUTOSUGGEST_PENDING_BUFFER="$BUFFER"
+
+	if (( use_async )); then
+		_zsh_autosuggest_async_request "$BUFFER" $offset
 	else
 		local suggestion
-		_zsh_autosuggest_fetch_suggestion "$BUFFER"
+		_zsh_autosuggest_fetch_suggestion "$BUFFER" $offset
+
+		if [[ -n "$suggestion" ]]; then
+			_ZSH_AUTOSUGGEST_SUGGESTION_INDEX=$offset
+			_ZSH_AUTOSUGGEST_LAST_PREFIX="$BUFFER"
+		else
+			if (( offset > 0 )); then
+				_ZSH_AUTOSUGGEST_SUGGESTION_INDEX=0
+			fi
+			# Ensure state tracks the current buffer even when no suggestion exists
+			_ZSH_AUTOSUGGEST_LAST_PREFIX="$BUFFER"
+		fi
+
 		_zsh_autosuggest_suggest "$suggestion"
+
+		# Clear pending markers for synchronous flow
+		unset _ZSH_AUTOSUGGEST_PENDING_BUFFER
+		_ZSH_AUTOSUGGEST_PENDING_OFFSET=0
 	fi
 }
 
@@ -464,6 +572,8 @@ _zsh_autosuggest_partial_accept() {
 		clear
 		fetch
 		suggest
+		next
+		previous
 		accept
 		execute
 		enable
@@ -596,7 +706,8 @@ _zsh_autosuggest_strategy_completion() {
 	setopt EXTENDED_GLOB
 
 	typeset -g suggestion
-	local line REPLY
+	local -i offset=${2:-0}
+	local line
 
 	# Exit if we don't have completions
 	whence compdef >/dev/null || return
@@ -629,8 +740,16 @@ _zsh_autosuggest_strategy_completion() {
 		# Destroy the pty
 		zpty -d $ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME
 	}
-}
 
+	if [[ -n "$suggestion" ]]; then
+		REPLY=1
+		if (( offset > 0 )); then
+			unset suggestion
+		fi
+	else
+		REPLY=0
+	fi
+}
 #--------------------------------------------------------------------#
 # History Suggestion Strategy                                        #
 #--------------------------------------------------------------------#
@@ -645,22 +764,43 @@ _zsh_autosuggest_strategy_history() {
 	# Enable globbing flags so that we can use (#m) and (x~y) glob operator
 	setopt EXTENDED_GLOB
 
+	local raw_prefix="$1"
+	local -i offset=${2:-0}
+
 	# Escape backslashes and all of the glob operators so we can use
-	# this string as a pattern to search the $history associative array.
+	# this string as a pattern to search the history list.
 	# - (#m) globbing flag enables setting references for match data
 	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
-	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
+	local prefix="${raw_prefix//(#m)[\\*?\[\]<>()|^~#]/\\$MATCH}"
 
-	# Get the history items that match the prefix, excluding those that match
-	# the ignore pattern
+	# Build the matcher, excluding entries that match the ignore pattern
 	local pattern="$prefix*"
 	if [[ -n $ZSH_AUTOSUGGEST_HISTORY_IGNORE ]]; then
 		pattern="($pattern)~($ZSH_AUTOSUGGEST_HISTORY_IGNORE)"
 	fi
 
-	# Give the first history item matching the pattern as the suggestion
-	# - (r) subscript flag makes the pattern match on values
-	typeset -g suggestion="${history[(r)$pattern]}"
+	local fc_output
+	fc_output=$(builtin fc -ln 2>/dev/null)
+
+	local -a matches
+	matches=()
+
+	local line
+	for line in ${(f)fc_output}; do
+		if [[ "$line" == ${~pattern} ]]; then
+			matches=("$line" "${matches[@]}")
+		fi
+	done
+
+    # no-op: keep vars local to this function to avoid global pollution
+
+	REPLY=$#matches
+
+	if (( offset < $#matches )); then
+		typeset -g suggestion="${matches[offset+1]}"
+	else
+		unset suggestion
+	fi
 }
 
 #--------------------------------------------------------------------#
@@ -691,8 +831,11 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 	# Enable globbing flags so that we can use (#m) and (x~y) glob operator
 	setopt EXTENDED_GLOB
 
+	local raw_prefix="$1"
+	local -i offset=${2:-0}
+
 	# TODO: Use (b) flag when we can drop support for zsh older than v5.0.8
-	local prefix="${1//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
+	local prefix="${raw_prefix//(#m)[\\*?[\]<>()|^~#]/\\$MATCH}"
 
 	# Get the history items that match the prefix, excluding those that match
 	# the ignore pattern
@@ -701,10 +844,9 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 		pattern="($pattern)~($ZSH_AUTOSUGGEST_HISTORY_IGNORE)"
 	fi
 
-	# Get all history event numbers that correspond to history
-	# entries that match the pattern
+	# Get all history event numbers that correspond to history entries that match the pattern
 	local history_match_keys
-	history_match_keys=(${(k)history[(R)$~pattern]})
+	history_match_keys=(${(kOn)history[(R)$pattern]})
 
 	# By default we use the first history number (most recent history entry)
 	local histkey="${history_match_keys[1]}"
@@ -725,8 +867,29 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 		fi
 	done
 
-	# Give back the matched history entry
-	typeset -g suggestion="$history[$histkey]"
+	local -a ordered_keys matches
+	if [[ -n "$histkey" ]]; then
+		ordered_keys=("$histkey")
+	fi
+
+	for key in "${(@)history_match_keys[1,200]}"; do
+		[[ -n "$key" ]] || continue
+		[[ "$key" = "$histkey" ]] && continue
+		ordered_keys+=("$key")
+	done
+
+	matches=()
+	for key in $ordered_keys; do
+		matches+=("${history[$key]}")
+	done
+
+	REPLY=$#matches
+
+	if (( offset < $#matches )); then
+		typeset -g suggestion="${matches[offset+1]}"
+	else
+		unset suggestion
+	fi
 }
 
 #--------------------------------------------------------------------#
@@ -738,21 +901,56 @@ _zsh_autosuggest_strategy_match_prev_cmd() {
 
 _zsh_autosuggest_fetch_suggestion() {
 	typeset -g suggestion
+	local prefix="$1"
+	local -i remaining_offset=${2:-0}
 	local -a strategies
 	local strategy
+	local reply_value
+	local -i strategy_count
 
 	# Ensure we are working with an array
 	strategies=(${=ZSH_AUTOSUGGEST_STRATEGY})
 
+	# Reset global suggestion result
+	unset suggestion
+
 	for strategy in $strategies; do
+		reply_value=
+		REPLY=
+
 		# Try to get a suggestion from this strategy
-		_zsh_autosuggest_strategy_$strategy "$1"
+		_zsh_autosuggest_strategy_$strategy "$prefix" $remaining_offset
 
 		# Ensure the suggestion matches the prefix
-		[[ "$suggestion" != "$1"* ]] && unset suggestion
+		if [[ "$suggestion" != "$prefix"* ]]; then
+			unset suggestion
+		fi
 
 		# Break once we've found a valid suggestion
-		[[ -n "$suggestion" ]] && break
+		if [[ -n "$suggestion" ]]; then
+			break
+		fi
+
+		# Determine how many suggestions this strategy can offer so we can
+		# decrement the remaining offset before trying the next strategy.
+		reply_value="$REPLY"
+		if [[ -n "$reply_value" && "$reply_value" = <-> ]]; then
+			strategy_count=$reply_value
+		elif [[ -n "$reply_value" ]]; then
+			# Treat non-numeric replies as zero to avoid arithmetic errors
+			strategy_count=0
+		else
+			# Preserve existing behaviour when the strategy doesn't report a count.
+			strategy_count=0
+		fi
+
+		if (( remaining_offset > 0 && strategy_count > 0 )); then
+			if (( remaining_offset >= strategy_count )); then
+				remaining_offset=$((remaining_offset - strategy_count))
+			else
+				remaining_offset=0
+			fi
+		fi
 	done
 }
 
@@ -760,33 +958,45 @@ _zsh_autosuggest_fetch_suggestion() {
 # Async                                                              #
 #--------------------------------------------------------------------#
 
+_zsh_autosuggest_async_cancel() {
+	if [[ -n "$_ZSH_AUTOSUGGEST_ASYNC_FD" ]] && { true <&$_ZSH_AUTOSUGGEST_ASYNC_FD } 2>/dev/null; then
+		# Close the file descriptor and remove the handler
+		builtin exec {_ZSH_AUTOSUGGEST_ASYNC_FD}<&-
+		zle -F $_ZSH_AUTOSUGGEST_ASYNC_FD
+	fi
+
+	if [[ -n "$_ZSH_AUTOSUGGEST_CHILD_PID" ]]; then
+		# Zsh will make a new process group for the child process only if job
+		# control is enabled (MONITOR option)
+		if [[ -o MONITOR ]]; then
+			# Send the signal to the process group to kill any processes that may
+			# have been forked by the suggestion strategy
+			kill -TERM -$_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
+		else
+			# Kill just the child process since it wasn't placed in a new process
+			# group. If the suggestion strategy forked any child processes they may
+			# be orphaned and left behind.
+			kill -TERM $_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
+		fi
+	fi
+
+	_ZSH_AUTOSUGGEST_ASYNC_FD=
+	_ZSH_AUTOSUGGEST_CHILD_PID=
+}
+
 _zsh_autosuggest_async_request() {
 	zmodload zsh/system 2>/dev/null # For `$sysparams`
 
 	typeset -g _ZSH_AUTOSUGGEST_ASYNC_FD _ZSH_AUTOSUGGEST_CHILD_PID
 
-	# If we've got a pending request, cancel it
-	if [[ -n "$_ZSH_AUTOSUGGEST_ASYNC_FD" ]] && { true <&$_ZSH_AUTOSUGGEST_ASYNC_FD } 2>/dev/null; then
-		# Close the file descriptor and remove the handler
-		builtin exec {_ZSH_AUTOSUGGEST_ASYNC_FD}<&-
-		zle -F $_ZSH_AUTOSUGGEST_ASYNC_FD
+	local buffer="$1"
+	local -i offset=${2:-0}
 
-		# We won't know the pid unless the user has zsh/system module installed
-		if [[ -n "$_ZSH_AUTOSUGGEST_CHILD_PID" ]]; then
-			# Zsh will make a new process group for the child process only if job
-			# control is enabled (MONITOR option)
-			if [[ -o MONITOR ]]; then
-				# Send the signal to the process group to kill any processes that may
-				# have been forked by the suggestion strategy
-				kill -TERM -$_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
-			else
-				# Kill just the child process since it wasn't placed in a new process
-				# group. If the suggestion strategy forked any child processes they may
-				# be orphaned and left behind.
-				kill -TERM $_ZSH_AUTOSUGGEST_CHILD_PID 2>/dev/null
-			fi
-		fi
-	fi
+	_zsh_autosuggest_async_cancel
+
+	typeset -g _ZSH_AUTOSUGGEST_PENDING_BUFFER _ZSH_AUTOSUGGEST_PENDING_OFFSET
+	_ZSH_AUTOSUGGEST_PENDING_BUFFER="$buffer"
+	_ZSH_AUTOSUGGEST_PENDING_OFFSET=$offset
 
 	# Fork a process to fetch a suggestion and open a pipe to read from it
 	builtin exec {_ZSH_AUTOSUGGEST_ASYNC_FD}< <(
@@ -795,7 +1005,7 @@ _zsh_autosuggest_async_request() {
 
 		# Fetch and print the suggestion
 		local suggestion
-		_zsh_autosuggest_fetch_suggestion "$1"
+		_zsh_autosuggest_fetch_suggestion "$buffer" $offset
 		echo -nE "$suggestion"
 	)
 
@@ -822,6 +1032,22 @@ _zsh_autosuggest_async_response() {
 	if [[ -z "$2" || "$2" == "hup" ]]; then
 		# Read everything from the fd and give it as a suggestion
 		IFS='' read -rd '' -u $1 suggestion
+		if [[ -n "$suggestion" && "$suggestion" = "$BUFFER"* ]]; then
+			typeset -g _ZSH_AUTOSUGGEST_SUGGESTION_INDEX _ZSH_AUTOSUGGEST_LAST_PREFIX
+			if [[ -n "${_ZSH_AUTOSUGGEST_PENDING_BUFFER-}" && "$BUFFER" = "$_ZSH_AUTOSUGGEST_PENDING_BUFFER" ]]; then
+				_ZSH_AUTOSUGGEST_SUGGESTION_INDEX=${_ZSH_AUTOSUGGEST_PENDING_OFFSET:-0}
+				_ZSH_AUTOSUGGEST_LAST_PREFIX="$BUFFER"
+			else
+				# Fall back to updating state using the current buffer if it still
+				# matches the suggestion.
+				_ZSH_AUTOSUGGEST_SUGGESTION_INDEX=${_ZSH_AUTOSUGGEST_PENDING_OFFSET:-0}
+				_ZSH_AUTOSUGGEST_LAST_PREFIX="$BUFFER"
+			fi
+		elif [[ -z "$suggestion" ]]; then
+			typeset -g _ZSH_AUTOSUGGEST_SUGGESTION_INDEX _ZSH_AUTOSUGGEST_LAST_PREFIX
+			_ZSH_AUTOSUGGEST_SUGGESTION_INDEX=0
+			_ZSH_AUTOSUGGEST_LAST_PREFIX="$BUFFER"
+		fi
 		zle autosuggest-suggest -- "$suggestion"
 
 		# Close the fd
@@ -831,6 +1057,11 @@ _zsh_autosuggest_async_response() {
 	# Always remove the handler
 	zle -F "$1"
 	_ZSH_AUTOSUGGEST_ASYNC_FD=
+	_ZSH_AUTOSUGGEST_CHILD_PID=
+
+	typeset -g _ZSH_AUTOSUGGEST_PENDING_BUFFER _ZSH_AUTOSUGGEST_PENDING_OFFSET
+	unset _ZSH_AUTOSUGGEST_PENDING_BUFFER
+	_ZSH_AUTOSUGGEST_PENDING_OFFSET=0
 }
 
 #--------------------------------------------------------------------#

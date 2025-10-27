@@ -3,6 +3,11 @@
 # Autosuggest Widget Implementations                                 #
 #--------------------------------------------------------------------#
 
+typeset -gi _ZSH_AUTOSUGGEST_SUGGESTION_INDEX=0
+typeset -gi _ZSH_AUTOSUGGEST_PENDING_OFFSET=0
+typeset -g _ZSH_AUTOSUGGEST_PENDING_BUFFER
+typeset -g _ZSH_AUTOSUGGEST_LAST_PREFIX
+
 # Disable suggestions
 _zsh_autosuggest_disable() {
 	typeset -g _ZSH_AUTOSUGGEST_DISABLED
@@ -18,6 +23,69 @@ _zsh_autosuggest_enable() {
 	fi
 }
 
+_zsh_autosuggest_next() {
+	emulate -L zsh
+
+	# Do nothing if suggestions are disabled or there's no buffer to base suggestions on
+	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )) || (( $#BUFFER == 0 )); then
+		return 0
+	fi
+
+	local -i current_index=${_ZSH_AUTOSUGGEST_SUGGESTION_INDEX:-0}
+	local -i next_index=$((current_index + 1))
+
+	# Fetch synchronously to avoid races
+	_zsh_autosuggest_fetch $next_index "sync"
+
+	# If no suggestion at next_index, wrap back to 0
+	if (( _ZSH_AUTOSUGGEST_SUGGESTION_INDEX != next_index )); then
+		_zsh_autosuggest_fetch 0 "sync"
+	fi
+
+	return 0
+}
+
+_zsh_autosuggest_previous() {
+	emulate -L zsh
+
+	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )) || (( $#BUFFER == 0 )); then
+		return 0
+	fi
+
+	local -i current_index=${_ZSH_AUTOSUGGEST_SUGGESTION_INDEX:-0}
+
+	if (( current_index > 0 )); then
+		local -i prev_index=$((current_index - 1))
+		_zsh_autosuggest_fetch $prev_index "sync"
+		return 0
+	fi
+
+	# We are at the first suggestion; step forward until we can't to find the last entry.
+	_zsh_autosuggest_fetch 0 "sync"
+
+	if [[ -z "$POSTDISPLAY" ]]; then
+		return 0
+	fi
+
+	local -i probe=0
+	local -i last_index=0
+
+	while true; do
+		(( probe++ ))
+		_zsh_autosuggest_fetch $probe "sync"
+
+		if (( _ZSH_AUTOSUGGEST_SUGGESTION_INDEX == probe )); then
+			last_index=$probe
+			continue
+		fi
+
+		break
+	done
+
+	_zsh_autosuggest_fetch $last_index "sync"
+
+	return 0
+}
 # Toggle suggestions (enable/disable)
 _zsh_autosuggest_toggle() {
 	if (( ${+_ZSH_AUTOSUGGEST_DISABLED} )); then
@@ -31,6 +99,8 @@ _zsh_autosuggest_toggle() {
 _zsh_autosuggest_clear() {
 	# Remove the suggestion
 	POSTDISPLAY=
+	_ZSH_AUTOSUGGEST_SUGGESTION_INDEX=0
+	_ZSH_AUTOSUGGEST_LAST_PREFIX="$BUFFER"
 
 	_zsh_autosuggest_invoke_original_widget $@
 }
@@ -84,12 +154,50 @@ _zsh_autosuggest_modify() {
 
 # Fetch a new suggestion based on what's currently in the buffer
 _zsh_autosuggest_fetch() {
+	local -i offset=${1:-0}
+	local mode="${2:-auto}"
+	local use_async=0
+
+	# Reset offset if the buffer changed since the last suggestion lookup
+	if [[ "$BUFFER" != "${_ZSH_AUTOSUGGEST_LAST_PREFIX-}" ]]; then
+		offset=0
+	fi
+
 	if (( ${+ZSH_AUTOSUGGEST_USE_ASYNC} )); then
-		_zsh_autosuggest_async_request "$BUFFER"
+		use_async=1
+	fi
+
+	if [[ "$mode" == "sync" ]]; then
+		use_async=0
+		# Cancel any pending async request so results don't race the sync fetch
+		_zsh_autosuggest_async_cancel
+	fi
+
+	_ZSH_AUTOSUGGEST_PENDING_OFFSET=$offset
+	_ZSH_AUTOSUGGEST_PENDING_BUFFER="$BUFFER"
+
+	if (( use_async )); then
+		_zsh_autosuggest_async_request "$BUFFER" $offset
 	else
 		local suggestion
-		_zsh_autosuggest_fetch_suggestion "$BUFFER"
+		_zsh_autosuggest_fetch_suggestion "$BUFFER" $offset
+
+		if [[ -n "$suggestion" ]]; then
+			_ZSH_AUTOSUGGEST_SUGGESTION_INDEX=$offset
+			_ZSH_AUTOSUGGEST_LAST_PREFIX="$BUFFER"
+		else
+			if (( offset > 0 )); then
+				_ZSH_AUTOSUGGEST_SUGGESTION_INDEX=0
+			fi
+			# Ensure state tracks the current buffer even when no suggestion exists
+			_ZSH_AUTOSUGGEST_LAST_PREFIX="$BUFFER"
+		fi
+
 		_zsh_autosuggest_suggest "$suggestion"
+
+		# Clear pending markers for synchronous flow
+		unset _ZSH_AUTOSUGGEST_PENDING_BUFFER
+		_ZSH_AUTOSUGGEST_PENDING_OFFSET=0
 	fi
 }
 
@@ -200,6 +308,8 @@ _zsh_autosuggest_partial_accept() {
 		clear
 		fetch
 		suggest
+		next
+		previous
 		accept
 		execute
 		enable
