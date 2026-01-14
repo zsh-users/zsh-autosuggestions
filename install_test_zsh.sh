@@ -5,7 +5,7 @@ set -ex
 mkdir zsh-build
 cd zsh-build
 
-curl -L https://api.github.com/repos/zsh-users/zsh/tarball/zsh-$TEST_ZSH_VERSION | tar xz --strip=1
+curl -L "https://api.github.com/repos/zsh-users/zsh/tarball/zsh-$TEST_ZSH_VERSION" | tar xz --strip=1
 
 ./Util/preconfig
 ./configure --enable-pcre \
