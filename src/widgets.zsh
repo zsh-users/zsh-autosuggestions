@@ -105,7 +105,13 @@ _zsh_autosuggest_suggest() {
 	local min_input="${ZSH_AUTOSUGGEST_AI_MIN_INPUT:-1}"
 
 	if [[ -n "$suggestion" ]] && { (( $#BUFFER )) || (( min_input == 0 )); }; then
-		POSTDISPLAY="${suggestion#$BUFFER}"
+		# Only extract suffix if suggestion starts with buffer
+		if [[ "$suggestion" == "$BUFFER"* ]]; then
+			POSTDISPLAY="${suggestion#$BUFFER}"
+		else
+			# Suggestion doesn't match current buffer, discard it
+			POSTDISPLAY=
+		fi
 	else
 		POSTDISPLAY=
 	fi

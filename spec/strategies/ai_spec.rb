@@ -405,3 +405,29 @@ EOFCURL
  wait_for { session.content }.to eq('temp 0.3')
  end
  end
+
+ context 'suggestion buffer validation' do
+ let(:options) { ["ZSH_AUTOSUGGEST_AI_API_KEY=test-key", "ZSH_AUTOSUGGEST_STRATEGY=(ai)"] }
+
+ context 'when suggestion does not match current buffer' do
+ let(:before_sourcing) do
+ -> {
+ session.run_command('curl() {
+ if [[ "$*" == *"max-time"* ]]; then
+ cat <<EOFCURL
+{"choices":[{"message":{"content":"git status --long"}}]}
+200
+EOFCURL
+ fi
+ }')
+ }
+ end
+
+ it 'discards suggestion that does not match buffer' do
+ # Suggestion is "git status --long" but buffer is unrelated
+ session.send_string('ls')
+ wait_for { session.content }.to_not match(/git status/)
+ end
+ end
+ end
+end
