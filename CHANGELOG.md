@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- Fix `region_highlight` entries leaking across accept/edit cycles, causing stale colors to bleed onto accepted text (#698, #789). Plugin-owned entries now carry a `memo=zsh-autosuggestions` tag on zsh 5.9+ and are tracked individually for older versions.
+
 ## v0.7.1
 - Clear POSTDISPLAY instead of unsetting (#634)
 - Always reset async file descriptor after consuming it (#630)
