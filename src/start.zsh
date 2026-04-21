@@ -21,6 +21,12 @@ _zsh_autosuggest_start() {
 # Mark for auto-loading the functions that we use
 autoload -Uz add-zsh-hook is-at-least
 
+# Hook that runs when line editing finishes (right before command execution)
+_zsh_autosuggest_line_finish() {
+	# Clear POSTDISPLAY to prevent it from appearing in terminal
+	POSTDISPLAY=
+}
+
 # Automatically enable asynchronous mode in newer versions of zsh. Disable for
 # older versions because there is a bug when using async mode where ^C does not
 # work immediately after fetching a suggestion.
@@ -28,6 +34,9 @@ autoload -Uz add-zsh-hook is-at-least
 if is-at-least 5.0.8; then
 	typeset -g ZSH_AUTOSUGGEST_USE_ASYNC=
 fi
+
+# Register the line finish hook
+zle -N zle-line-finish _zsh_autosuggest_line_finish
 
 # Start the autosuggestion widgets on the next precmd
 add-zsh-hook precmd _zsh_autosuggest_start
