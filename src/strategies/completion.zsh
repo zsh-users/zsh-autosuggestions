@@ -39,7 +39,7 @@ _zsh_autosuggest_capture_completion_widget() {
 	fi
 
 	# The completion has been added, print the buffer as the suggestion
-	echo -nE - $'\0'$BUFFER$'\0'
+	builtin echo -nE - $'\0'$BUFFER$'\0'
 }
 
 zle -N autosuggest-capture-completion _zsh_autosuggest_capture_completion_widget

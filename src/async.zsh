@@ -34,12 +34,12 @@ _zsh_autosuggest_async_request() {
 	# Fork a process to fetch a suggestion and open a pipe to read from it
 	builtin exec {_ZSH_AUTOSUGGEST_ASYNC_FD}< <(
 		# Tell parent process our pid
-		echo $sysparams[pid]
+		builtin echo $sysparams[pid]
 
 		# Fetch and print the suggestion
 		local suggestion
 		_zsh_autosuggest_fetch_suggestion "$1"
-		echo -nE "$suggestion"
+		builtin echo -nE "$suggestion"
 	)
 
 	# There's a weird bug here where ^C stops working unless we force a fork
