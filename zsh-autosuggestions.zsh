@@ -128,7 +128,7 @@ _zsh_autosuggest_escape_command() {
 	setopt localoptions EXTENDED_GLOB
 
 	# Escape special chars in the string (requires EXTENDED_GLOB)
-	echo -E "${1//(#m)[\"\'\\()\[\]|*?~]/\\$MATCH}"
+	builtin echo -E "${1//(#m)[\"\'\\()\[\]|*?~]/\\$MATCH}"
 }
 
 #--------------------------------------------------------------------#
@@ -534,7 +534,7 @@ _zsh_autosuggest_capture_completion_widget() {
 	fi
 
 	# The completion has been added, print the buffer as the suggestion
-	echo -nE - $'\0'$BUFFER$'\0'
+	builtin echo -nE - $'\0'$BUFFER$'\0'
 }
 
 zle -N autosuggest-capture-completion _zsh_autosuggest_capture_completion_widget
@@ -791,12 +791,12 @@ _zsh_autosuggest_async_request() {
 	# Fork a process to fetch a suggestion and open a pipe to read from it
 	builtin exec {_ZSH_AUTOSUGGEST_ASYNC_FD}< <(
 		# Tell parent process our pid
-		echo $sysparams[pid]
+		builtin echo $sysparams[pid]
 
 		# Fetch and print the suggestion
 		local suggestion
 		_zsh_autosuggest_fetch_suggestion "$1"
-		echo -nE "$suggestion"
+		builtin echo -nE "$suggestion"
 	)
 
 	# There's a weird bug here where ^C stops working unless we force a fork
