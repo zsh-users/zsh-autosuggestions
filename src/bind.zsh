@@ -34,7 +34,7 @@ _zsh_autosuggest_bind_widget() {
 		# Built-in widget
 		builtin)
 			_zsh_autosuggest_incr_bind_count $widget
-			eval "_zsh_autosuggest_orig_${(q)widget}() { zle .${(q)widget} }"
+			eval "_zsh_autosuggest_orig_${(q)widget}() { zle .${(q)widget} -- \"\$@\" }"
 			zle -N $prefix$bind_count-$widget _zsh_autosuggest_orig_$widget
 			;;
 
@@ -53,6 +53,9 @@ _zsh_autosuggest_bind_widget() {
 	# `zle self-insert -w`).
 	eval "_zsh_autosuggest_bound_${bind_count}_${(q)widget}() {
 		_zsh_autosuggest_widget_$autosuggest_action $prefix$bind_count-${(q)widget} \$@
+		case ${(q)widget} in
+			(${(j:|:)ZSH_AUTOSUGGEST_ZLE_KILL_WIDGETS}) zle -f 'kill';;
+		esac
 	}"
 
 	# Create the bound widget

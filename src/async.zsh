@@ -65,7 +65,11 @@ _zsh_autosuggest_async_response() {
 	if [[ -z "$2" || "$2" == "hup" ]]; then
 		# Read everything from the fd and give it as a suggestion
 		IFS='' read -rd '' -u $1 suggestion
-		zle autosuggest-suggest -- "$suggestion"
+		# Async delivery must not clobber $LASTWIDGET: widgets such as
+		# backward-kill-word-match, copy-earlier-word and
+		# up-line-or-beginning-search inspect it.  zsh 5.9 added `-f nolast`.
+		local -a nolast; is-at-least 5.9 && nolast=(-f nolast)
+		zle autosuggest-suggest $nolast -- "$suggestion"
 
 		# Close the fd
 		exec {1}<&-
