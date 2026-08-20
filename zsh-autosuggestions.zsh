@@ -116,6 +116,20 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 	)
 }
 
+# Widgets whose ZLE_KILL flag must be re-asserted on the wrapper, so that
+# consecutive kills keep appending to $CUTBUFFER instead of rotating the
+# kill ring.  Only needed on zsh < 5.9, where `zle -f nolast` (see async.zsh)
+# is unavailable.  See https://github.com/zsh-users/zsh-autosuggestions/pull/551
+(( ! ${+ZSH_AUTOSUGGEST_ZLE_KILL_WIDGETS} )) && {
+	typeset -ga ZSH_AUTOSUGGEST_ZLE_KILL_WIDGETS
+	ZSH_AUTOSUGGEST_ZLE_KILL_WIDGETS=(
+		kill-\*
+		backward-kill-\*
+		vi-kill-\*
+		copy-region-as-kill
+	)
+}
+
 # Pty name for capturing completions for completion suggestion strategy
 (( ! ${+ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME} )) &&
 typeset -g ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME=zsh_autosuggest_completion_pty
@@ -166,7 +180,7 @@ _zsh_autosuggest_bind_widget() {
 		# Built-in widget
 		builtin)
 			_zsh_autosuggest_incr_bind_count $widget
-			eval "_zsh_autosuggest_orig_${(q)widget}() { zle .${(q)widget} }"
+			eval "_zsh_autosuggest_orig_${(q)widget}() { zle .${(q)widget} -- \"\$@\" }"
 			zle -N $prefix$bind_count-$widget _zsh_autosuggest_orig_$widget
 			;;
 
@@ -185,6 +199,9 @@ _zsh_autosuggest_bind_widget() {
 	# `zle self-insert -w`).
 	eval "_zsh_autosuggest_bound_${bind_count}_${(q)widget}() {
 		_zsh_autosuggest_widget_$autosuggest_action $prefix$bind_count-${(q)widget} \$@
+		case ${(q)widget} in
+			(${(j:|:)ZSH_AUTOSUGGEST_ZLE_KILL_WIDGETS}) zle -f 'kill';;
+		esac
 	}"
 
 	# Create the bound widget
@@ -822,7 +839,11 @@ _zsh_autosuggest_async_response() {
 	if [[ -z "$2" || "$2" == "hup" ]]; then
 		# Read everything from the fd and give it as a suggestion
 		IFS='' read -rd '' -u $1 suggestion
-		zle autosuggest-suggest -- "$suggestion"
+		# Async delivery must not clobber $LASTWIDGET: widgets such as
+		# backward-kill-word-match, copy-earlier-word and
+		# up-line-or-beginning-search inspect it.  zsh 5.9 added `-f nolast`.
+		local -a nolast; is-at-least 5.9 && nolast=(-f nolast)
+		zle autosuggest-suggest $nolast -- "$suggestion"
 
 		# Close the fd
 		builtin exec {1}<&-

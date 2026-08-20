@@ -90,6 +90,20 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 	)
 }
 
+# Widgets whose ZLE_KILL flag must be re-asserted on the wrapper, so that
+# consecutive kills keep appending to $CUTBUFFER instead of rotating the
+# kill ring.  Only needed on zsh < 5.9, where `zle -f nolast` (see async.zsh)
+# is unavailable.  See https://github.com/zsh-users/zsh-autosuggestions/pull/551
+(( ! ${+ZSH_AUTOSUGGEST_ZLE_KILL_WIDGETS} )) && {
+	typeset -ga ZSH_AUTOSUGGEST_ZLE_KILL_WIDGETS
+	ZSH_AUTOSUGGEST_ZLE_KILL_WIDGETS=(
+		kill-\*
+		backward-kill-\*
+		vi-kill-\*
+		copy-region-as-kill
+	)
+}
+
 # Pty name for capturing completions for completion suggestion strategy
 (( ! ${+ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME} )) &&
 typeset -g ZSH_AUTOSUGGEST_COMPLETIONS_PTY_NAME=zsh_autosuggest_completion_pty
