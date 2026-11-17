@@ -38,6 +38,8 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 		down-line-or-history
 		accept-line
 		copy-earlier-word
+		run-help
+		which-command
 	)
 }
 
@@ -81,9 +83,7 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 	ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 		orig-\*
 		beep
-		run-help
 		set-local-history
-		which-command
 		yank
 		yank-pop
 		zle-\*

@@ -64,6 +64,8 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 		down-line-or-history
 		accept-line
 		copy-earlier-word
+		run-help
+		which-command
 	)
 }
 
@@ -107,9 +109,7 @@ typeset -g ZSH_AUTOSUGGEST_ORIGINAL_WIDGET_PREFIX=autosuggest-orig-
 	ZSH_AUTOSUGGEST_IGNORE_WIDGETS=(
 		orig-\*
 		beep
-		run-help
 		set-local-history
-		which-command
 		yank
 		yank-pop
 		zle-\*
@@ -160,14 +160,36 @@ _zsh_autosuggest_bind_widget() {
 		# User-defined widget
 		user:*)
 			_zsh_autosuggest_incr_bind_count $widget
-			zle -N $prefix$bind_count-$widget ${widgets[$widget]#*:}
+			if [[ $widget == run-help || $widget == which-command ]]; then
+				local original_widget_function=${widgets[$widget]#*:}
+				zle -N $prefix$bind_count-$widget $original_widget_function
+				eval "_zsh_autosuggest_orig_${(q)widget}() {
+					zle -N ${(q)widget} ${(q)original_widget_function}
+					zle ${(q)widget} -w
+					zle -N ${(q)widget} _zsh_autosuggest_bound_${bind_count}_${(q)widget}
+				}"
+				zle -N $prefix$bind_count-$widget _zsh_autosuggest_orig_$widget
+			else
+				zle -N $prefix$bind_count-$widget ${widgets[$widget]#*:}
+			fi
 			;;
 
 		# Built-in widget
 		builtin)
 			_zsh_autosuggest_incr_bind_count $widget
-			eval "_zsh_autosuggest_orig_${(q)widget}() { zle .${(q)widget} }"
-			zle -N $prefix$bind_count-$widget _zsh_autosuggest_orig_$widget
+			if [[ $widget == run-help || $widget == which-command ]]; then
+				zle -A $widget $prefix$bind_count-$widget
+				eval "_zsh_autosuggest_orig_${(q)widget}() {
+					zle -A ${(q)prefix}${bind_count}-${(q)widget} ${(q)widget}
+					zle ${(q)widget} -w
+					zle -A .${(q)widget} ${(q)prefix}${bind_count}-${(q)widget}
+					zle -N ${(q)widget} _zsh_autosuggest_bound_${bind_count}_${(q)widget}
+				}"
+				zle -N $prefix$bind_count-$widget _zsh_autosuggest_orig_$widget
+			else
+				eval "_zsh_autosuggest_orig_${(q)widget}() { zle .${(q)widget} }"
+				zle -N $prefix$bind_count-$widget _zsh_autosuggest_orig_$widget
+			fi
 			;;
 
 		# Completion widget
