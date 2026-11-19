@@ -34,7 +34,7 @@ _zsh_autosuggest_bind_widget() {
 		# Built-in widget
 		builtin)
 			_zsh_autosuggest_incr_bind_count $widget
-			eval "_zsh_autosuggest_orig_${(q)widget}() { zle .${(q)widget} }"
+			eval "_zsh_autosuggest_orig_${(q)widget}() { zle .${(q)widget} \$@ }"
 			zle -N $prefix$bind_count-$widget _zsh_autosuggest_orig_$widget
 			;;
 
