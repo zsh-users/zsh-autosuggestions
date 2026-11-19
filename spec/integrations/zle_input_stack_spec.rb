@@ -22,3 +22,17 @@ describe 'using `zle -U`' do
     end
   end
 end
+
+describe 'handling queued input after modifying the buffer' do
+  it 'does not restore a stale suggestion when more input is pending' do
+    with_history('echo hello world') do
+      session.send_string('echo h')
+      wait_for { session.content(esc_seqs: true) }.to match(/echo h.*world/)
+
+      session.send_keys('x', 'right', 'enter')
+
+      wait_for { session.content }.to include("hx\n")
+      expect(session.content).not_to include('hxello world')
+    end
+  end
+end

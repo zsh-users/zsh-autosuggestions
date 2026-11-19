@@ -55,15 +55,14 @@ _zsh_autosuggest_modify() {
 
 	emulate -L zsh
 
-	# Don't fetch a new suggestion if there's more input to be read immediately
-	if (( $PENDING > 0 || $KEYS_QUEUED_COUNT > 0 )); then
-		POSTDISPLAY="$orig_postdisplay"
-		return $retval
-	fi
-
 	# Optimize if manually typing in the suggestion or if buffer hasn't changed
 	if [[ "$BUFFER" = "$orig_buffer"* && "$orig_postdisplay" = "${BUFFER:$#orig_buffer}"* ]]; then
 		POSTDISPLAY="${orig_postdisplay:$(($#BUFFER - $#orig_buffer))}"
+		return $retval
+	fi
+
+	# Don't fetch a new suggestion if there's more input to be read immediately
+	if (( $PENDING > 0 || $KEYS_QUEUED_COUNT > 0 )); then
 		return $retval
 	fi
 
