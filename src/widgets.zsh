@@ -39,6 +39,15 @@ _zsh_autosuggest_clear() {
 _zsh_autosuggest_modify() {
 	local -i retval
 
+	# Some widgets, such as read-from-minibuffer, invoke `undo` with an
+	# explicit change number to restore the buffer after a recursive edit.
+	# Treating that internal undo as a buffer modification can replace the
+	# outer command line with the minibuffer input.
+	if [[ ${1##*-} == undo ]] && (( $# > 1 )); then
+		_zsh_autosuggest_invoke_original_widget $@
+		return $?
+	fi
+
 	# Only available in zsh >= 5.4
 	local -i KEYS_QUEUED_COUNT
 
